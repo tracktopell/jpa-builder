@@ -4,10 +4,12 @@ import com.tracktopell.dao.builder.DBBuilderFactory;
 import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.parser.VP6Parser;
 import com.tracktopell.dao.builder.parser.VPModel;
+import com.tracktopell.util.VersionUtil;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Hashtable;
+import java.util.Properties;
 
 /**
  * com.tracktopell.dao.builder.dbschema.VPModel2SQL
@@ -22,8 +24,12 @@ public class VPModel2SQL {
         String  outputPath       = null;
         String[]tableNames2Gen   = null;
         try {
-			
+			Properties vp=VersionUtil.loadVersionProperties();
 			if( args.length != 5) {
+				System.err.println("==================== Tracktopell VPModel2SQL ======================");
+				System.err.println("\t  BUILD: \t"+vp.getProperty(VersionUtil.BUILT_TIMESTAMP));
+				System.err.println("\tVERSION: \t"+vp.getProperty(VersionUtil.PROJECT_VERSION));
+
                 System.err.println("use: <java ...> com.tracktopell.dao.builder.dbschema.VPModel2SQL  pathToVPProject  rdbms  schemma  basePath  [ tableNames2GenList,Separated,By,Comma | {all} ]" );
                 System.exit(1);
             }

@@ -6,27 +6,22 @@
 	<groupId>com.tracktopell</groupId>
 	<artifactId>jpa-builder</artifactId>
 	<packaging>jar</packaging>
-	<version>1.12.2</version>
+	<version>1.12.3</version>
 	<name>jpa-builder</name>
 
 	<properties>
 		<junit.version>4.8.1</junit.version>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>		
 	</properties>
   
 	<inceptionYear>2010</inceptionYear>
-
-	<organization>
-		<name>xpressosystems</name>
-		<url>http://xpressosystems.com</url>
-	</organization>
 
 	<developers>
 		<developer>
 			<id>tracktopell</id>
 			<name>Alfredo Estrada</name>
-			<email>alfredo.estrada@xpressosystems.com</email>
-			<organization>xpressosystems</organization>
-			<organizationUrl>http://xpressosystems.com</organizationUrl>
+			<email>tracktopell@gmail.com</email>
 			<roles>
 				<role>Architect</role>
 				<role>Developer</role>
@@ -36,23 +31,84 @@
 		</developer>
 	</developers>
 
-	<build>
+	<build>                
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		
+		<finalName>${project.artifactId}</finalName>
+
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.tracktopell.dao.builder.dbschema.VPModel2SQL</mainClass>
+							<classpathPrefix>dependency-jars/</classpathPrefix>
+						</manifest>
+					</archive>
 				</configuration>
+			</plugin>
+ 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.5.1</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/dependency-jars/</outputDirectory>
+						</configuration>
+					</execution>							
+				</executions>	
+			</plugin>
+		
+			<plugin> 
+				<artifactId>maven-antrun-plugin</artifactId> 
+				<executions> 
+					<execution> 
+						<id>set-build-time</id> 
+						<phase>process-resources</phase> 
+						<configuration> 
+							<tasks> 
+								<echo message="======================= set-build-time, in process-resources phase : version_timeStamp=${version_timeStamp}  ==============>>>"/>
+							</tasks> 
+						</configuration> 
+						<goals> 
+							<goal>run</goal> 
+						</goals> 
+					</execution> 
+				</executions> 
+			</plugin>
+			
+			<plugin>
+				<groupId>com.keyboardsamurais.maven</groupId>
+				<artifactId>maven-timestamp-plugin</artifactId>
+				<version>1.0</version>
+				<configuration>
+					<propertyName>version_timeStamp</propertyName>
+					<timestampPattern>yyyy/MM/dd HH:mm</timestampPattern>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>    
-	</dependencies>
 </project>
