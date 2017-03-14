@@ -34,7 +34,7 @@ import javax.persistence.TemporalType;
  * Class for mapping JPA Entity of Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
- * @version 0.10.9
+ * @version ${version}
  * @date ${date}
  */
 
@@ -45,6 +45,7 @@ public class ${tablebean.declaredName} implements java.io.Serializable {
     %foreach tablebean.member in ${tablebean.members}
     ${tablebean.member.javadocCommnet}    
     ${tablebean.member.declaration}
+
     %endfor
     ${tablebean.oneToManyRelations.declarations}
     ${tablebean.ManyToManyRelations.declarations}
@@ -58,10 +59,11 @@ public class ${tablebean.declaredName} implements java.io.Serializable {
     /** 
      * lazy Constructor just with IDs
      */
+    /* -- not ready
     public ${tablebean.declaredName}( ${tablebean.PKMembersParameters} ) {
         ${tablebean.PKMembersParametersInitCode}
     }
-    
+    */
     /**
      * Getters and Setters
      */
@@ -74,45 +76,29 @@ public class ${tablebean.declaredName} implements java.io.Serializable {
     ${tablebean.oneToManyRelations.gettersAndSetters}
     ${tablebean.ManyToManyRelations.gettersAndSetters}
 
+	/**
+	* to-do override using commons
+	*/
     @Override
     public int hashCode() {
         int hash = 0;
-        %foreach tablebean.member in ${tablebean.members}		
-		hash += String.valueOf(${tablebean.member.javaIdentifier}).hashCode();
-		%endfor
         return hash;
     }
 
+	/**
+	* to-do override using commons
+	*/
 	@Override
     public boolean equals(Object o){
-		if (this == o) {
-			return true;
-		}
-		if (o == null) {
-			return false;
-		}
-		if (getClass() != o.getClass()) {
-			return false;
-		}        
-        if (!(o instanceof ${tablebean.declaredName})) {
-            return false;
-        }		
-		${tablebean.declaredName} other = (${tablebean.declaredName} ) o;
-		%foreach tablebean.member in ${tablebean.members}	
-		if (!Objects.equals(this.${tablebean.member.javaIdentifier}, other.${tablebean.member.javaIdentifier})) { return false; }		
-		%endfor
-    	return true;
-    }
+		return super.equels(0);
+	}
 
+	/**
+	* to-do override using commons
+	*/
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("${tablebean.declaredName}DTO{");
-		%foreach tablebean.member in ${tablebean.members}		
-		sb.append("${tablebean.member.javaIdentifier}" ).append("=").append(${tablebean.member.javaIdentifier}).append("|");
-		%endfor
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
-    }
+		return super.toString();
+	}
 
 }

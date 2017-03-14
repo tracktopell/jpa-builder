@@ -14,6 +14,7 @@ public class Table {
 
 	protected String schemma;
 	protected String name;
+	protected String singularName;
 	protected String javaDeclaredName;
 	protected String label;
 	protected boolean transactionalTable;
@@ -457,6 +458,56 @@ public class Table {
 		return indexes.iterator();
 	}
 
+	public String getSingularName() {
+		return singularName;
+	}
+
+	public void setSingularName(String singularName) {
+		this.singularName = singularName;
+	}
+	
+	public String getSingularNameJavaDeclaredName() {
+		if(this.singularName != null){
+			return FormatString.getCadenaHungara(this.singularName);
+		}
+		return null;
+	}
+	
+	public String getSingularNameJavaDeclaredObjectName() {
+		if(this.singularName != null){
+			return FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(this.singularName));
+		}
+		return null;
+	}
+
+	public String getSingularNameGetter() {
+		if(this.singularName != null){
+			return "get"+FormatString.getCadenaHungara(this.singularName);
+		}
+		return null;
+	}
+	
+	public String getSingularNameSetter() {
+		if(this.singularName != null){
+			return "set"+FormatString.getCadenaHungara(this.singularName);
+		}
+		return null;
+	}
+	
+	public String getNameGetter() {
+		if(this.name != null){
+			return "get"+FormatString.getCadenaHungara(this.name);
+		}
+		return null;
+	}
+	
+	public String getNameSetter() {
+		if(this.name != null){
+			return "set"+FormatString.getCadenaHungara(this.name);
+		}
+		return null;
+	}
+	
 	public String getComments() {
 		return comments;
 	}

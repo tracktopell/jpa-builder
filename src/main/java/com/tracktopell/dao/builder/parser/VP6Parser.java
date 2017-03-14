@@ -193,6 +193,8 @@ public class VP6Parser {
                                     currentTable.setTransactionalTable(true);
                                 } else if(keyValueProp[0].trim().equals("label")){
                                     currentTable.setLabel(keyValueProp[1].trim());
+                                } else if(keyValueProp[0].trim().equals("singularName")){
+                                    currentTable.setSingularName(keyValueProp[1].trim());
                                 }
                             }                        
                         }
@@ -224,7 +226,7 @@ public class VP6Parser {
                                 } else if(keyValueProp[0].trim().equals("label")){
                                     currentColumn.setLabel(keyValueProp[1].trim());
                                 } 
-                            }                        
+                            }
                         }
                     } catch (Exception ex){
                         ex.printStackTrace(System.err);

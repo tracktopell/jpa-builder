@@ -171,21 +171,32 @@ public class JPABeanBuilder {
 										ps.println("    private " + column.getJavaClassType().replace("java.lang.", "")
 												+ " " + column.getJavaDeclaredObjectName() + ";");
 									} else if (fTable != null) {
-										//refObjFK = FormatString.getCadenaHungara(fTable.getName());
+										
 										ps.println("    @JoinColumn(name = \"" + column.getName().toUpperCase()
 												+ "\" , referencedColumnName = \"" + table.getFKReferenceTable(column.getName()).getColumnName().toUpperCase() + "\", "
 												+ " insertable = false, updatable = false)");
 										ps.println("    @ManyToOne(optional = " + column.isNullable() + ")");
-										//ps.println("    private " + refObjFK + " " + FormatString.firstLetterLowerCase(refObjFK) + ";");
-										ps.println("    private " + fTable.getJavaDeclaredName() + " " + fTable.getJavaDeclaredObjectName() + ";");
+										
+										ps.println("    //0 private " + fTable.getJavaDeclaredName() + " " + FormatString.getCadenaHungara(fTable.getJavaDeclaredName()) + ";");										
+										ps.println("    //2 singularname="+fTable.getSingularName());										
+										if(fTable.getSingularName()!=null){
+											ps.println("    private " + fTable.getJavaDeclaredName()+" "+fTable.getSingularNameJavaDeclaredObjectName()+";");
+										}else {
+											ps.println("    private " + fTable.getJavaDeclaredName() + " " + FormatString.getCadenaHungara(fTable.getJavaDeclaredName()) + ";");
+										}
 									} else {
 										ps.println("    @Basic(optional = " + column.isNullable() + ")");
 										ps.println("    @ManyToOne");
 										ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\")");
 										//if(column.getJavaClassType().equals("java.util.Date")){
-										if (column.getSqlType().toLowerCase().equals("timestamp") || column.getSqlType().toLowerCase().equals("datetime")) {
+										if (column.getSqlType().toLowerCase().equals("timestamp")) {
 											ps.println("    @Temporal(TemporalType.TIMESTAMP)");
+										} else if (column.getSqlType().toLowerCase().equals("datetime")) {
+											ps.println("    @Temporal(TemporalType.DATE)");
+										} else if (column.getSqlType().toLowerCase().equals("date")) {
+											ps.println("    @Temporal(TemporalType.DATE)");
 										}
+										
 										ps.println("    private " + column.getJavaClassType().replace("java.lang.", "") + " " + column.getJavaDeclaredObjectName() + ";");
 									}
 								} else {
@@ -228,10 +239,10 @@ public class JPABeanBuilder {
 											}
 											ps.println("    @ManyToOne(optional = " + column.isNullable() + ")");
 
-											if (hasNomalizaedFKReferences(fTable, column)) {
-												ps.println("    private " + fTable.getJavaDeclaredName() + " " + fTable.getJavaDeclaredObjectName() + ";");
-											} else {
-												ps.println("    private " + fTable.getJavaDeclaredName() + " " + FormatString.renameForJavaMethod(column.getName()) + ";");
+											if(fTable.getSingularName()!=null){
+												ps.println("    private " + fTable.getJavaDeclaredName()+" "+fTable.getSingularNameJavaDeclaredObjectName());												
+											}else {
+												ps.println("    private " + fTable.getJavaDeclaredName() + " " + FormatString.getCadenaHungara(fTable.getJavaDeclaredName()) + ";");
 											}
 										} else {
 											String extraCoulmnDeclarationInfo = "";
@@ -251,8 +262,13 @@ public class JPABeanBuilder {
 								}
 
 							} else if (lineInLoop.indexOf("${tablebean.member.getter}") >= 0) {
-								if (fTable != null && !table.getName().toUpperCase().endsWith("_P_K")) {
-
+								if (fTable != null) {
+									if(fTable.getSingularName()!=null){
+										ps.println("    public " + fTable.getJavaDeclaredName()+" "+ fTable.getSingularNameGetter()+"("+fTable.getJavaDeclaredName()+" x){ return this."+fTable.getSingularNameJavaDeclaredObjectName()+" ; }");
+									}else {
+										ps.println("    public " + fTable.getJavaDeclaredName()+" " +fTable.getNameSetter()        +"("+fTable.getJavaDeclaredName()+" x){ return this."+fTable.getJavaDeclaredObjectName()+"; }");
+									}
+									/*
 									refObjFK = fTable.getJavaDeclaredName();
 
 									if (table instanceof EmbeddeableColumn) {
@@ -276,6 +292,7 @@ public class JPABeanBuilder {
 									ps.println("    public " + refObjFK + " g" + finalyXetterName + " () {");
 									ps.println("        return this." + finalyVarName + ";");
 									ps.println("    }");
+									*/
 								} else {
 									ps.println("    public " + column.getJavaClassType().replace("java.lang.", "")
 											+ " get" + column.getJavaDeclaredName() + "() {");
@@ -283,8 +300,13 @@ public class JPABeanBuilder {
 									ps.println("    }");
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.setter}") >= 0) {
-								if (fTable != null && !table.getName().toUpperCase().endsWith("_P_K")) {
-
+								if (fTable != null ) {
+									if(fTable.getSingularName()!=null){
+										ps.println("    public void " + fTable.getSingularNameSetter()+"("+fTable.getJavaDeclaredName()+" x){ this."+fTable.getSingularNameJavaDeclaredObjectName()+" = x; }");
+									}else {
+										ps.println("    public void " + fTable.getNameSetter()+"("+fTable.getJavaDeclaredName()+" x){ this."+fTable.getJavaDeclaredObjectName()+" = x; }");
+									}
+									/*
 									refObjFK = fTable.getJavaDeclaredName();
 
 									if (table instanceof EmbeddeableColumn) {
@@ -308,7 +330,8 @@ public class JPABeanBuilder {
 									ps.println("    public void s" + finalyXetterName + "(" + refObjFK + " v) {");
 									ps.println("        this." + finalyVarName + " = v;");
 									ps.println("    }");
-								} else {
+									*/
+								} else {									
 									ps.println("    public void set" + FormatString.getCadenaHungara(column.getName())
 											+ "(" + column.getJavaClassType().replace("java.lang.", "") + " v) {");
 									ps.println("        this." + column.getJavaDeclaredObjectName() + " = v;");
@@ -510,7 +533,7 @@ public class JPABeanBuilder {
 				sb.append(", ");
 			}
 
-			if (column.isForeignKey() && !table.isManyToManyTable() && !table.getName().toUpperCase().endsWith("_P_K")) {
+			if (column.isForeignKey() && !table.isManyToManyTable()) {
 				Table fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
 				if (table instanceof EmbeddeableColumn) {
 					refObjFK = column.getJavaClassType().replace("java.lang.", "");
@@ -558,7 +581,7 @@ public class JPABeanBuilder {
 				sb.append("        ");
 			}
 
-			if (column.isForeignKey() && !table.isManyToManyTable() && !table.getName().toUpperCase().endsWith("_P_K")) {
+			if (column.isForeignKey() && !table.isManyToManyTable()) {
 				Table fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
 				if (table instanceof EmbeddeableColumn) {
 					refObjFK = column.getJavaClassType().replace("java.lang.", "");
