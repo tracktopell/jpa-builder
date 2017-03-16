@@ -4,6 +4,7 @@
 
 package com.tracktopell.dao.builder.metadata;
 
+import com.tracktopell.dao.builder.FormatString;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -14,6 +15,8 @@ import java.util.Iterator;
  * @author Usuario
  */
 public class EmbeddeableColumn extends Table implements Column{
+	private Table  fTable;
+	private String hyperColumnName;	
     private String sqlType;
     private String javaClassType;
     private boolean autoIncremment;
@@ -165,7 +168,37 @@ public class EmbeddeableColumn extends Table implements Column{
         this.farFKDescription = farFKDescription;
     }
 
+	@Override
+	public String getHyperColumnName() {
+		return hyperColumnName;
+	}
 
+	public String getHyperColumnObjectName() {
+		if(hyperColumnName!= null){
+			return FormatString.getCadenaHungara(hyperColumnName);
+		}
+		return null;
+	}
+
+	public String getHyperColumnGetterName() {
+		if(hyperColumnName!= null){
+			return "get"+FormatString.getCadenaHungara(hyperColumnName);
+		}
+		return null;
+	}
+	
+	public String getHyperColumnSetterName() {
+		if(hyperColumnName!= null){
+			return "set"+FormatString.getCadenaHungara(hyperColumnName);
+		}
+		return null;
+	}	
+
+	@Override
+	public void setHyperColumnName(String hc) {
+		this.hyperColumnName = hc;
+	}
+	
     //--------------------------------------------------------------------------
 
     public Iterator<Column> getSortedColumnsForJPA() {
@@ -195,4 +228,15 @@ public class EmbeddeableColumn extends Table implements Column{
     public void setToStringConcatenable(boolean toStringConcatenable) {
         this.toStringConcatenable = toStringConcatenable;
     }
+	
+	
+	@Override
+	public void setFTable(Table ft) {
+		this.fTable = ft;
+	}
+
+	@Override
+	public Table getFTable() {
+		return this.fTable;
+	}
 }

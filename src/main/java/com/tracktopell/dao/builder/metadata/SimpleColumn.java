@@ -14,6 +14,8 @@ import java.util.Hashtable;
 public class SimpleColumn implements Column {
 
 	private String name;
+	private Table  fTable;
+	private String hyperColumnName;
 	protected String javaDeclaredName;
 	private String sqlType;
 	private String javaClassType;
@@ -243,6 +245,38 @@ public class SimpleColumn implements Column {
 		return toStringConcatenable;
 	}
 
+	@Override
+	public String getHyperColumnName() {
+		return hyperColumnName;
+	}
+	
+	public String getHyperColumnObjectName() {
+		if(hyperColumnName!= null){
+			return FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(hyperColumnName));
+		}
+		return null;
+	}
+
+	public String getHyperColumnGetterName() {
+		if(hyperColumnName!= null){
+			return "get"+FormatString.getCadenaHungara(hyperColumnName);
+		}
+		return null;
+	}
+	
+	public String getHyperColumnSetterName() {
+		if(hyperColumnName!= null){
+			return "set"+FormatString.getCadenaHungara(hyperColumnName);
+		}
+		return null;
+	}
+
+	@Override
+	public void setHyperColumnName(String hc) {
+		this.hyperColumnName = hc;
+	}
+	
+
 	/**
 	 * @param toStringConcatenable the toStringConcatenable to set
 	 */
@@ -288,5 +322,15 @@ public class SimpleColumn implements Column {
 	 */
 	public void setMetaProperties(Hashtable<String, String> metaProperties) {
 		this.metaProperties = metaProperties;
+	}
+
+	@Override
+	public void setFTable(Table ft) {
+		this.fTable = ft;
+	}
+
+	@Override
+	public Table getFTable() {
+		return this.fTable;
 	}
 }

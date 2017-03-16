@@ -95,5 +95,19 @@ public interface Column {
 
 	void setMetaProperties(Hashtable<String, String> properties);
 	
+	void setHyperColumnName(String hc);
+	
+	String getHyperColumnName();
+	
+	String getHyperColumnObjectName();
+	
+	String getHyperColumnSetterName();
+	
+	String getHyperColumnGetterName();
+	
+	void setFTable(Table ft);
+	
+	Table getFTable();
+	
 	Hashtable<String, String>  getMetaProperties();
 }

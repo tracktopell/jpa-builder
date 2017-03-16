@@ -82,8 +82,35 @@ public class JPABeanBuilder {
 			List<Column> definitiveColumns = new ArrayList();
 			while (columnsSortedColumnsForJPA.hasNext()) {
 				Column c = columnsSortedColumnsForJPA.next();
+				String suggested=null;
+				String suggestedObjectName=null;
+				String suggestedGettetObjectName=null;
+				String suggestedSettetObjectName=null;
+				Table fTable = null;
+				if (c.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
+					fTable = dbSet.getTable(table.getFKReferenceTable(c.getName()).getTableName());
+					c.setFTable(fTable);
+					if(fTable.getSingularName()!=null){
+						final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
+						for(Column ftpk: ftPksCol){
+							if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+								suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
+								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
+								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+								
+								c.setHyperColumnName(suggested);
+								break;
+							}
+						}					
+					}else {												
+
+					}
+				} else {
+					fTable = null;
+				}				
 				definitiveColumns.add(c);
-				System.err.println("\t-->> DefinitiveColumn: " + c);
+				System.err.println("\t-->> DefinitiveColumn: " + c+" => {"+suggested+", "+suggestedObjectName+", "+suggestedGettetObjectName+", "+suggestedSettetObjectName+"}");
 			}
 
 			//-------------------------------------------------------
@@ -120,16 +147,7 @@ public class JPABeanBuilder {
 
 					for (Column column : definitiveColumns) {
 						numColumnGenerating++;
-
-						Table fTable = null;
-						String refObjFK = null;
-
-						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
-							fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
-						} else {
-							fTable = null;
-						}
-
+						
 						for (String lineInLoop : linesToParse) {
 							if (lineInLoop.indexOf("${tablebean.member.javadocCommnet}") >= 0) {
 								if (!table.isManyToManyTableWinthMoreColumns()) {
@@ -147,19 +165,9 @@ public class JPABeanBuilder {
 									}
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0) {								
-								if(column.isForeignKey()){
-									if(!(table instanceof EmbeddeableColumn)){
-										if(hasNomalizaedFKReferences(fTable, column)){
-											lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", fTable.getJavaDeclaredObjectName());
-										} else {
-											lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
-										}
-									} else {
-										lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
-									} 
-								} else {
-									lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
-								}
+								
+								lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
+								
 								ps.println(lineInLoop);
 
 							} else if (lineInLoop.indexOf("${tablebean.member.declaration}") >= 0) {
@@ -170,25 +178,22 @@ public class JPABeanBuilder {
 										ps.println("    @EmbeddedId");
 										ps.println("    private " + column.getJavaClassType().replace("java.lang.", "")
 												+ " " + column.getJavaDeclaredObjectName() + ";");
-									} else if (fTable != null) {
+									} else if (column.getFTable() != null) {
 										
 										ps.println("    @JoinColumn(name = \"" + column.getName().toUpperCase()
 												+ "\" , referencedColumnName = \"" + table.getFKReferenceTable(column.getName()).getColumnName().toUpperCase() + "\", "
 												+ " insertable = false, updatable = false)");
 										ps.println("    @ManyToOne(optional = " + column.isNullable() + ")");
 										
-										ps.println("    //0 private " + fTable.getJavaDeclaredName() + " " + FormatString.getCadenaHungara(fTable.getJavaDeclaredName()) + ";");										
-										ps.println("    //2 singularname="+fTable.getSingularName());										
-										if(fTable.getSingularName()!=null){
-											ps.println("    private " + fTable.getJavaDeclaredName()+" "+fTable.getSingularNameJavaDeclaredObjectName()+";");
+										if(column.getFTable()!=null && column.getHyperColumnName()!=null){
+											ps.println("    private " + column.getFTable().getJavaDeclaredName()+" "+column.getHyperColumnObjectName()+";");
 										}else {
-											ps.println("    private " + fTable.getJavaDeclaredName() + " " + FormatString.getCadenaHungara(fTable.getJavaDeclaredName()) + ";");
+											ps.println("    private " + column.getFTable().getJavaDeclaredName() + " " + FormatString.getCadenaHungara(column.getFTable().getJavaDeclaredName()) + ";");
 										}
 									} else {
 										ps.println("    @Basic(optional = " + column.isNullable() + ")");
 										ps.println("    @ManyToOne");
-										ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\")");
-										//if(column.getJavaClassType().equals("java.util.Date")){
+										ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\")");										
 										if (column.getSqlType().toLowerCase().equals("timestamp")) {
 											ps.println("    @Temporal(TemporalType.TIMESTAMP)");
 										} else if (column.getSqlType().toLowerCase().equals("datetime")) {
@@ -225,11 +230,12 @@ public class JPABeanBuilder {
 										} else if (column.getJavaClassType().equals("java.util.Calendar")) {
 											ps.println("    @Temporal(TemporalType.DATE)");
 										}
+										
 										ps.println("    private " + column.getJavaClassType().replace("java.lang.", "")
 												+ " " + column.getJavaDeclaredObjectName() + ";");
 									} else {
-										if (fTable != null) {
-
+										if (column.getFTable() != null) {
+											ps.println("    // bug dtos --");
 											//ps.println("    // (insertable = false, updatable = false) FIX ?"+table.hasEmbeddedPK()+" && "+column.isPrimaryKey());
 											ps.print("    @JoinColumn(name = \"" + column.getName().toUpperCase() + "\" , referencedColumnName = \"" + table.getFKReferenceTable(column.getName()).getColumnName().toUpperCase() + "\"");
 											if (table.hasEmbeddedPK() && column.isPrimaryKey()) {
@@ -238,11 +244,11 @@ public class JPABeanBuilder {
 												ps.println(")");
 											}
 											ps.println("    @ManyToOne(optional = " + column.isNullable() + ")");
-
-											if(fTable.getSingularName()!=null){
-												ps.println("    private " + fTable.getJavaDeclaredName()+" "+fTable.getSingularNameJavaDeclaredObjectName());												
-											}else {
-												ps.println("    private " + fTable.getJavaDeclaredName() + " " + FormatString.getCadenaHungara(fTable.getJavaDeclaredName()) + ";");
+											
+											if(column.getFTable()!=null && column.getHyperColumnName()!=null){
+												ps.println("    private " + column.getFTable().getJavaDeclaredName()+" "+column.getHyperColumnObjectName()+";");
+											}else {												
+												ps.println("    private " + column.getFTable().getJavaDeclaredName() + " " + FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(column.getFTable().getJavaDeclaredName())) + ";");
 											}
 										} else {
 											String extraCoulmnDeclarationInfo = "";
@@ -253,7 +259,7 @@ public class JPABeanBuilder {
 												ps.println("    @Temporal(TemporalType.DATE)");
 											} else if (column.getJavaClassType().equals("java.lang.String")) {
 												extraCoulmnDeclarationInfo = ", length=" + column.getScale();
-											}
+											}											
 											ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\" " + extraCoulmnDeclarationInfo + "  )");
 											ps.println("    private " + column.getJavaClassType().replace("java.lang.", "")
 													+ " " + column.getJavaDeclaredObjectName() + ";");
@@ -262,37 +268,13 @@ public class JPABeanBuilder {
 								}
 
 							} else if (lineInLoop.indexOf("${tablebean.member.getter}") >= 0) {
-								if (fTable != null) {
-									if(fTable.getSingularName()!=null){
-										ps.println("    public " + fTable.getJavaDeclaredName()+" "+ fTable.getSingularNameGetter()+"("+fTable.getJavaDeclaredName()+" x){ return this."+fTable.getSingularNameJavaDeclaredObjectName()+" ; }");
+								if (column.getFTable() != null) {
+									if(column.getFTable()!=null && column.getHyperColumnName()!=null){										
+										ps.println("    public " + column.getFTable().getJavaDeclaredName()+" "+ column.getHyperColumnGetterName()+"(){ return this."+column.getHyperColumnObjectName()+" ; }");
 									}else {
-										ps.println("    public " + fTable.getJavaDeclaredName()+" " +fTable.getNameSetter()        +"("+fTable.getJavaDeclaredName()+" x){ return this."+fTable.getJavaDeclaredObjectName()+"; }");
+										ps.println("    public " + column.getFTable().getJavaDeclaredName()+" " +column.getFTable().getNameGetter()        +"(){ return this."+column.getFTable().getJavaDeclaredObjectName()+"; }");
 									}
-									/*
-									refObjFK = fTable.getJavaDeclaredName();
-
-									if (table instanceof EmbeddeableColumn) {
-										refObjFK = column.getJavaClassType().replace("java.lang.", "");
-									}
-
-									String finalyVarName = null;
-									String finalyXetterName = null;
-
-									if (table instanceof EmbeddeableColumn && column.isForeignKey()) {
-										finalyVarName = column.getJavaDeclaredObjectName();
-									} else {
-										if (hasNomalizaedFKReferences(fTable, column)) {
-											finalyVarName = fTable.getJavaDeclaredObjectName();
-										} else {
-											finalyVarName = FormatString.renameForJavaMethod(column.getName());
-										}
-									}
-									finalyXetterName = "et" + FormatString.firstLetterUpperCase(finalyVarName);
-
-									ps.println("    public " + refObjFK + " g" + finalyXetterName + " () {");
-									ps.println("        return this." + finalyVarName + ";");
-									ps.println("    }");
-									*/
+									
 								} else {
 									ps.println("    public " + column.getJavaClassType().replace("java.lang.", "")
 											+ " get" + column.getJavaDeclaredName() + "() {");
@@ -300,37 +282,12 @@ public class JPABeanBuilder {
 									ps.println("    }");
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.setter}") >= 0) {
-								if (fTable != null ) {
-									if(fTable.getSingularName()!=null){
-										ps.println("    public void " + fTable.getSingularNameSetter()+"("+fTable.getJavaDeclaredName()+" x){ this."+fTable.getSingularNameJavaDeclaredObjectName()+" = x; }");
+								if (column.getFTable() != null ) {
+									if(column.getFTable()!=null && column.getHyperColumnName()!=null){										
+										ps.println("    public void " + column.getHyperColumnSetterName()+"("+column.getFTable().getJavaDeclaredName()+" x){ this."+column.getHyperColumnObjectName()+" = x; }");
 									}else {
-										ps.println("    public void " + fTable.getNameSetter()+"("+fTable.getJavaDeclaredName()+" x){ this."+fTable.getJavaDeclaredObjectName()+" = x; }");
+										ps.println("    public void " + column.getFTable().getNameSetter()+"("+column.getFTable().getJavaDeclaredName()+" x){ this."+column.getFTable().getJavaDeclaredObjectName()+" = x; }");
 									}
-									/*
-									refObjFK = fTable.getJavaDeclaredName();
-
-									if (table instanceof EmbeddeableColumn) {
-										refObjFK = column.getJavaClassType().replace("java.lang.", "");
-									}
-
-									String finalyVarName = null;
-									String finalyXetterName = null;
-
-									if (table instanceof EmbeddeableColumn && column.isForeignKey()) {
-										finalyVarName = column.getJavaDeclaredObjectName();
-									} else {
-										if (hasNomalizaedFKReferences(fTable, column)) {
-											finalyVarName = fTable.getJavaDeclaredObjectName();
-										} else {
-											finalyVarName = FormatString.renameForJavaMethod(column.getName());
-										}
-									}
-									finalyXetterName = "et" + FormatString.firstLetterUpperCase(finalyVarName);
-
-									ps.println("    public void s" + finalyXetterName + "(" + refObjFK + " v) {");
-									ps.println("        this." + finalyVarName + " = v;");
-									ps.println("    }");
-									*/
 								} else {									
 									ps.println("    public void set" + FormatString.getCadenaHungara(column.getName())
 											+ "(" + column.getJavaClassType().replace("java.lang.", "") + " v) {");

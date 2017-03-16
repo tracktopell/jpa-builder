@@ -320,6 +320,33 @@ public class DTOBeanBuilder {
 			List<Column> definitiveColumns = new ArrayList();
 			while (columnsSortedColumnsForJPA.hasNext()) {
 				Column c = columnsSortedColumnsForJPA.next();
+				String suggested=null;
+				String suggestedObjectName=null;
+				String suggestedGettetObjectName=null;
+				String suggestedSettetObjectName=null;
+				Table fTable = null;
+				if (c.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
+					fTable = dbSet.getTable(table.getFKReferenceTable(c.getName()).getTableName());
+					c.setFTable(fTable);
+					if(fTable.getSingularName()!=null){
+						final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
+						for(Column ftpk: ftPksCol){
+							if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+								suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
+								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
+								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+								
+								c.setHyperColumnName(suggested);
+								break;
+							}
+						}					
+					}else {												
+
+					}
+				} else {
+					fTable = null;
+				}				
 				definitiveColumns.add(c);
 				System.err.println("\t-->> DefinitiveColumn: " + c);
 			}
@@ -579,6 +606,33 @@ public class DTOBeanBuilder {
 			List<Column> definitiveColumns = new ArrayList();
 			while (columnsSortedColumnsForJPA.hasNext()) {
 				Column c = columnsSortedColumnsForJPA.next();
+				String suggested=null;
+				String suggestedObjectName=null;
+				String suggestedGettetObjectName=null;
+				String suggestedSettetObjectName=null;
+				Table fTable = null;
+				if (c.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
+					fTable = dbSet.getTable(table.getFKReferenceTable(c.getName()).getTableName());
+					c.setFTable(fTable);
+					if(fTable.getSingularName()!=null){
+						final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
+						for(Column ftpk: ftPksCol){
+							if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+								suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
+								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
+								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+								
+								c.setHyperColumnName(suggested);
+								break;
+							}
+						}					
+					}else {												
+
+					}
+				} else {
+					fTable = null;
+				}				
 				definitiveColumns.add(c);
 				System.err.println("\t-->> DefinitiveColumn: " + c);
 			}
@@ -655,28 +709,22 @@ public class DTOBeanBuilder {
 				} else if (line.indexOf("${jpaCopyedToDtoMembers.code.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 
-						Table fTable = null;
-
 						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
-							fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
-							ps.println("        //Embedable: "+FormatString.getCadenaHungara(column.getName())+" -> "+FormatString.getCadenaHungara(fTable.getName())+", STD?"+hasNomalizaedFKReferences(fTable, column));
-							if(hasNomalizaedFKReferences(fTable, column)) {
-								for(Column cfk: fTable.getColums()){
-									if(cfk.isPrimaryKey()){									
-										ps.println("        dtoEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( jpaEntity.get"+FormatString.getCadenaHungara(fTable.getName())+"()!=null?jpaEntity.get"+FormatString.getCadenaHungara(fTable.getName())+"().get"+FormatString.getCadenaHungara(cfk.getName())+"():null); ");
-									}
-								}
-							} else {
-								for(Column cfk: fTable.getColums()){
-									if(cfk.isPrimaryKey()){									
-										ps.println("        dtoEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( jpaEntity.get"+FormatString.getCadenaHungara(column.getName())+"()!=null?jpaEntity.get"+FormatString.getCadenaHungara(column.getName())+"().get"+FormatString.getCadenaHungara(cfk.getName())+"():null);");
+							
+							ps.println("        //Not Embedable: "+FormatString.getCadenaHungara(column.getName())+" -> "+FormatString.getCadenaHungara(column.getFTable().getName())+", FTable: "+column.getFTable().getName()+", HyperName:"+column.getHyperColumnName());
+							for(Column cfk: column.getFTable().getColums()){
+								if(cfk.isPrimaryKey()){									
+									if(column.getHyperColumnName()!=null){
+										ps.println("        dtoEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( jpaEntity."+column.getHyperColumnGetterName()+"()!=null?jpaEntity."+column.getHyperColumnGetterName()+"().get"+FormatString.getCadenaHungara(cfk.getName())+"():null);");
+									} else {
+										ps.println("        dtoEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( jpaEntity.get"+FormatString.getCadenaHungara(column.getFTable().getName())+"()!=null?jpaEntity.get"+FormatString.getCadenaHungara(column.getFTable().getName())+"().get"+FormatString.getCadenaHungara(cfk.getName())+"():null);");
 									}
 								}
 							}
 						} else if (column instanceof EmbeddeableColumn) {
 							EmbeddeableColumn eColumn = (EmbeddeableColumn)column;							
 							
-							ps.println("        // "+FormatString.getCadenaHungara(column.getName())+" is Embeddable. Begin nested settings");
+							ps.println("        // Embedable: "+FormatString.getCadenaHungara(column.getName())+", begin nested settings");
 							final Collection<Column> fKs = eColumn.getFKs();
 							for(Column fC: fKs){
 								ps.print  ("        dtoEntity.set" + FormatString.getCadenaHungara(fC.getName()));
@@ -690,27 +738,19 @@ public class DTOBeanBuilder {
 					}
 				} else if (line.indexOf("${dtoCopyedToJpaMembers.code.code}") >= 0) {
 					for (Column column : definitiveColumns) {
-						Table fTable = null;
-
-						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
-							fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
-							
-							if( hasNomalizaedFKReferences(fTable, column) ){
-								ps.println("        " + FormatString.getCadenaHungara(fTable.getName()) + "DTO pk"+FormatString.getCadenaHungara(fTable.getName())+"DTO = new "+FormatString.getCadenaHungara(fTable.getName())+"DTO();");
-								for(Column cfk: fTable.getColums()){
-									if(cfk.isPrimaryKey()){
-										ps.println("        pk"+FormatString.getCadenaHungara(fTable.getName())+"DTO.set"+FormatString.getCadenaHungara(cfk.getName())+"(dtoEntity.get"+FormatString.getCadenaHungara(column.getName())+"()); // FK");
-									}
-								}							
-								ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(fTable.getName()) + "( "+FormatString.getCadenaHungara(fTable.getName())+"Assembler.buildJpaEntity( pk"+FormatString.getCadenaHungara(fTable.getName())+"DTO )); // Assembler delegation by PKs");
-							}else{
-								ps.println("        "+FormatString.getCadenaHungara(fTable.getName())+"DTO dto"+FormatString.getCadenaHungara(fTable.getName())+"DTO = new "+FormatString.getCadenaHungara(fTable.getName())+"DTO();");
-								ps.println("        dto"+FormatString.getCadenaHungara(fTable.getName())+"DTO.set"+FormatString.getCadenaHungara(column.getName())+"( dtoEntity.get" + FormatString.getCadenaHungara(column.getName())+ "());");
-								ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( "+FormatString.getCadenaHungara(fTable.getName())+"Assembler.buildJpaEntity( dto"+FormatString.getCadenaHungara(fTable.getName())+"DTO )); // Assembler delegation not normalizaed");
+						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {							
+							if( column.getHyperColumnName()!=null){
+								ps.println("        "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO = new "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO();");
+								ps.println("        "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO.set"+FormatString.getCadenaHungara(column.getFTable().getJPAPK())+"( dtoEntity.get" + FormatString.getCadenaHungara(column.getName())+ "());");								
+								ps.println("        jpaEntity." + column.getHyperColumnSetterName() + "( "+FormatString.getCadenaHungara(column.getFTable().getName())+"Assembler.buildJpaEntity( "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO ));");
+							} else {
+								ps.println("        // Assembler delegation: fTable.pk="+column.getFTable().getJPAPK());
+								ps.println("        "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO dto"+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO = new "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO();");
+								ps.println("        dto"+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO.set"+FormatString.getCadenaHungara(column.getFTable().getJPAPK())+"( dtoEntity.get" + FormatString.getCadenaHungara(column.getName())+ "());");
+								ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(column.getFTable().getName()) + "( "+FormatString.getCadenaHungara(column.getFTable().getName())+"Assembler.buildJpaEntity( dto"+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO )); ");
 							}
 						} else if (column instanceof EmbeddeableColumn) {
-							EmbeddeableColumn eColumn = (EmbeddeableColumn)column;							
-							
+							EmbeddeableColumn eColumn = (EmbeddeableColumn)column;														
 							ps.println("        // "+FormatString.getCadenaHungara(column.getName())+" is Embeddable. Begin nested settings");
 							final Collection<Column> fKs = eColumn.getFKs();
 							for(Column fC: fKs){

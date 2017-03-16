@@ -90,7 +90,7 @@ public class ${tablebean.declaredName} implements java.io.Serializable {
 	*/
 	@Override
     public boolean equals(Object o){
-		return super.equels(0);
+		return super.equals(0);
 	}
 
 	/**
