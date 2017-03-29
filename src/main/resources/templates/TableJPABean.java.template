@@ -3,7 +3,7 @@ package ${tablebean.package};
 import java.io.Serializable;
 import java.util.Set;
 import java.util.Collection;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Basic;
@@ -33,7 +33,7 @@ import javax.persistence.TemporalType;
 /**
  * Class for mapping JPA Entity of Table ${tablebean.name}.
  * 
- * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  * @version ${version}
  * @date ${date}
  */
@@ -69,36 +69,53 @@ public class ${tablebean.declaredName} implements java.io.Serializable {
      */
     %foreach tablebean.member in ${tablebean.members}
     ${tablebean.member.getter}
-
     ${tablebean.member.setter}    
-
     %endfor
     ${tablebean.oneToManyRelations.gettersAndSetters}
     ${tablebean.ManyToManyRelations.gettersAndSetters}
 
-	/**
-	* to-do override using commons
-	*/
     @Override
     public int hashCode() {
         int hash = 0;
+        %foreach tablebean.member in ${tablebean.members}		
+		hash += String.valueOf(${tablebean.member.javaIdentifier}).hashCode();
+		%endfor
         return hash;
     }
 
-	/**
-	* to-do override using commons
-	*/
 	@Override
     public boolean equals(Object o){
-		return super.equals(0);
-	}
+		if (this == o) {
+			return true;
+	    }
+		if (o == null) {
+			return false;
+		}
+		if (getClass() != o.getClass()) {
+			return false;
+		}        
+        if (!(o instanceof ${tablebean.declaredName})) {
+            return false;
+        }		
+		${tablebean.declaredName} other = (${tablebean.declaredName} ) o;
+		%foreach tablebean.member in ${tablebean.members}	
+		if (!Objects.equals(this.${tablebean.member.javaIdentifier}, other.${tablebean.member.javaIdentifier})) { return false; }		
+		%endfor
+    	return true;
+    }
 
 	/**
 	* to-do override using commons
 	*/
     @Override
     public String toString() {
-		return super.toString();
+		StringBuilder sb=new StringBuilder();
+		sb.append("${tablebean.declaredName}{");
+		%foreach tablebean.member in ${tablebean.members}		
+		sb.append("${tablebean.member.javaIdentifier}" ).append("=").append(${tablebean.member.javaIdentifier}).append("|");
+		%endfor
+		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
+		return sb.toString();
 	}
 
 }

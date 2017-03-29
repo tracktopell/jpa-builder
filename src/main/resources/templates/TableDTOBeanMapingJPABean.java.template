@@ -5,8 +5,8 @@ import java.util.Objects;
 /**
  * Class for mapping DTO Entity of Table ${tablebean.name}.
  * 
- * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
- * @version 0.10.9
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ * @version ${version}
  * @date ${date}
  */
 
@@ -29,9 +29,7 @@ public class ${tablebean.declaredName}DTO implements java.io.Serializable {
      */
     %foreach tablebean.member in ${tablebean.members}
     ${tablebean.member.getter}
-
-    ${tablebean.member.setter}    
-
+    ${tablebean.member.setter}
     %endfor
 
     @Override

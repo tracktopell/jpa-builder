@@ -10,6 +10,7 @@ import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.metadata.EmbeddeableColumn;
 import com.tracktopell.dao.builder.metadata.ReferenceTable;
 import com.tracktopell.dao.builder.metadata.Table;
+import com.tracktopell.util.VersionUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +27,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -44,10 +46,11 @@ public class JPABeanBuilder {
 		PrintStream ps = null;
 		BufferedReader br = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm");
-		String collectionClass = "Collection";
+		String collectionClass = "List";
 
 		Enumeration<String> tableNames = dbSet.getTableNames();
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
+		Properties vp=VersionUtil.loadVersionProperties();
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
 			if (!simpleTable.isManyToManyTable()) {
@@ -165,9 +168,13 @@ public class JPABeanBuilder {
 									}
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0) {								
-								
-								lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
-								
+								if(column.getFTable()!=null && column.getHyperColumnName()!=null){
+									lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getHyperColumnObjectName());
+								} else if(column.getFTable()!=null){
+									lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(column.getFTable().getJavaDeclaredName())));
+								} else{
+									lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
+								}
 								ps.println(lineInLoop);
 
 							} else if (lineInLoop.indexOf("${tablebean.member.declaration}") >= 0) {
@@ -192,8 +199,7 @@ public class JPABeanBuilder {
 										}
 									} else {
 										ps.println("    @Basic(optional = " + column.isNullable() + ")");
-										ps.println("    @ManyToOne");
-										ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\")");										
+										ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\")");
 										if (column.getSqlType().toLowerCase().equals("timestamp")) {
 											ps.println("    @Temporal(TemporalType.TIMESTAMP)");
 										} else if (column.getSqlType().toLowerCase().equals("datetime")) {
@@ -235,7 +241,7 @@ public class JPABeanBuilder {
 												+ " " + column.getJavaDeclaredObjectName() + ";");
 									} else {
 										if (column.getFTable() != null) {
-											ps.println("    // bug dtos --");
+											
 											//ps.println("    // (insertable = false, updatable = false) FIX ?"+table.hasEmbeddedPK()+" && "+column.isPrimaryKey());
 											ps.print("    @JoinColumn(name = \"" + column.getName().toUpperCase() + "\" , referencedColumnName = \"" + table.getFKReferenceTable(column.getName()).getColumnName().toUpperCase() + "\"");
 											if (table.hasEmbeddedPK() && column.isPrimaryKey()) {
@@ -340,13 +346,25 @@ public class JPABeanBuilder {
 										: posibleOneToManyMamber;
 
 								tableReferenceOneToMany = sameTableTargetFK > 1 ? FormatString.renameForJavaMethod(columnNameFK) : tableReferenceOneToMany;
-
-								ps.println("    // bug , must refering " + posibleTableOneToMany.getName() + "." + colmnMappedBy.getName() + " => " + colmnMappedBy.getJavaDeclaredObjectName() + ", normalized ? " + hasNomalizaedFKReferences(table, colmnMappedBy));
-								if (hasNomalizaedFKReferences(table, colmnMappedBy)) {
-									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + table.getJavaDeclaredObjectName() + "\")");
-								} else {
-									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + colmnMappedBy.getJavaDeclaredObjectName() + "\")");
+								final Collection<Column> fKs = posibleTableOneToMany.getFKs();
+								
+								Column mappedByBakColumn=null;
+								for(Column fkb :fKs){
+									if(fkb.getFTable()!=null && (fkb.getFTable().getName().equals(table.getName()))){
+										mappedByBakColumn = fkb;
+									}
 								}
+								if(mappedByBakColumn!=null){
+									
+									if(mappedByBakColumn.getHyperColumnName()!=null && mappedByBakColumn.getFTable().getSingularName()!=null){
+										ps.println("    // Must refering " + posibleTableOneToMany.getName() + "." + colmnMappedBy.getName() + " => " + mappedByBakColumn.getHyperColumnObjectName() + "\")");
+										ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + mappedByBakColumn.getHyperColumnObjectName() + "\")");
+									}else{
+										ps.println("    // Must refering " + posibleTableOneToMany.getName() + "." + colmnMappedBy.getName() + " => " + mappedByBakColumn.getFTable().getJavaDeclaredObjectName());
+										ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + mappedByBakColumn.getFTable().getJavaDeclaredObjectName() + "\")");
+									}
+								}
+								
 								ps.println("    private " + collectionClass + "<" + FormatString.getCadenaHungara(posibleTableOneToMany.getName()) + "> " + realSugestedCollectionName + ";");
 								ps.println("    ");
 							}
@@ -435,6 +453,7 @@ public class JPABeanBuilder {
 					}
 
 				} else {
+					line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 					line = line.replace("${date}", sdf.format(new Date()));
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
 					line = line.replace("${tablebean.name}", table.getName());
@@ -690,12 +709,6 @@ public class JPABeanBuilder {
 			}
 			System.out.println();
 		}
-	}
-
-	private static boolean hasNomalizaedFKReferences(Table fTable, Column column) {
-		String x = (fTable.getName() + "_" + fTable.getJPAPK()).toLowerCase();
-		String y = column.getName().toLowerCase();
-		return x.equals(y);
 	}
 
 }
