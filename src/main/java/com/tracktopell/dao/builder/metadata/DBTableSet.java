@@ -63,8 +63,19 @@ public class DBTableSet {
     public Enumeration<Table> getTablesElements(){
         return this.getTables().elements();
     }
+	
+	public List<Table> getTablesList(){ 
+		ArrayList<Table> result =  new ArrayList<Table>();
+        Enumeration<Table> te = this.tables.elements();
+        Table iterTable = null;
+        while (te.hasMoreElements()){
+            iterTable = te.nextElement();
+            result.add(iterTable);
+        }
+		return result;
+	}
     
-    public List<Table> getTablesSortedForCreation(){        
+    public List<Table> getTablesSortedForCreation(){ 
         ArrayList<Table> result =  new ArrayList<Table>();
         Enumeration<Table> te = this.tables.elements();
         Table iterTable = null;
@@ -193,7 +204,7 @@ public class DBTableSet {
         while(relatedTablesEnumeration.hasMoreElements()) {
             Table relatedTable = relatedTablesEnumeration.nextElement();
 
-            if(relatedTable.isManyToManyTable()) {
+            if(relatedTable.isManyToManyTableWinthMoreColumns()) {
                 //System.err.println("\t\t-->>M2M :  RelatedTable :"+relatedTable.getName());
                 Collection<Column> ffks = relatedTable.getFKs();
                 boolean m2mPontsHere = false;
@@ -219,6 +230,20 @@ public class DBTableSet {
         
         return m2mTables;
     }
+	
+    public Collection<Table> getOneToManyRelationTables(Table t) {
+        ArrayList<Table> m2mTables = new ArrayList<Table>();
+		
+		for(Table it:tables.values()){
+			Collection<ReferenceTable> fkReferenceTables = it.getFKReferenceTables();
+			for(ReferenceTable rt: fkReferenceTables){
+				if(rt.getTableName().equalsIgnoreCase(t.getName())){
+					m2mTables.add(it);
+				}
+			}
+		}        
+        return m2mTables;
+    }
 
     public Table getTableOwnerManyToManyRelation(Table t1,Table t2) {
         Table m2mTalbeOwner = null;
@@ -227,7 +252,7 @@ public class DBTableSet {
         while(relatedTablesEnumeration.hasMoreElements()) {
             Table relatedTable = relatedTablesEnumeration.nextElement();
 
-            if(relatedTable.isManyToManyTable()) {
+            if(relatedTable.isManyToManyTableWinthMoreColumns()) {
                 Collection<Column> ffks = relatedTable.getFKs();
                 boolean m2mPointsT1 = false;
                 boolean m2mPointsT2 = false;

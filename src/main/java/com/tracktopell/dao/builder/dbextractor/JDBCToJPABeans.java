@@ -78,7 +78,7 @@ public class JDBCToJPABeans {
                 }
             }
 
-            JPABeanBuilder.buildMappingBeans(dbSet, packageBeanMember, basePath);
+            JPABeanBuilder.buildMappingBeans(dbSet, schemma, packageBeanMember, basePath);
 
         } catch (Exception e) {
             e.printStackTrace(System.err);

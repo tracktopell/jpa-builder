@@ -30,7 +30,7 @@ public class VPModel2SQL {
 				System.err.println("\t  BUILD: \t"+vp.getProperty(VersionUtil.BUILT_TIMESTAMP));
 				System.err.println("\tVERSION: \t"+vp.getProperty(VersionUtil.PROJECT_VERSION));
 
-                System.err.println("use: <java ...> com.tracktopell.dao.builder.dbschema.VPModel2SQL  pathToVPProject  rdbms  schemma  basePath  [ tableNames2GenList,Separated,By,Comma | {all} ]" );
+                System.err.println("use: <java ...> com.tracktopell.dao.builder.dbschema.VPModel2SQL  pathToVPProject  rdbms  catalog  basePath  [ tableNames2GenList,Separated,By,Comma | {all} ]" );
                 System.exit(1);
             }
 

@@ -25,7 +25,12 @@ public class Table {
 	protected String toStringPattern;
 
 	private Hashtable<String, String> metaProperties;
-
+	
+	private List<Column>            plainColumns;
+	private List<EmbeddeableColumn> embededColumns;
+	private List<Table>             m2mTableList;
+	private List<Table>             o2mTableList;
+	
 	/**
 	 * Creates a new instance of Table
 	 */
@@ -53,16 +58,10 @@ public class Table {
 		return treeSorter.iterator();
 	}
 
-	public boolean isManyToManyTable() {
-		return 2 == countForeignKeys()
-				&& 2 == countPrimaryKeys()
-				&& 2 == columns.size();
-	}
-
 	public boolean isManyToManyTableWinthMoreColumns() {
-		return 2 == countForeignKeys()
-				&& 2 == countPrimaryKeys()
-				&& 2 < columns.size();
+		return countForeignKeys()==2
+				&& countPrimaryKeys()==2
+				&& columns.size()==2;
 	}
 
 	public Iterator<Column> getSortedColumnsForJPA() {
@@ -544,8 +543,7 @@ public class Table {
 		if (pks.size() == 1) {
 			Column pk = pks.iterator().next();
 			return pk.getName();
-		}
-		if (pks.size() > 1) {
+		} else if (pks.size() > 1) {
 			Iterator<Column> sortedColumnsForJPAIterator = getSortedColumnsForJPA();
 			while (sortedColumnsForJPAIterator.hasNext()) {
 				Column c = sortedColumnsForJPAIterator.next();
@@ -565,8 +563,7 @@ public class Table {
 		if (pks.size() == 1) {
 			Column pk = pks.iterator().next();
 			return pk.getJavaClassType();
-		}
-		if (pks.size() > 1) {
+		} else if (pks.size() > 1) {
 			Iterator<Column> sortedColumnsForJPAIterator = getSortedColumnsForJPA();
 			while (sortedColumnsForJPAIterator.hasNext()) {
 				Column c = sortedColumnsForJPAIterator.next();
@@ -584,50 +581,35 @@ public class Table {
 	public String getHashCodeSumCode() {
 		StringBuffer sbHashCodeSum = new StringBuffer();
 		int numColumns = 0;
-		String jpaPKClass = getJPAPKClass();
-		if (countPrimaryKeys() == 1 || hasEmbeddedPK() || isManyToManyTableWinthMoreColumns()) {
+		
+		sbHashCodeSum.append("(");
 
+		Iterator<Column> simpleColumnsIterator = getSortedColumnsForJPA();
+
+		while (simpleColumnsIterator.hasNext()) {
+			Column c = simpleColumnsIterator.next();
+			if (!c.isPrimaryKey()) {
+				continue;
+			}
+			if (numColumns > 0) {
+				sbHashCodeSum.append(" + \n\t\t\t");
+			}
+			String jpaPKClass = c.getJavaClassType();
 			if (!(this instanceof EmbeddeableColumn) && jpaPKClass.equals("double") || jpaPKClass.equals("int") || jpaPKClass.equals("float") || jpaPKClass.equals("char") || jpaPKClass.equals("byte")) {
-				sbHashCodeSum.append("( String.valueOf(");
-				sbHashCodeSum.append(FormatString.renameForJavaMethod(getJPAPK()));
+				sbHashCodeSum.append(" ( String.valueOf(");
+				sbHashCodeSum.append(FormatString.renameForJavaMethod(c.getName()));
 				sbHashCodeSum.append(").hashCode() )");
 			} else {
-				sbHashCodeSum.append("(");
-				sbHashCodeSum.append(FormatString.renameForJavaMethod(getJPAPK()));
+				sbHashCodeSum.append(" (");
+				sbHashCodeSum.append(FormatString.renameForJavaMethod(c.getName()));
 				sbHashCodeSum.append(" != null ? ");
-				sbHashCodeSum.append(FormatString.renameForJavaMethod(getJPAPK()));
+				sbHashCodeSum.append(FormatString.renameForJavaMethod(c.getName()));
 				sbHashCodeSum.append(".hashCode() : 0 )");
 			}
-		} else {
-			sbHashCodeSum.append("(");
 
-			Iterator<Column> simpleColumnsIterator = getSortedColumnsForJPA();
-
-			while (simpleColumnsIterator.hasNext()) {
-				Column c = simpleColumnsIterator.next();
-				if (!c.isPrimaryKey()) {
-					continue;
-				}
-				if (numColumns > 0) {
-					sbHashCodeSum.append(" + \n\t\t\t");
-				}
-				jpaPKClass = c.getJavaClassType();
-				if (!(this instanceof EmbeddeableColumn) && jpaPKClass.equals("double") || jpaPKClass.equals("int") || jpaPKClass.equals("float") || jpaPKClass.equals("char") || jpaPKClass.equals("byte")) {
-					sbHashCodeSum.append(" ( String.valueOf(");
-					sbHashCodeSum.append(FormatString.renameForJavaMethod(c.getName()));
-					sbHashCodeSum.append(").hashCode() )");
-				} else {
-					sbHashCodeSum.append(" (");
-					sbHashCodeSum.append(FormatString.renameForJavaMethod(c.getName()));
-					sbHashCodeSum.append(" != null ? ");
-					sbHashCodeSum.append(FormatString.renameForJavaMethod(c.getName()));
-					sbHashCodeSum.append(".hashCode() : 0 )");
-				}
-
-				numColumns++;
-			}
-			sbHashCodeSum.append(" )");
+			numColumns++;
 		}
+		sbHashCodeSum.append(" )");
 
 		return sbHashCodeSum.toString();
 	}
@@ -640,75 +622,45 @@ public class Table {
 		//sbEqualsCode.append("\n");
 		String jpaPKClass = getJPAPKClass();
 
-		if ((countPrimaryKeys() == 1 || hasEmbeddedPK() || isManyToManyTableWinthMoreColumns())) {
+		Iterator<Column> simpleColumnsIterator = getSortedColumnsForJPA();
+		int numColumns = 0;
 
-			sbEqualsCode.append("        if ( ");
+		sbEqualsCode.append("        if ( ");
 
+		while (simpleColumnsIterator.hasNext()) {
+			Column c = simpleColumnsIterator.next();
+			if (!c.isPrimaryKey()) {
+				continue;
+			}
+			if (numColumns > 0) {
+				sbEqualsCode.append(" || \n             ");
+			}
+			jpaPKClass = c.getJavaClassType();
 			if (!(this instanceof EmbeddeableColumn) && jpaPKClass.equals("double") || jpaPKClass.equals("int") || jpaPKClass.equals("float") || jpaPKClass.equals("char") || jpaPKClass.equals("byte")) {
-
-				sbEqualsCode.append(" this.");
-				sbEqualsCode.append(FormatString.renameForJavaMethod(getJPAPK()));
+				sbEqualsCode.append(" ( this.");
+				sbEqualsCode.append(c.getJavaDeclaredObjectName());
 				sbEqualsCode.append(" != other.");
-				sbEqualsCode.append(FormatString.renameForJavaMethod(getJPAPK()));
-
+				sbEqualsCode.append(c.getJavaDeclaredObjectName());
+				sbEqualsCode.append(" ) ");
 			} else {
 				sbEqualsCode.append("(this.");
-				sbEqualsCode.append(FormatString.renameForJavaMethod(getJPAPK()));
+				sbEqualsCode.append(FormatString.renameForJavaMethod(c.getName()));
 				sbEqualsCode.append(" == null && other.");
-				sbEqualsCode.append(FormatString.renameForJavaMethod(getJPAPK()));
-				sbEqualsCode.append(" != null) || (this.");
-				sbEqualsCode.append(FormatString.renameForJavaMethod(getJPAPK()));
+				sbEqualsCode.append(FormatString.renameForJavaMethod(c.getName()));
+				sbEqualsCode.append(" != null) || (this." + FormatString.renameForJavaMethod(c.getName()));
 				sbEqualsCode.append(" != null && !this.");
-				sbEqualsCode.append(FormatString.renameForJavaMethod(getJPAPK()));
+				sbEqualsCode.append(FormatString.renameForJavaMethod(c.getName()));
 				sbEqualsCode.append(".equals(other.");
-				sbEqualsCode.append(FormatString.renameForJavaMethod(getJPAPK()));
+				sbEqualsCode.append(FormatString.renameForJavaMethod(c.getName()));
 				sbEqualsCode.append("))");
 			}
 
-			sbEqualsCode.append(") {\n");
-			sbEqualsCode.append("            return false;\n");
-			sbEqualsCode.append("        }\n");
-
-		} else {
-			Iterator<Column> simpleColumnsIterator = getSortedColumnsForJPA();
-			int numColumns = 0;
-
-			sbEqualsCode.append("        if ( ");
-
-			while (simpleColumnsIterator.hasNext()) {
-				Column c = simpleColumnsIterator.next();
-				if (!c.isPrimaryKey()) {
-					continue;
-				}
-				if (numColumns > 0) {
-					sbEqualsCode.append(" || \n             ");
-				}
-				jpaPKClass = c.getJavaClassType();
-				if (!(this instanceof EmbeddeableColumn) && jpaPKClass.equals("double") || jpaPKClass.equals("int") || jpaPKClass.equals("float") || jpaPKClass.equals("char") || jpaPKClass.equals("byte")) {
-					sbEqualsCode.append(" ( this.");
-					sbEqualsCode.append(c.getJavaDeclaredObjectName());
-					sbEqualsCode.append(" != other.");
-					sbEqualsCode.append(c.getJavaDeclaredObjectName());
-					sbEqualsCode.append(" ) ");
-				} else {
-					sbEqualsCode.append("(this.");
-					sbEqualsCode.append(FormatString.renameForJavaMethod(c.getName()));
-					sbEqualsCode.append(" == null && other.");
-					sbEqualsCode.append(FormatString.renameForJavaMethod(c.getName()));
-					sbEqualsCode.append(" != null) || (this." + FormatString.renameForJavaMethod(c.getName()));
-					sbEqualsCode.append(" != null && !this.");
-					sbEqualsCode.append(FormatString.renameForJavaMethod(c.getName()));
-					sbEqualsCode.append(".equals(other.");
-					sbEqualsCode.append(FormatString.renameForJavaMethod(c.getName()));
-					sbEqualsCode.append("))");
-				}
-
-				numColumns++;
-			}
-			sbEqualsCode.append(") {\n");
-			sbEqualsCode.append("            return false;\n");
-			sbEqualsCode.append("        }\n");
+			numColumns++;
 		}
+		sbEqualsCode.append(") {\n");
+		sbEqualsCode.append("            return false;\n");
+		sbEqualsCode.append("        }\n");
+
 
 		return sbEqualsCode.toString();
 	}
@@ -1058,4 +1010,55 @@ public class Table {
 		}
 		return ccrfk;
 	}
+
+	public void setPlainColumns(List<Column> plainColumns) {
+		this.plainColumns = plainColumns;
+	}
+
+	public List<Column> getPlainColumns() {
+		return plainColumns;
+	}
+
+	public void setEmbededColumns(List<EmbeddeableColumn> embededColumns) {
+		this.embededColumns = embededColumns;
+	}
+
+	public List<EmbeddeableColumn> getEmbededColumns() {
+		return embededColumns;
+	}
+	/**
+	 * @return the m2mTableList
+	 */
+	public List<Table> getM2mTableList() {
+		if(m2mTableList == null){
+			m2mTableList= new ArrayList<Table>();
+		}
+		return m2mTableList;
+	}
+
+	/**
+	 * @param m2mTableList the m2mTableList to set
+	 */
+	public void setM2mTableList(List<Table> m2mTableList) {
+		this.m2mTableList = m2mTableList;
+	}
+
+	/**
+	 * @return the o2mTableList
+	 */
+	public List<Table> getO2mTableList() {
+		if(o2mTableList == null){
+			o2mTableList=new ArrayList<Table>();
+		}
+		return o2mTableList;
+	}
+
+	/**
+	 * @param o2mTableList the o2mTableList to set
+	 */
+	public void setO2mTableList(List<Table> o2mTableList) {
+		this.o2mTableList = o2mTableList;
+	}
+
+
 }

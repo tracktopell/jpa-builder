@@ -49,7 +49,7 @@ public class DTOBeanBuilder {
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTable()) {
+			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
 				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
@@ -288,7 +288,7 @@ public class DTOBeanBuilder {
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTable()) {
+			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
 				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
@@ -571,7 +571,7 @@ public class DTOBeanBuilder {
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTable()) {
+			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
 				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
@@ -819,7 +819,7 @@ public class DTOBeanBuilder {
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTable()) {
+			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
 				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
@@ -1046,7 +1046,7 @@ public class DTOBeanBuilder {
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTable()) {
+			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
 				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
@@ -1293,7 +1293,7 @@ public class DTOBeanBuilder {
 				sb.append(", ");
 			}
 
-			if (column.isForeignKey() && !table.isManyToManyTable() && !table.getName().toUpperCase().endsWith("_P_K")) {
+			if (column.isForeignKey() && !table.isManyToManyTableWinthMoreColumns() && !table.getName().toUpperCase().endsWith("_P_K")) {
 				Table fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
 				if (table instanceof EmbeddeableColumn) {
 					refObjFK = column.getJavaClassType().replace("java.lang.", "");
@@ -1341,7 +1341,7 @@ public class DTOBeanBuilder {
 				sb.append("        ");
 			}
 
-			if (column.isForeignKey() && !table.isManyToManyTable() && !table.getName().toUpperCase().endsWith("_P_K")) {
+			if (column.isForeignKey() && !table.isManyToManyTableWinthMoreColumns() && !table.getName().toUpperCase().endsWith("_P_K")) {
 				Table fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
 				if (table instanceof EmbeddeableColumn) {
 					refObjFK = column.getJavaClassType().replace("java.lang.", "");

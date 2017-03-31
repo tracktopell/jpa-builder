@@ -50,7 +50,7 @@ public class CodeBuilder {
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTable()) {
+			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
 				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
@@ -230,7 +230,7 @@ public class CodeBuilder {
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTable()) {
+			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
 				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 			} else {

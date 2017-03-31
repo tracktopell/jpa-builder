@@ -19,16 +19,17 @@ public class VPModel2JPA {
         String[]tableNames2Gen   = null;
         try {
 
-            if( args.length != 4) {
-                System.err.println("use: <java ...> VPModel2JPA  pathToVPProject  packageBeanMember  basePath   tableNames2GenList,Separated,By,Comma" );
+            if( args.length != 5) {
+                System.err.println("use: <java ...> VPModel2JPA  pathToVPProject  catalog packageBeanMember  basePath   tableNames2GenList,Separated,By,Comma" );
                 System.exit(1);
             }
 
 
             pathToVPProject  = args[0];
-            packageBeanMember= args[1];
-            basePath         = args[2];
-            tableNames2Gen   = args[3].split(",");
+			schemmaName      = args[1];
+            packageBeanMember= args[2];
+            basePath         = args[3];
+            tableNames2Gen   = args[4].split(",");
 
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
@@ -44,7 +45,7 @@ public class VPModel2JPA {
             //System.out.println("====================== END PARSE XML ========================");
             //System.out.println("->" + dbSet);
 
-            JPABeanBuilder.buildMappingBeans(dbSet, packageBeanMember, basePath);
+            JPABeanBuilder.buildMappingBeans(dbSet, schemmaName, packageBeanMember, basePath);
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
