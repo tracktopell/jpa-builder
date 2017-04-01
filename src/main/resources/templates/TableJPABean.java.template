@@ -43,23 +43,23 @@ import javax.xml.bind.annotation.XmlTransient;
 ${tablebean.jpa_entity_or_embeddeable}
 ${tablebean.jpa_talbe}
 @XmlRootElement
+/* WildFly fails review !
 @NamedQueries({
     ${tablebean.namedQuery}
     %foreach tablebean.member in ${tablebean.members}
     , ${tablebean.member.namedQuery}
     %endfor
 })
+*/
 public class ${tablebean.declaredName} implements java.io.Serializable {
     private static final long serialVersionUID = ${tablebean.serialId};
     %foreach tablebean.member in ${tablebean.members}
     ${tablebean.member.javadocCommnet}    
     ${tablebean.member.declaration}
-    %endfor
-	// >>>>>>>>>>>>>>>>>>>
+    %endfor	
     ${tablebean.oneToManyRelations.declarations}
 
     ${tablebean.ManyToManyRelations.declarations}
-	// <<<<<<<<<<<<<<<<<<<
 	// =========================================================================
     // =========================================================================
     /** 

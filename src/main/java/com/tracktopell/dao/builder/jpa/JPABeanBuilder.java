@@ -333,8 +333,7 @@ public class JPABeanBuilder {
 												+ " " + column.getJavaDeclaredObjectName() + ";");
 									} else {
 										if (column.getFTable() != null) {
-											
-											//ps.println("    // (insertable = false, updatable = false) FIX ?"+table.hasEmbeddedPK()+" && "+column.isPrimaryKey());
+																						
 											ps.print("    @JoinColumn(name = \"" + column.getName().toUpperCase() + "\" , referencedColumnName = \"" + table.getFKReferenceTable(column.getName()).getColumnName().toUpperCase() + "\"");
 											if (table.hasEmbeddedPK() && column.isPrimaryKey()) {
 												ps.println(", insertable = false, updatable = false)");
@@ -491,133 +490,91 @@ public class JPABeanBuilder {
 				} else if (linesToParse != null) {
 					linesToParse.add(line);
 				} else if (line.indexOf("${tablebean.oneToManyRelations.declarations}") >= 0) {
-					ps.println("    // ----------------- tablebean.oneToManyRelations.declarations");
+					
 					for (Table posibleTableOneToMany : tablesForGeneration) {
 						
-						Table tableReferenceOneToMany = null;
-						Enumeration<String> fkColumnNames = posibleTableOneToMany.getFKColumnNames();
-						int sameTableTargetFK = 0;
-						while (fkColumnNames.hasMoreElements()) {
-							String columnNameFK = fkColumnNames.nextElement();
-							ReferenceTable rt4OneToMany = posibleTableOneToMany.getFKReferenceTable(columnNameFK);
-
-							if (rt4OneToMany.getTableName().equals(table.getName())
-									&& !FormatString.getCadenaHungara(posibleTableOneToMany.getName()).endsWith("PK")) {
-								sameTableTargetFK++;
-							}
+						if(posibleTableOneToMany instanceof EmbeddeableColumn){
+							continue;
 						}
-						fkColumnNames = posibleTableOneToMany.getFKColumnNames();
-						while (fkColumnNames.hasMoreElements()) {
-							String columnNameFK = fkColumnNames.nextElement();
-							ReferenceTable rt4OneToMany = posibleTableOneToMany.getFKReferenceTable(columnNameFK);
-							
-							if (rt4OneToMany.getTableName().equals(table.getName())
-									&& !FormatString.getCadenaHungara(posibleTableOneToMany.getName()).endsWith("PK")) {
-								tableReferenceOneToMany = null;
+						
+						Table  tableReferenceOneToMany = null;
+						Column colmnMappedBy = null;
+						String realSugestedCollectionName = null;
+						
+						for(Column cfk: posibleTableOneToMany.getFKs()){
+							if(!cfk.isPrimaryKey() && cfk.getFTable().getName().equals(table.getName())){
+								colmnMappedBy = cfk;
 								
-								Collection<Column> fks = posibleTableOneToMany.getFKs();
-								Column colmnMappedBy = null;
-								for (Column cfk : fks) {
-									if (posibleTableOneToMany.getFKReferenceTable(cfk.getName()).getTableName().equals(table.getName())) {
-										colmnMappedBy = cfk;
-										tableReferenceOneToMany = dbSet.getTable(posibleTableOneToMany.getFKReferenceTable(cfk.getName()).getTableName());										
-									}
+								if(posibleTableOneToMany.getSingularName()!=null){
+									realSugestedCollectionName = posibleTableOneToMany.getSingularName()+"_THAT_HAS_";
+								}else{
+									realSugestedCollectionName = posibleTableOneToMany.getName()+"_TO_";
 								}
 								
-								String posibleOneToManyMamber = FormatString.renameForJavaMethod(posibleTableOneToMany.getName()) + collectionClass;
-								String fkReferencedMemberName = rt4OneToMany.getTableName() + "_" + rt4OneToMany.getColumnName();
-								String realSugestedCollectionName = (!columnNameFK.equals(fkReferencedMemberName) && sameTableTargetFK > 1)
-										? FormatString.renameForJavaMethod(posibleTableOneToMany.getName() + "_To_" + columnNameFK + "_" + collectionClass)
-										: posibleOneToManyMamber;
-																
-								final Collection<Column> fKs = posibleTableOneToMany.getFKs();
-								
-								Column mappedByBakColumn=null;
-								
-								for(Column fkb :fKs){
-									if(fkb.getFTable()!=null && (fkb.getFTable().getName().equals(table.getName()))){
-										mappedByBakColumn = fkb;
-									}
-								}
-								for(Column cfkx:posibleTableOneToMany.getColums()){
-									posibleTableOneToMany.getFKReferenceTables();
-									for(ReferenceTable rtFK:posibleTableOneToMany.getFKReferenceTables()){
-										if((rtFK.getTableName().equals(table.getName()))){
-											Table  txf = dbSet.getTable(rtFK.getTableName());
-											Column cxf = txf.getColumn(rtFK.getColumnName());
-											mappedByBakColumn = cxf;
-											mappedByBakColumn.setFTable(txf);
-											if(txf.getSingularName()!=null){
-												mappedByBakColumn.setHyperColumnName(txf.getSingularName());
-											}else{
-												mappedByBakColumn.setHyperColumnName(txf.getName());											
-											}
-											break;
-										}
-									}
+								if(cfk.getHyperColumnName()!=null){
+									realSugestedCollectionName += cfk.getHyperColumnName()+"_"+collectionClass;
+								}else{
+									realSugestedCollectionName += cfk.getName()+"_"+collectionClass;
 								}
 								
-								if(mappedByBakColumn!=null){
-									ps.println("    /** " );
-									ps.println("    * Map the relation to other table where has object of this class." );
-									ps.println("    */ " );
-									if(mappedByBakColumn.getHyperColumnName()!=null && mappedByBakColumn.getFTable().getSingularName()!=null){
-										ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + mappedByBakColumn.getHyperColumnObjectName() + "\")");
-									}else{
-										ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + mappedByBakColumn.getFTable().getJavaDeclaredObjectName() + "\")");
-									}
+								realSugestedCollectionName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(realSugestedCollectionName));
 								
-									ps.println("    private " + collectionClass + "<" + FormatString.getCadenaHungara(posibleTableOneToMany.getName()) + "> " + realSugestedCollectionName + ";");
-									ps.println("    " );
+								ps.println("    /** " );
+								ps.println("    * Map the relation to "+posibleTableOneToMany.getName()+" table where has "+cfk.getName()+" object mapped column of for this class." );
+								ps.println("    */ " );
+								if(cfk.getHyperColumnName()!=null){
+									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\")");
+								}else if(cfk.getFTable()!=null){
+									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\")");
+								}else {
+									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\")");
 								}
+								ps.println("    private " + collectionClass + "<" + FormatString.getCadenaHungara(posibleTableOneToMany.getName()) + "> " + realSugestedCollectionName + ";");
+								ps.println("    " );
 							}
 						}
 					}
 				} else if (line.indexOf("${tablebean.oneToManyRelations.gettersAndSetters}") >= 0) {
-					ps.println("    // tablebean.oneToManyRelations.gettersAndSetters ----------------------------------" );
 					for (Table posibleTableOneToMany : tablesForGeneration) {
-						Enumeration<String> fkColumnNames = posibleTableOneToMany.getFKColumnNames();
-						int sameTableTargetFK = 0;
-						while (fkColumnNames.hasMoreElements()) {
-							String columnNameFK = fkColumnNames.nextElement();
-							ReferenceTable rt4OneToMany = posibleTableOneToMany.getFKReferenceTable(columnNameFK);
-
-							if (rt4OneToMany.getTableName().equals(table.getName())
-									&& !FormatString.getCadenaHungara(posibleTableOneToMany.getName()).endsWith("PK")) {
-								sameTableTargetFK++;
-							}
+						
+						if(posibleTableOneToMany instanceof EmbeddeableColumn){
+							continue;
 						}
-						fkColumnNames = posibleTableOneToMany.getFKColumnNames();
-						while (fkColumnNames.hasMoreElements()) {
-							String columnNameFK = fkColumnNames.nextElement();
-							ReferenceTable rt4OneToMany = posibleTableOneToMany.getFKReferenceTable(columnNameFK);
-							if (rt4OneToMany.getTableName().equals(table.getName())
-									&& !FormatString.getCadenaHungara(posibleTableOneToMany.getName()).endsWith("PK")) {
-								Table fTable = dbSet.getTable(posibleTableOneToMany.getName());
-								String posibleOneToManyMamber = posibleTableOneToMany.getName() + "_" + collectionClass;
-								String fkReferencedMemberName = rt4OneToMany.getTableName() + "_" + rt4OneToMany.getColumnName();
-								String realSugestedCollectionName = (!columnNameFK.equals(fkReferencedMemberName) && sameTableTargetFK > 1)
-										? posibleTableOneToMany.getName() + "_To_" + columnNameFK + "_" + collectionClass
-										: posibleOneToManyMamber;
-
+						
+						Table  tableReferenceOneToMany = null;
+						Column colmnMappedBy = null;
+						String realSugestedCollectionName = null;
+						
+						for(Column cfk: posibleTableOneToMany.getFKs()){
+							if(!cfk.isPrimaryKey() && cfk.getFTable().getName().equals(table.getName())){
+								colmnMappedBy = cfk;
+								
+								if(posibleTableOneToMany.getSingularName()!=null){
+									realSugestedCollectionName = posibleTableOneToMany.getSingularName()+"_THAT_HAS_";
+								}else{
+									realSugestedCollectionName = posibleTableOneToMany.getName()+"_THAT_HAS_";
+								}
+								
+								if(cfk.getHyperColumnName()!=null){
+									realSugestedCollectionName += cfk.getHyperColumnName()+"_"+collectionClass;
+								}else{
+									realSugestedCollectionName += cfk.getName()+"_"+collectionClass;
+								}
+								
+								realSugestedCollectionName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(realSugestedCollectionName));
+																
+								ps.println("    public " + collectionClass + "<"+posibleTableOneToMany.getJavaDeclaredName()+"> get"+FormatString.firstLetterUpperCase(realSugestedCollectionName)+"(){ return this." + realSugestedCollectionName + "; }");
+								ps.println("    public void set"+FormatString.firstLetterUpperCase(realSugestedCollectionName)+"(" + collectionClass + "<"+posibleTableOneToMany.getJavaDeclaredName()+"> v){ this." + realSugestedCollectionName + " = v; }");
 								ps.println("    ");
-								ps.println("    public " + collectionClass + "<" + FormatString.getCadenaHungara(posibleTableOneToMany.getName()) + "> " + FormatString.renameForJavaMethod("Get_" + realSugestedCollectionName) + "() {");
-								ps.println("        return this." + FormatString.renameForJavaMethod(realSugestedCollectionName) + ";");
-								ps.println("    }");
-								ps.println("    ");
-								ps.println("    ");
-								ps.println("    public void " + FormatString.renameForJavaMethod("Set_" + realSugestedCollectionName) + "(" + collectionClass + "<" + FormatString.getCadenaHungara(posibleTableOneToMany.getName()) + ">  v) {");
-								ps.println("        this." + FormatString.renameForJavaMethod(realSugestedCollectionName) + " = v;");
-								ps.println("    }");
 							}
 						}
 					}
 				} else if (line.indexOf("${tablebean.ManyToManyRelations.declarations}") >= 0) {
-					ps.println("    // tablebean.ManyToManyRelations.declarations ----------------------------------" );
+					
 					Collection<Table> m2mTables = dbSet.getManyToManyRelationTables(table);
 
 					for (Table fm2mTable : m2mTables) {
-						ps.println("    // "+fm2mTable.getName());
+						//ps.println("    // "+fm2mTable.getName());
 						Table tableOwnerManyToManyRelation = dbSet.getTableOwnerManyToManyRelation(table, fm2mTable);
 						Iterator<Column> fKsM2M = tableOwnerManyToManyRelation.getFKs().iterator();
 
@@ -638,20 +595,13 @@ public class JPABeanBuilder {
 						ps.println("    private " + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + "> " + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + ";");
 						ps.println("    ");
 					}
-				} else if (line.indexOf("${tablebean.ManyToManyRelations.gettersAndSetters}") >= 0) {
-					ps.println("    // tablebean.ManyToManyRelations.gettersAndSetters ----------------------------------" );
+				} else if (line.indexOf("${tablebean.ManyToManyRelations.gettersAndSetters}") >= 0) {					
 					Collection<Table> m2mTables = dbSet.getManyToManyRelationTables(table);
 					for (Table fm2mTable : m2mTables) {
-						ps.println("    // Getter and Setters @ManyToMany Collection<" + FormatString.getCadenaHungara(fm2mTable.getName()) + ">");
+												
+						ps.println("    public " + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + "> get" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "() { return this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + "; }");						
+						ps.println("    public void set" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "(" + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + ">  v) { this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + " = v; }");
 						ps.println("    ");
-						ps.println("    public " + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + "> get" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "() {");
-						ps.println("        return this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + ";");
-						ps.println("    }");
-						ps.println("    ");
-						ps.println("    ");
-						ps.println("    public void set" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "(" + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + ">  v) {");
-						ps.println("        this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + " = v;");
-						ps.println("    }");
 					}
 
 				} else {
