@@ -6,7 +6,7 @@
 	<groupId>com.tracktopell</groupId>
 	<artifactId>jpa-builder</artifactId>
 	<packaging>jar</packaging>
-	<version>1.12.5</version>
+	<version>1.12.7</version>
 	<name>jpa-builder</name>
 
 	<properties>

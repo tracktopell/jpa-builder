@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.tracktopell.dao.builder.jpa;
 
 import com.tracktopell.dao.builder.FormatString;
@@ -45,8 +41,9 @@ public class JPABeanBuilder {
 		FileOutputStream fos = null;
 		PrintStream ps = null;
 		BufferedReader br = null;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm");
-		String collectionClass = "List";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		final String collectionClass = "List";
+		final String explainedM2OList = "_THAT_HAS_THIS_";
 		
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		Properties vp=VersionUtil.loadVersionProperties();
@@ -69,7 +66,9 @@ public class JPABeanBuilder {
 		
 		for (Table iterTable: tablesForGeneration) {
 			System.err.println("\tAnaliznig Table: " + iterTable.getName());
-			
+			if(iterTable.getSingularName()!=null){				
+				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
+			}
 			List<Column>            plainColumns   = new ArrayList();
 			List<EmbeddeableColumn> embededColumns = new ArrayList();
 			
@@ -155,9 +154,9 @@ public class JPABeanBuilder {
 				System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
 			}
 		}
-		System.err.println("================== CODE GENERATION ========================>>> ");
+		System.err.println("================== @JPA BEAN CODE GENERATION ========================>>> ");
 		for (Table table : tablesForGeneration) {
-			System.err.println("------------->> Generating: "+table.getJavaDeclaredName()+" for Table:"+table.getName());
+			System.err.println("------------->> Generating: "+table.getJavaDeclaredName()+".java for Table:"+table.getName());
 			//-------------------------------------------------------
 			baseDir = new File(basePath);
 
@@ -171,9 +170,13 @@ public class JPABeanBuilder {
 			if (!dirSourceFile.exists()) {
 				dirSourceFile.mkdirs();
 			}
-			
-			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName() + ".java";
 
+			if(table.getSingularName()!=null){
+				fileName = dirSourceFile.getPath() + File.separator + table.getSingularNameJavaDeclaredName()+ ".java";
+			} else {
+				fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName() + ".java";
+			}
+			
 			sourceFile = new File(fileName);
 			fos = new FileOutputStream(sourceFile);
 			ps = new PrintStream(fos);
@@ -506,9 +509,9 @@ public class JPABeanBuilder {
 								colmnMappedBy = cfk;
 								
 								if(posibleTableOneToMany.getSingularName()!=null){
-									realSugestedCollectionName = posibleTableOneToMany.getSingularName()+"_THAT_HAS_";
+									realSugestedCollectionName = posibleTableOneToMany.getSingularName()+explainedM2OList;
 								}else{
-									realSugestedCollectionName = posibleTableOneToMany.getName()+"_TO_";
+									realSugestedCollectionName = posibleTableOneToMany.getName()+explainedM2OList;
 								}
 								
 								if(cfk.getHyperColumnName()!=null){
@@ -529,7 +532,8 @@ public class JPABeanBuilder {
 								}else {
 									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\")");
 								}
-								ps.println("    private " + collectionClass + "<" + FormatString.getCadenaHungara(posibleTableOneToMany.getName()) + "> " + realSugestedCollectionName + ";");
+								ps.println("    // DEBUG :"+posibleTableOneToMany.getName()+" Well know as "+posibleTableOneToMany.getJavaDeclaredName());
+								ps.println("    private " + collectionClass + "<" + posibleTableOneToMany.getJavaDeclaredName() + "> " + realSugestedCollectionName + ";");
 								ps.println("    " );
 							}
 						}
@@ -549,10 +553,11 @@ public class JPABeanBuilder {
 							if(!cfk.isPrimaryKey() && cfk.getFTable().getName().equals(table.getName())){
 								colmnMappedBy = cfk;
 								
+								
 								if(posibleTableOneToMany.getSingularName()!=null){
-									realSugestedCollectionName = posibleTableOneToMany.getSingularName()+"_THAT_HAS_";
+									realSugestedCollectionName = posibleTableOneToMany.getSingularName()+explainedM2OList;
 								}else{
-									realSugestedCollectionName = posibleTableOneToMany.getName()+"_THAT_HAS_";
+									realSugestedCollectionName = posibleTableOneToMany.getName()+explainedM2OList;
 								}
 								
 								if(cfk.getHyperColumnName()!=null){
@@ -804,7 +809,7 @@ public class JPABeanBuilder {
 		FileOutputStream fos = null;
 		PrintStream ps = null;
 		BufferedReader br = null;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 		String collectionClass = "Collection";
 
 		Enumeration<String> tableNames = dbSet.getTableNames();
@@ -864,6 +869,243 @@ public class JPABeanBuilder {
 			}
 			System.out.println();
 		}
+	}
+
+	static void buildESB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String rsbPackageBeanMember, String esbPackageBeanMember, String basePathJPA, String basePathRSB, String basePathESB) 
+		throws IOException{
+				String fileName;
+		File baseDir = null;
+		File dirSourceFile = null;
+		File sourceFile = null;
+
+		FileOutputStream fos = null;
+		PrintStream ps = null;
+		BufferedReader br = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		final String collectionClass = "List";
+		final String explainedM2OList = "_THAT_HAS_THIS_";
+		
+		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
+		Properties vp=VersionUtil.loadVersionProperties();
+		System.err.println("==============================>>buildMappingBeans");
+		System.err.println("Preparing Tables: ");			
+		for (Table iterTable: dbSet.getTablesList()) {
+			System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
+			if (!iterTable.isManyToManyTableWinthMoreColumns()) {				
+				tablesForGeneration.add(iterTable);								
+				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();
+				while (itFKC.hasNext()) {
+					Column c = itFKC.next();					
+					if (c instanceof EmbeddeableColumn) {						
+						tablesForGeneration.add((EmbeddeableColumn) c);						
+					}
+				}
+			}
+		}
+		System.err.println("----------------->>Analizing"); 
+		
+		for (Table iterTable: tablesForGeneration) {
+			System.err.println("\tAnaliznig Table: " + iterTable.getName());
+			if(iterTable.getSingularName()!=null){				
+				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
+			}
+			List<Column>            plainColumns   = new ArrayList();
+			List<EmbeddeableColumn> embededColumns = new ArrayList();
+			
+			iterTable.setPlainColumns(plainColumns);
+			iterTable.setEmbededColumns(embededColumns);
+			
+			if (! ( iterTable instanceof EmbeddeableColumn)) {
+			
+				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();
+				
+				while (itFKC.hasNext()) {
+					Column c = itFKC.next();					
+					if (c instanceof EmbeddeableColumn) {						
+						embededColumns.add((EmbeddeableColumn)c);						
+					} else {
+						
+						plainColumns.add(c);
+						
+						String suggested=null;
+						String suggestedObjectName=null;
+						String suggestedGettetObjectName=null;
+						String suggestedSettetObjectName=null;
+						Table fTable = null;
+						if (c.isForeignKey() && !(iterTable instanceof EmbeddeableColumn)) {
+							fTable = dbSet.getTable(iterTable.getFKReferenceTable(c.getName()).getTableName());
+							c.setFTable(fTable);
+							if(fTable.getSingularName()!=null){
+								final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
+								for(Column ftpk: ftPksCol){
+									if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+										suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+										suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
+										suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
+										suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+
+										c.setHyperColumnName(suggested);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				Collection<Table> m2mTables = dbSet.getManyToManyRelationTables(iterTable);
+
+				for (Table m2mTable : m2mTables) {
+					//System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
+					iterTable.getM2mTableList().add(m2mTable);
+				}
+				
+				Collection<Table> o2mTables = dbSet.getOneToManyRelationTables(iterTable);
+				for (Table o2mTable : o2mTables) {
+					//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
+					iterTable.getO2mTableList().add(o2mTable);
+				}
+				
+			} else {				
+				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();				
+				while (itFKC.hasNext()) {
+					Column c = itFKC.next();
+					plainColumns.add(c);
+				}
+			}
+			
+			
+			for(Column dc:plainColumns){
+				if(dc.isForeignKey()){
+					System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
+				} else{
+					System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
+				}				
+			}
+			for(EmbeddeableColumn ec:embededColumns){
+				System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
+			}
+			
+			for(Table m2mTable:iterTable.getM2mTableList()){
+				Table m2mOT = dbSet.getTableOwnerManyToManyRelation(iterTable, m2mTable);
+				System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
+			}
+			for(Table o2mTable:iterTable.getO2mTableList()){
+				System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
+			}
+		}
+		System.err.println("============ @EJB Stateless Session Abstract BEAN CODE GENERATION =====================>>> ");
+		String line = null;
+		baseDir = new File(basePathESB);
+
+		if (!baseDir.exists()) {
+			baseDir.mkdirs();
+		}
+
+		fileName = esbPackageBeanMember.replace(".", File.separator) + File.separator;
+
+		dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+		if (!dirSourceFile.exists()) {
+			dirSourceFile.mkdirs();
+		}
+
+		fileName = dirSourceFile.getPath() + File.separator + "AbstractFacade.java";		
+
+		sourceFile = new File(fileName);
+		fos = new FileOutputStream(sourceFile);
+		ps = new PrintStream(fos);
+		br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/ESBAF.java.template")));
+		
+		while ((line = br.readLine()) != null) {
+			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+			line = line.replace("${date}", sdf.format(new Date()));
+			line = line.replace("${rsbbean.package}"  , rsbPackageBeanMember);			
+			ps.println(line);
+		}
+		br.close();
+		ps.close();
+		fos.close();
+		
+		System.err.println("================== @EJB Stateless Session BEAN CODE GENERATION ========================>>> ");
+		for (Table table : tablesForGeneration) {
+			
+			baseDir = new File(basePathRSB);
+
+			if (!baseDir.exists()) {
+				baseDir.mkdirs();
+			}
+
+			fileName = rsbPackageBeanMember.replace(".", File.separator) + File.separator;
+
+			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+			if (!dirSourceFile.exists()) {
+				dirSourceFile.mkdirs();
+			}
+
+			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName()+"FacadeRemote.java";		
+
+			sourceFile = new File(fileName);
+			fos = new FileOutputStream(sourceFile);
+			ps = new PrintStream(fos);
+			br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/ESBRemote.java.template")));
+
+			while ((line = br.readLine()) != null) {
+				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+				line = line.replace("${date}", sdf.format(new Date()));
+				line = line.replace("${rsbbean.package}"  , rsbPackageBeanMember);
+				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
+				line = line.replace("${tablebean.name}", table.getName());
+				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+				line = line.replace("${JPA.PU}", jpaPU);
+				ps.println(line);
+			}
+			br.close();
+			ps.close();
+			fos.close();
+			
+			sourceFile = null;
+			ps = null;
+			fos = null;
+			//==================================================================
+			baseDir = new File(basePathESB);
+
+			if (!baseDir.exists()) {
+				baseDir.mkdirs();
+			}
+
+			fileName = esbPackageBeanMember.replace(".", File.separator) + File.separator;
+
+			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+			if (!dirSourceFile.exists()) {
+				dirSourceFile.mkdirs();
+			}
+
+			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName()+"Facade.java";		
+
+			sourceFile = new File(fileName);
+			fos = new FileOutputStream(sourceFile);
+			ps = new PrintStream(fos);
+			br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/ESB.java.template")));
+
+			while ((line = br.readLine()) != null) {
+				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+				line = line.replace("${date}", sdf.format(new Date()));
+				line = line.replace("${rsbbean.package}"  , rsbPackageBeanMember);
+				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
+				line = line.replace("${tablebean.name}", table.getName());
+				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+				line = line.replace("${JPA.PU}", jpaPU);
+				ps.println(line);
+			}
+			br.close();
+			ps.close();
+			fos.close();
+			
+			sourceFile = null;
+			ps = null;
+			fos = null;			
+		}
+
 	}
 
 }

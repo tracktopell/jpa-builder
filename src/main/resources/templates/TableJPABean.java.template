@@ -76,7 +76,7 @@ public class ${tablebean.declaredName} implements java.io.Serializable {
     ${tablebean.member.setter}
     
     %endfor
-    
+    // O2M <*>    
     ${tablebean.oneToManyRelations.gettersAndSetters}
 
     ${tablebean.ManyToManyRelations.gettersAndSetters}

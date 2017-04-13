@@ -554,7 +554,7 @@ public class DTOBeanBuilder {
 		}
 	}
 
-	public static void buildAssembler(DBTableSet dbSet, String dtoPackageBeanMember, String jpaPackageBeanMember, String basePath)
+	public static void buildAssembler(DBTableSet dbSet, String asmPackageBeanMember, String dtoPackageBeanMember, String jpaPackageBeanMember, String basePath)
 			throws Exception {
 		String fileName;
 		File baseDir = null;
@@ -644,7 +644,7 @@ public class DTOBeanBuilder {
 				baseDir.mkdirs();
 			}
 
-			fileName = dtoPackageBeanMember.replace(".", File.separator) + File.separator;
+			fileName = asmPackageBeanMember.replace(".", File.separator) + File.separator;
 
 			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
 			if (!dirSourceFile.exists()) {
@@ -739,10 +739,10 @@ public class DTOBeanBuilder {
 				} else if (line.indexOf("${dtoCopyedToJpaMembers.code.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {							
-							if( column.getHyperColumnName()!=null){
-								ps.println("        "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO = new "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO();");
+							if( column.getHyperColumnName()!=null){								
+								ps.println("        "+column.getFTable().getJavaDeclaredName()+"DTO "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO = new "+column.getFTable().getJavaDeclaredName()+"DTO();");
 								ps.println("        "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO.set"+FormatString.getCadenaHungara(column.getFTable().getJPAPK())+"( dtoEntity.get" + FormatString.getCadenaHungara(column.getName())+ "());");								
-								ps.println("        jpaEntity." + column.getHyperColumnSetterName() + "( "+FormatString.getCadenaHungara(column.getFTable().getName())+"Assembler.buildJpaEntity( "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO ));");
+								ps.println("        jpaEntity." + column.getHyperColumnSetterName() + "( "+column.getFTable().getJavaDeclaredName()+"Assembler.buildJpaEntity( "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO ));");
 							} else {
 								ps.println("        // Assembler delegation: fTable.pk="+column.getFTable().getJPAPK());
 								ps.println("        "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO dto"+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO = new "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO();");
@@ -785,9 +785,11 @@ public class DTOBeanBuilder {
 					line = line.replace("${tablebean.PKMembersParametersInitCode}", membersParametersInitCode(table, dbSet));
 					line = line.replace("${tablebean.equalsCode}", table.getEqualsCode());
 					line = line.replace("${tablebean.toStringCode}", table.getToDTOStringCode(dbSet, dtoPackageBeanMember));
-					line = line.replace("${tablebean.name.uc}", table.getName().toUpperCase());
-					line = line.replace("${tablebean.package}", dtoPackageBeanMember);
+					line = line.replace("${tablebean.name.uc}", table.getName().toUpperCase());					
 					line = line.replace("${tableJPAbean.package}", jpaPackageBeanMember);
+					line = line.replace("${tableDTObean.package}", dtoPackageBeanMember);
+					line = line.replace("${asmbean.package}"     , asmPackageBeanMember);
+					
 
 					ps.println(line);
 				}

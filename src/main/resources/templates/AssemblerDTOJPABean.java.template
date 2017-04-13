@@ -1,4 +1,4 @@
-package ${tablebean.package};
+package ${asmbean.package};
 
 import java.io.Serializable;
 import java.util.Set;
@@ -28,6 +28,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import ${tableDTObean.package}.*;
 import ${tableJPAbean.package}.${tablebean.declaredName};
 
 /**
@@ -47,11 +48,11 @@ public class ${tablebean.declaredName}Assembler {
     }
 
     public static ${tableJPAbean.package}.${tablebean.declaredName} buildJpaEntity(${tablebean.declaredName}DTO dtoEntity){
-		if(dtoEntity != null){
+		if(dtoEntity == null){
 			return null;
 		}
 
-		${tableJPAbean.package}.${tablebean.declaredName} jpaEntity = new ${tableJPAbean.package}.${tablebean.declaredName}();
+		${tablebean.declaredName} jpaEntity = new ${tablebean.declaredName}();
 
         ${dtoCopyedToJpaMembers.code.code}
 
@@ -59,7 +60,7 @@ public class ${tablebean.declaredName}Assembler {
     }
 
 	public static ${tablebean.declaredName}DTO buildDTOEntity(${tableJPAbean.package}.${tablebean.declaredName} jpaEntity){
-		if(jpaEntity != null){
+		if(jpaEntity == null){
 			return null;
 		}
 

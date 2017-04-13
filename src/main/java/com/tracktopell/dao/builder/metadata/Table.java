@@ -18,6 +18,7 @@ public class Table {
 	protected String javaDeclaredName;
 	protected String label;
 	protected boolean transactionalTable;
+	protected boolean preferredSingularName;
 	protected Hashtable<String, Column> columns;
 	protected Hashtable<String, ReferenceTable> foreignKeys;
 	protected List<Index> indexes;
@@ -35,6 +36,7 @@ public class Table {
 	 * Creates a new instance of Table
 	 */
 	public Table() {
+		this.preferredSingularName=true;
 	}
 
 	public void addColumn(Column col) {
@@ -903,8 +905,13 @@ public class Table {
 	 * @return the javaDeclaredName
 	 */
 	public String getJavaDeclaredName() {
+		
 		if (javaDeclaredName == null) {
-			javaDeclaredName = FormatString.getCadenaHungara(name);
+			if(preferredSingularName && singularName!=null){
+				javaDeclaredName = FormatString.getCadenaHungara(singularName);
+			} else{
+				javaDeclaredName = FormatString.getCadenaHungara(name);
+			}
 		}
 		return javaDeclaredName;
 	}
@@ -1060,5 +1067,13 @@ public class Table {
 		this.o2mTableList = o2mTableList;
 	}
 
+	public void setPreferredSingularName(boolean preferredSingularName) {
+		this.preferredSingularName = preferredSingularName;
+	}
 
+	public boolean isPreferredSingularName() {
+		return preferredSingularName;
+	}
+
+	
 }
