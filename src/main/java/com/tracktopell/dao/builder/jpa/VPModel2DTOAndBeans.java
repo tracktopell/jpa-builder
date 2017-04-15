@@ -30,7 +30,7 @@ public class VPModel2DTOAndBeans {
         boolean  flatDTOs         = false;
 		try {
             if( args.length != 15 ) {
-                System.err.println("use: <java ...> VPModel2DTOAndBeans  pathToVPProject catalog dtoPackageBeanMember asmPackageBeanMember jpaPackageBeanMember rsbPackageBeanMember esbPackageBeanMember basePathJPA basePathDTO basePathASM basePathRSB basePathESB flatDTOs jpaPU [ tableNames2GenList,Separated,By,Comma | {all} ]" );
+                System.err.println("use: <java ...> VPModel2DTOAndBeans  pathToVPProject catalog dtoPackageBeanMember asmPackageBeanMember jpaPackageBeanMember rsbPackageBeanMember esbPackageBeanMember basePathJPA basePathDTO basePathASM basePathRSB basePathESB jpaPU  flatDTOs  [ tableNames2GenList,Separated,By,Comma | {all} ]" );
                 System.exit(1);
             }
 

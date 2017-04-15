@@ -887,7 +887,7 @@ public class JPABeanBuilder {
 		
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		Properties vp=VersionUtil.loadVersionProperties();
-		System.err.println("==============================>>buildMappingBeans");
+		System.err.println("==============================>>build Stateless Session Beans for JPA");
 		System.err.println("Preparing Tables: ");			
 		for (Table iterTable: dbSet.getTablesList()) {
 			System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
