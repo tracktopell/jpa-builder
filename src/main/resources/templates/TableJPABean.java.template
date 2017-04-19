@@ -29,8 +29,6 @@ import javax.persistence.TemporalType;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Class for mapping JPA Entity of Table ${tablebean.name}.
@@ -42,15 +40,13 @@ import javax.xml.bind.annotation.XmlTransient;
 
 ${tablebean.jpa_entity_or_embeddeable}
 ${tablebean.jpa_talbe}
-@XmlRootElement
-/* WildFly fails review !
 @NamedQueries({
     ${tablebean.namedQuery}
+    , ${tablebean.countAll.namedQuery}
     %foreach tablebean.member in ${tablebean.members}
     , ${tablebean.member.namedQuery}
     %endfor
 })
-*/
 public class ${tablebean.declaredName} implements java.io.Serializable {
     private static final long serialVersionUID = ${tablebean.serialId};
     %foreach tablebean.member in ${tablebean.members}

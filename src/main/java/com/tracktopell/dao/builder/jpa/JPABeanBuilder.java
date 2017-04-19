@@ -236,22 +236,27 @@ public class JPABeanBuilder {
 							} else if (lineInLoop.indexOf("${tablebean.member.namedQuery}") >= 0) {																
 								String on = "";
 								String vn = "";
-								
-								if(column.getFTable()!=null && column.getHyperColumnName()!=null){
-									on = column.getHyperColumnName();
-									vn = FormatString.firstLetterLowerCase(column.getHyperColumnObjectName());
-								} else if(column.getFTable()!=null){									
-									on = column.getFTable().getJavaDeclaredName();
-									vn = FormatString.firstLetterLowerCase(column.getFTable().getJavaDeclaredName());
-								} else{
-									on = column.getJavaDeclaredName();
-									vn = column.getJavaDeclaredObjectName();
+								if(		column.getName().equalsIgnoreCase("FECHA_CREACION")		|| 
+										column.getName().equalsIgnoreCase("CREADO_POR")			||
+										column.getName().equalsIgnoreCase("FECHA_MODIFICACION")	||
+										column.getName().equalsIgnoreCase("MODIFICADO_POR")){
+									// NO GENERATION
+								} else {
+									if(column.getFTable()!=null && column.getHyperColumnName()!=null){
+										on = column.getHyperColumnName();
+										vn = FormatString.firstLetterLowerCase(column.getHyperColumnObjectName());
+									} else if(column.getFTable()!=null){									
+										on = column.getFTable().getJavaDeclaredName();
+										vn = FormatString.firstLetterLowerCase(column.getFTable().getJavaDeclaredName());
+									} else{
+										on = column.getJavaDeclaredName();
+										vn = column.getJavaDeclaredObjectName();
+									}
+
+									lineInLoop = lineInLoop.replace("${tablebean.member.namedQuery}", "@NamedQuery(name = \""+table.getJavaDeclaredName()+
+											".findBy"+on+"\", query = \"SELECT "+table.getName().toLowerCase().charAt(0)+" FROM "+table.getJavaDeclaredName()+" "+table.getName().toLowerCase().charAt(0)+" WHERE "+table.getName().toLowerCase().charAt(0)+"."+vn+" = :"+vn+"\")");
+									ps.println(lineInLoop);
 								}
-								
-								lineInLoop = lineInLoop.replace("${tablebean.member.namedQuery}", "@NamedQuery(name = \""+table.getJavaDeclaredName()+
-										".findBy"+on+"\", query = \"SELECT x FROM "+table.getJavaDeclaredName()+" x WHERE x."+vn+" = :="+vn+"\")");
-								ps.println(lineInLoop);
-								
 							} else if (lineInLoop.indexOf("${tablebean.member.declaration}") >= 0) {
 								ps.println("    ");
 								
@@ -615,7 +620,8 @@ public class JPABeanBuilder {
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
 					line = line.replace("${tablebean.name}", table.getName());
 					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
-					line = line.replace("${tablebean.namedQuery}", "@NamedQuery(name = \""+table.getJavaDeclaredName()+".findAll\", query = \"SELECT x FROM "+table.getJavaDeclaredName()+" x\")");
+					line = line.replace("${tablebean.namedQuery}", "@NamedQuery(name = \""+table.getJavaDeclaredName()+".findAll\", query = \"SELECT "+table.getName().toLowerCase().charAt(0)+" FROM "+table.getJavaDeclaredName()+" "+table.getName().toLowerCase().charAt(0)+"\")");
+					line = line.replace("${tablebean.countAll.namedQuery}", "@NamedQuery(name = \""+table.getJavaDeclaredName()+".countAll\", query = \"SELECT COUNT("+table.getName().toLowerCase().charAt(0)+") FROM "+table.getJavaDeclaredName()+" "+table.getName().toLowerCase().charAt(0)+"\")");					
 					line = line.replace("${tablebean.PKMembersParameters}", membersParameters(table, dbSet));
 
 					if (table instanceof EmbeddeableColumn) {

@@ -10,6 +10,7 @@ import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.metadata.EmbeddeableColumn;
 import com.tracktopell.dao.builder.metadata.ReferenceTable;
 import com.tracktopell.dao.builder.metadata.Table;
+import com.tracktopell.util.VersionUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -269,7 +271,7 @@ public class DTOBeanBuilder {
 		}
 	}
 
-	public static void buildMappingDTOBeansAndJPABeans(DBTableSet dbSet, String dtoPackageBeanMember, String jpaPackageBeanMember, String basePath,boolean flatDTOs)
+	public static void buildMappingDTOsForJPABeans(DBTableSet dbSet, String dtoPackageBeanMember, String jpaPackageBeanMember, String basePath,boolean flatDTOs)
 			throws Exception {
 		String fileName;
 		File baseDir = null;
@@ -280,7 +282,7 @@ public class DTOBeanBuilder {
 		PrintStream ps = null;
 		BufferedReader br = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");		
-		
+		Properties vp=VersionUtil.loadVersionProperties();
 		System.err.println("=============================>>> DTOs ");
 		
 		
@@ -319,25 +321,32 @@ public class DTOBeanBuilder {
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
 			List<Column> definitiveColumns = new ArrayList();
 			while (columnsSortedColumnsForJPA.hasNext()) {
-				Column c = columnsSortedColumnsForJPA.next();
+				Column column = columnsSortedColumnsForJPA.next();
+				if(		column.getName().equalsIgnoreCase("FECHA_CREACION")		|| 
+						column.getName().equalsIgnoreCase("CREADO_POR")			||
+						column.getName().equalsIgnoreCase("FECHA_MODIFICACION")	||
+						column.getName().equalsIgnoreCase("MODIFICADO_POR")){
+					continue;
+				}
 				String suggested=null;
 				String suggestedObjectName=null;
 				String suggestedGettetObjectName=null;
 				String suggestedSettetObjectName=null;
 				Table fTable = null;
-				if (c.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
-					fTable = dbSet.getTable(table.getFKReferenceTable(c.getName()).getTableName());
-					c.setFTable(fTable);
+				
+				if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
+					fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
+					column.setFTable(fTable);
 					if(fTable.getSingularName()!=null){
 						final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
 						for(Column ftpk: ftPksCol){
-							if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
-								suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+							if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+								suggested = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
 								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
 								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
 								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
 								
-								c.setHyperColumnName(suggested);
+								column.setHyperColumnName(suggested);
 								break;
 							}
 						}					
@@ -347,8 +356,8 @@ public class DTOBeanBuilder {
 				} else {
 					fTable = null;
 				}				
-				definitiveColumns.add(c);
-				System.err.println("\t-->> DefinitiveColumn: " + c);
+				definitiveColumns.add(column);
+				System.err.println("\t-->> DefinitiveColumn: " + column);
 			}
 
 			//-------------------------------------------------------
@@ -517,6 +526,7 @@ public class DTOBeanBuilder {
 
 					}
 				} else {
+					line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 					line = line.replace("${date}", sdf.format(new Date()));
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
 					line = line.replace("${tablebean.name}", table.getName());
@@ -554,7 +564,7 @@ public class DTOBeanBuilder {
 		}
 	}
 
-	public static void buildAssembler(DBTableSet dbSet, String asmPackageBeanMember, String dtoPackageBeanMember, String jpaPackageBeanMember, String basePath)
+	public static void buildDTOsAssembler(DBTableSet dbSet, String asmPackageBeanMember, String dtoPackageBeanMember, String jpaPackageBeanMember, String basePath)
 			throws Exception {
 		String fileName;
 		File baseDir = null;
@@ -566,7 +576,7 @@ public class DTOBeanBuilder {
 		BufferedReader br = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 		String collectionClass = "Collection";
-
+		Properties vp=VersionUtil.loadVersionProperties();
 		Enumeration<String> tableNames = dbSet.getTableNames();
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		while (tableNames.hasMoreElements()) {
@@ -605,25 +615,32 @@ public class DTOBeanBuilder {
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
 			List<Column> definitiveColumns = new ArrayList();
 			while (columnsSortedColumnsForJPA.hasNext()) {
-				Column c = columnsSortedColumnsForJPA.next();
+				Column column = columnsSortedColumnsForJPA.next();
+				if(		column.getName().equalsIgnoreCase("FECHA_CREACION")		|| 
+						column.getName().equalsIgnoreCase("CREADO_POR")			||
+						column.getName().equalsIgnoreCase("FECHA_MODIFICACION")	||
+						column.getName().equalsIgnoreCase("MODIFICADO_POR")){
+					continue;
+				}
 				String suggested=null;
 				String suggestedObjectName=null;
 				String suggestedGettetObjectName=null;
 				String suggestedSettetObjectName=null;
 				Table fTable = null;
-				if (c.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
-					fTable = dbSet.getTable(table.getFKReferenceTable(c.getName()).getTableName());
-					c.setFTable(fTable);
+				
+				if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
+					fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
+					column.setFTable(fTable);
 					if(fTable.getSingularName()!=null){
 						final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
 						for(Column ftpk: ftPksCol){
-							if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
-								suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+							if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+								suggested = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
 								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
 								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
 								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
 								
-								c.setHyperColumnName(suggested);
+								column.setHyperColumnName(suggested);
 								break;
 							}
 						}					
@@ -633,8 +650,8 @@ public class DTOBeanBuilder {
 				} else {
 					fTable = null;
 				}				
-				definitiveColumns.add(c);
-				System.err.println("\t-->> DefinitiveColumn: " + c);
+				definitiveColumns.add(column);
+				System.err.println("\t-->> DefinitiveColumn: " + column);
 			}
 
 			//-------------------------------------------------------
@@ -765,6 +782,7 @@ public class DTOBeanBuilder {
 
 					}
 				} else {
+					line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 					line = line.replace("${date}", sdf.format(new Date()));
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
 					line = line.replace("${tablebean.name}", table.getName());

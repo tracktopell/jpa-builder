@@ -26,6 +26,8 @@ public interface ${tablebean.declaredName}FacadeRemote {
 
 	List<${tablebean.declaredName}> findRange(int[] range);
 
-	int count();
+	Long count();
+
+	Long countAll();
 
 }

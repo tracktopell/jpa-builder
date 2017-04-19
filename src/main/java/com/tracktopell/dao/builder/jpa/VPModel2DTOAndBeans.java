@@ -64,9 +64,9 @@ public class VPModel2DTOAndBeans {
             System.err.println("====================== END PARSE XML ========================");
             //System.out.println("->" + dbSet);
 			
-			DTOBeanBuilder.buildMappingDTOBeansAndJPABeans(dbSet, dtoPackageBeanMember, jpaPackageBeanMember, basePathDTO, flatDTOs );
+			DTOBeanBuilder.buildMappingDTOsForJPABeans(dbSet, dtoPackageBeanMember, jpaPackageBeanMember, basePathDTO, flatDTOs );
 			
-			DTOBeanBuilder.buildAssembler(dbSet, asmPackageBeanMember,dtoPackageBeanMember, jpaPackageBeanMember, basePathASM);
+			DTOBeanBuilder.buildDTOsAssembler(dbSet, asmPackageBeanMember,dtoPackageBeanMember, jpaPackageBeanMember, basePathASM);
 			
 			JPABeanBuilder.buildMappingBeans(dbSet, schemmaName, jpaPackageBeanMember, basePathJPA);
 			
