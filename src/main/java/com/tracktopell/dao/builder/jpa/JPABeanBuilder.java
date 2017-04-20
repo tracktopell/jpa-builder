@@ -27,7 +27,7 @@ import java.util.Properties;
 
 /**
  *
- * @author aegonzalez
+ * @author tracktopell
  */
 public class JPABeanBuilder {
 	
@@ -537,7 +537,7 @@ public class JPABeanBuilder {
 								}else {
 									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\")");
 								}
-								ps.println("    // DEBUG :"+posibleTableOneToMany.getName()+" Well know as "+posibleTableOneToMany.getJavaDeclaredName());
+								ps.println("    // "+posibleTableOneToMany.getName()+" Well know as "+posibleTableOneToMany.getJavaDeclaredName());
 								ps.println("    private " + collectionClass + "<" + posibleTableOneToMany.getJavaDeclaredName() + "> " + realSugestedCollectionName + ";");
 								ps.println("    " );
 							}
@@ -592,25 +592,38 @@ public class JPABeanBuilder {
 						Column rtCol2 = fKsM2M.next();
 
 						ps.println("    ");
-						if (tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equals(table.getName())) {
-							ps.println("    @ManyToMany(mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\")");
+						if (tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equals(table.getName())) {							
+							if(table.getSingularName()!=null){
+								ps.println("    @ManyToMany(mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\")");
+							}else{
+								ps.println("    @ManyToMany(mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\")");
+							}
 						} else {
 							ps.println("    @JoinTable(name               = \"" + tableOwnerManyToManyRelation.getName().toUpperCase() + "\",");
 							ps.println("               joinColumns        = {@JoinColumn(name = \"" + rtCol2.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol2.getName()).getColumnName().toUpperCase() + "\")},");
 							ps.println("               inverseJoinColumns = {@JoinColumn(name = \"" + rtCol1.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getColumnName().toUpperCase() + "\")}");
-							ps.println("               )");
-							ps.println("    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)");
+							ps.println("               )");							
+							ps.println("    @ManyToMany //(fetch = FetchType.LAZY, cascade = CascadeType.ALL)");
+						}		
+						
+						if(fm2mTable.getSingularName()!=null){
+							ps.println("    private " + collectionClass + "<" + fm2mTable.getSingularNameJavaDeclaredName() + "> " + fm2mTable.getSingularNameJavaDeclaredObjectName() + collectionClass + ";");
+						}else{
+							ps.println("    private " + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + "> " + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + ";");
 						}
-
-						ps.println("    private " + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + "> " + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + ";");
+						
 						ps.println("    ");
 					}
 				} else if (line.indexOf("${tablebean.ManyToManyRelations.gettersAndSetters}") >= 0) {					
 					Collection<Table> m2mTables = dbSet.getManyToManyRelationTables(table);
 					for (Table fm2mTable : m2mTables) {
-												
-						ps.println("    public " + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + "> get" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "() { return this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + "; }");						
-						ps.println("    public void set" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "(" + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + ">  v) { this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + " = v; }");
+						if(fm2mTable.getSingularName()!=null){
+							ps.println("    public " + collectionClass + "<" + fm2mTable.getSingularNameJavaDeclaredName() + "> " + fm2mTable.getSingularNameGetter() + collectionClass + "() { return this." + fm2mTable.getSingularNameJavaDeclaredObjectName() + collectionClass + "; }");						
+							ps.println("    public void " + fm2mTable.getSingularNameSetter() + collectionClass + "(" + collectionClass + "<" + fm2mTable.getSingularNameJavaDeclaredName() + ">  v) { this." + fm2mTable.getSingularNameJavaDeclaredObjectName() + collectionClass + " = v; }");							
+						}else{
+							ps.println("    public " + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + "> get" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "() { return this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + "; }");						
+							ps.println("    public void set" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "(" + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + ">  v) { this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + " = v; }");
+						}
 						ps.println("    ");
 					}
 

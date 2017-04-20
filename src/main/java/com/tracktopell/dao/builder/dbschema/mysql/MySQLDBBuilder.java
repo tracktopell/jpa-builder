@@ -23,7 +23,7 @@ public class MySQLDBBuilder extends DBBuilder{
     }
 
     protected void printDefinitionSchema(String schemaName,DBTableSet dbSet,PrintStream out) {
-		out.println("-- SCHEMMA COMPATIBLE WITH  MySQL SERVER 5.7.x+ ");
+		out.println("-- SCHEMMA COMPATIBLE WITH  MySQL SERVER 5.7.x+");
         out.println("DROP DATABASE IF EXISTS ${schemaName};".replace("${schemaName}",schemaName.toLowerCase()));
         out.println("CREATE DATABASE ${schemaName};".replace("${schemaName}",schemaName.toLowerCase()));
         out.println("USE ${schemaName};".replace("${schemaName}",schemaName.toLowerCase()));        
@@ -33,7 +33,7 @@ public class MySQLDBBuilder extends DBBuilder{
         Iterator<Column> it = currentTable.getSortedColumns();
         Column col = null;
         StringBuffer pkBuffer = new StringBuffer("PRIMARY KEY (");
-        int pkConter=0;
+        int pkConter=0;        
         out.println("CREATE TABLE ${table.name}".replace("${table.name}",currentTable.getName().toUpperCase())+" (");
         while(it.hasNext()) {
             col = it.next();
@@ -47,7 +47,8 @@ public class MySQLDBBuilder extends DBBuilder{
             }
             out.print(" ");
             if(col.getSqlType().equals("integer") || 
-                    col.getSqlType().equals("varchar") || 
+                    col.getSqlType().equals("varchar") ||
+                    col.getSqlType().equals("char") ||
                     col.getSqlType().equals("decimal")){
                 out.print(" (");
                 out.print(col.getScale());

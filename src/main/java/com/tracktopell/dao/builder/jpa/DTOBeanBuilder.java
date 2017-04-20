@@ -430,7 +430,7 @@ public class DTOBeanBuilder {
 									EmbeddeableColumn eColumn = (EmbeddeableColumn)column;
 									ps.println("    // " + column.getJavaDeclaredObjectName() + " EmbedableColumn ID References: FKs {"+eColumn.getFKs()+"}");
 								} else {
-									ps.println("    // Simple: PK?"+column.isPrimaryKey()+", FK?"+column.isForeignKey()+", class="+column.getClass());
+									ps.println("    // Simple: PK?"+column.isPrimaryKey()+", FK?"+column.isForeignKey()+", class="+column.getJavaClassType()+", o="+column.getJavaDeclaredObjectName());
 									ps.println("    private " + column.getJavaClassType().replace("java.lang.", "") + " " + column.getJavaDeclaredObjectName() + ";");
 								}
 
@@ -465,7 +465,7 @@ public class DTOBeanBuilder {
 					linesToParse = null;
 				} else if (linesToParse != null) {
 					linesToParse.add(line);
-				} else if (line.indexOf("${jpaCopyedToDtoMembers.code.code}") >= 0) {
+				} else if (line.indexOf("${jpaCopyedToDtoMembers.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 
 						Table fTable = null;
@@ -495,7 +495,7 @@ public class DTOBeanBuilder {
 							ps.println("        this." + column.getJavaDeclaredObjectName() + " = jpaEntity.get" + FormatString.getCadenaHungara(column.getName()) + "(); // primitive");							
 						}
 					}
-				} else if (line.indexOf("${dtoCopyedToJpaMembers.code.code}") >= 0) {
+				} else if (line.indexOf("${dtoCopyedToJpaMembers.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 						Table fTable = null;
 
@@ -524,6 +524,35 @@ public class DTOBeanBuilder {
 							ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( this.get" + FormatString.getCadenaHungara(column.getName()) + "());");
 						}
 
+					}
+				} else if (line.indexOf("${dtoCopyedToJpaMembersList.code}") >= 0) {
+					for (Column column : definitiveColumns) {
+						Table fTable = null;
+
+						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
+							fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
+							
+							if( hasNomalizaedFKReferences(fTable, column) ){
+								//ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(fTable.getName()) + "( new " + jpaPackageBeanMember + "." + fTable.getJavaDeclaredName() + "(this.get" + FormatString.getCadenaHungara(column.getName()) + "())); // normalized");
+								ps.println("            jpaEntity.set" + FormatString.getCadenaHungara(fTable.getName()) + "( this.get" + FormatString.getCadenaHungara(column.getName()) + "()!=null? new " + jpaPackageBeanMember + "." + fTable.getJavaDeclaredName() + "(this.get" + FormatString.getCadenaHungara(column.getName()) + "()):null); // normalized");
+							}else{
+								ps.println("            jpaEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( new " + jpaPackageBeanMember + "." + fTable.getJavaDeclaredName() + "(this.get" + FormatString.getCadenaHungara(column.getName()) + "())); // custom");
+							}
+						} else if (column instanceof EmbeddeableColumn) {
+							EmbeddeableColumn eColumn = (EmbeddeableColumn)column;							
+							
+							ps.println("            // "+FormatString.getCadenaHungara(column.getName())+" is Embeddable. Begin nested settings");
+							final Collection<Column> fKs = eColumn.getFKs();
+							for(Column fC: fKs){
+								ps.print  ("            jpaEntity.get" + FormatString.getCadenaHungara(column.getName()) + "().set"+fC.getJavaDeclaredName());
+								ps.println("( this." + column.getJavaDeclaredObjectName() + ".get"+fC.getJavaDeclaredName()+"() );");
+							}
+							ps.println("            // End nested settings");
+							
+						} else {
+
+							ps.println("            jpaEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( this.get" + FormatString.getCadenaHungara(column.getName()) + "());");
+						}
 					}
 				} else {
 					line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
@@ -723,7 +752,7 @@ public class DTOBeanBuilder {
 					linesToParse = null;
 				} else if (linesToParse != null) {
 					linesToParse.add(line);
-				} else if (line.indexOf("${jpaCopyedToDtoMembers.code.code}") >= 0) {
+				} else if (line.indexOf("${jpaCopyedToDtoMembers.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 
 						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
@@ -753,7 +782,37 @@ public class DTOBeanBuilder {
 							ps.println("        dtoEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( jpaEntity.get" + FormatString.getCadenaHungara(column.getName()) + "() ); // primitive");
 						}
 					}
-				} else if (line.indexOf("${dtoCopyedToJpaMembers.code.code}") >= 0) {
+				} else if (line.indexOf("${jpaCopyedToDtoMembersList.code}") >= 0) {
+					for (Column column : definitiveColumns) {
+
+						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
+							
+							ps.println("            //Not Embedable: "+FormatString.getCadenaHungara(column.getName())+" -> "+FormatString.getCadenaHungara(column.getFTable().getName())+", FTable: "+column.getFTable().getName()+", HyperName:"+column.getHyperColumnName());
+							for(Column cfk: column.getFTable().getColums()){
+								if(cfk.isPrimaryKey()){									
+									if(column.getHyperColumnName()!=null){
+										ps.println("            dtoEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( jpaEntity."+column.getHyperColumnGetterName()+"()!=null?jpaEntity."+column.getHyperColumnGetterName()+"().get"+FormatString.getCadenaHungara(cfk.getName())+"():null);");
+									} else {
+										ps.println("            dtoEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( jpaEntity.get"+FormatString.getCadenaHungara(column.getFTable().getName())+"()!=null?jpaEntity.get"+FormatString.getCadenaHungara(column.getFTable().getName())+"().get"+FormatString.getCadenaHungara(cfk.getName())+"():null);");
+									}
+								}
+							}
+						} else if (column instanceof EmbeddeableColumn) {
+							EmbeddeableColumn eColumn = (EmbeddeableColumn)column;							
+							
+							ps.println("            // Embedable: "+FormatString.getCadenaHungara(column.getName())+", begin nested settings");
+							final Collection<Column> fKs = eColumn.getFKs();
+							for(Column fC: fKs){
+								ps.print  ("            dtoEntity.set" + FormatString.getCadenaHungara(fC.getName()));
+								ps.println("( jpaEntity.get" + FormatString.getCadenaHungara(column.getName()) + "().get"+fC.getJavaDeclaredName()+"() );");
+							}
+							ps.println("            // End nested settings");
+							
+						} else {
+							ps.println("            dtoEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( jpaEntity.get" + FormatString.getCadenaHungara(column.getName()) + "() );");
+						}
+					}
+				} else if (line.indexOf("${dtoCopyedToJpaMembers.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {							
 							if( column.getHyperColumnName()!=null){								
@@ -778,6 +837,34 @@ public class DTOBeanBuilder {
 							
 						} else {
 							ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( dtoEntity.get" + FormatString.getCadenaHungara(column.getName()) + "()); // normal");
+						}
+
+					}
+				} else if (line.indexOf("${dtoCopyedToJpaMembersList.code}") >= 0) {
+					for (Column column : definitiveColumns) {
+						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {							
+							if( column.getHyperColumnName()!=null){								
+								ps.println("            "+column.getFTable().getJavaDeclaredName()+"DTO "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO = new "+column.getFTable().getJavaDeclaredName()+"DTO();");
+								ps.println("            "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO.set"+FormatString.getCadenaHungara(column.getFTable().getJPAPK())+"( dtoEntity.get" + FormatString.getCadenaHungara(column.getName())+ "());");								
+								ps.println("            jpaEntity." + column.getHyperColumnSetterName() + "( "+column.getFTable().getJavaDeclaredName()+"Assembler.buildJpaEntity( "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO ));");
+							} else {
+								ps.println("            // Assembler delegation: fTable.pk="+column.getFTable().getJPAPK());
+								ps.println("            "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO dto"+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO = new "+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO();");
+								ps.println("            dto"+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO.set"+FormatString.getCadenaHungara(column.getFTable().getJPAPK())+"( dtoEntity.get" + FormatString.getCadenaHungara(column.getName())+ "());");
+								ps.println("            jpaEntity.set" + FormatString.getCadenaHungara(column.getFTable().getName()) + "( "+FormatString.getCadenaHungara(column.getFTable().getName())+"Assembler.buildJpaEntity( dto"+FormatString.getCadenaHungara(column.getFTable().getName())+"DTO )); ");
+							}
+						} else if (column instanceof EmbeddeableColumn) {
+							EmbeddeableColumn eColumn = (EmbeddeableColumn)column;														
+							ps.println("            // "+FormatString.getCadenaHungara(column.getName())+" is Embeddable. Begin nested settings");
+							final Collection<Column> fKs = eColumn.getFKs();
+							for(Column fC: fKs){
+								ps.print  ("            jpaEntity.get" + FormatString.getCadenaHungara(column.getName()) + "().set"+fC.getJavaDeclaredName());
+								ps.println("( dtoEntity.get"+fC.getJavaDeclaredName()+"() );  // nested FKs > BUG");
+							}
+							ps.println("            // End nested settings");
+							
+						} else {
+							ps.println("            jpaEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( dtoEntity.get" + FormatString.getCadenaHungara(column.getName()) + "());");
 						}
 
 					}
@@ -973,7 +1060,7 @@ public class DTOBeanBuilder {
 					linesToParse = null;
 				} else if (linesToParse != null) {
 					linesToParse.add(line);
-				} else if (line.indexOf("${jpaCopyedToDtoMembers.code.code}") >= 0) {
+				} else if (line.indexOf("${jpaCopyedToDtoMembers.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 
 						Table fTable = null;
@@ -992,7 +1079,7 @@ public class DTOBeanBuilder {
 							ps.println("        this." + column.getJavaDeclaredObjectName() + " = jpaEntity.get" + FormatString.getCadenaHungara(column.getName()) + "(); // primitive");
 						}
 					}
-				} else if (line.indexOf("${dtoCopyedToJpaMembers.code.code}") >= 0) {
+				} else if (line.indexOf("${dtoCopyedToJpaMembers.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 						Table fTable = null;
 

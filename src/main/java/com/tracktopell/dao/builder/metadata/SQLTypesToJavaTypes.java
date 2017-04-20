@@ -39,6 +39,7 @@ public class SQLTypesToJavaTypes {
         javaTypes.put("long_not_null", "long");
         
         javaTypes.put("varchar", String.class.toString().replace("class ", ""));
+		javaTypes.put("char", String.class.toString().replace("class ", ""));
         javaTypes.put("date", java.sql.Date.class.toString().replace("class ", ""));
         javaTypes.put("datetime", java.sql.Date.class.toString().replace("class ", ""));
 		javaTypes.put("timestamp", java.sql.Timestamp.class.toString().replace("class ", ""));
