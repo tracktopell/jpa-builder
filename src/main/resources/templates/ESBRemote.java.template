@@ -14,13 +14,15 @@ import javax.ejb.Remote;
 @Remote
 public interface ${tablebean.declaredName}FacadeRemote {
 
-	void create(${tablebean.declaredName} entity);
+	${tablebean.declaredName} create(${tablebean.declaredName} entity);
 
-	void edit(${tablebean.declaredName} entity);
+	${tablebean.declaredName} edit(${tablebean.declaredName} entity);
 
 	void remove(${tablebean.declaredName} entity);
 
-	${tablebean.declaredName} find(Object id);
+	${tablebean.declaredName} findByPK(Object id);
+
+	List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} entity);
 
 	List<${tablebean.declaredName}> findAll();
 

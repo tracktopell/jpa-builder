@@ -25,24 +25,32 @@ public abstract class AbstractFacade<T> {
 	protected abstract EntityManager getEntityManager();
 
 	@TransactionAttribute(REQUIRED)
-	public void create(T entity) {
+	public T create(T entity) {
 		getEntityManager().persist(entity);
+		getEntityManager().flush();
+		return entity;
 	}
 
 	@TransactionAttribute(REQUIRED)
-	public void edit(T entity) {
+	public T edit(T entity) {
 		getEntityManager().merge(entity);
+		getEntityManager().flush();
+		return entity;
 	}
 
 	@TransactionAttribute(REQUIRED)
 	public void remove(T entity) {
 		getEntityManager().remove(getEntityManager().merge(entity));
+		getEntityManager().flush();
 	}
 
 	@TransactionAttribute(SUPPORTS)
-	public T find(Object id) {
+	public T findByPK(Object id) {
 		return getEntityManager().find(entityClass, id);
 	}
+
+	@TransactionAttribute(SUPPORTS)
+	public abstract List<T> findAllLike(T entity);
 
 	@TransactionAttribute(SUPPORTS)
 	public abstract List<T> findAll();

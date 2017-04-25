@@ -31,6 +31,28 @@ public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.
 	}
 
 	@Override
+	public List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} x){
+		//return null;
+		
+		StringBuilder sbq=new StringBuilder("SELECT x FROM ${tablebean.declaredName} x WHERE ");
+		int paramAsigned=0;
+		if(x != null){
+			sbq.append(" 1=1 ");
+			${tablebean.prepareQuery}
+		} else {
+			sbq.append(" 1=2 ");
+		}
+		
+		TypedQuery<${tablebean.declaredName}> nq = em.createQuery(sbq.toString(), ${tablebean.declaredName}.class);
+		
+		if(paramAsigned>0){
+			${tablebean.fillQuery}
+		}		
+		return nq.getResultList();
+		
+	}
+
+	@Override
 	public List<${tablebean.declaredName}> findAll() {
 		TypedQuery<${tablebean.declaredName}> nq = em.createNamedQuery("${tablebean.declaredName}.findAll", ${tablebean.declaredName}.class);		
 		return nq.getResultList();

@@ -95,11 +95,15 @@ public class JPABeanBuilder {
 						if (c.isForeignKey() && !(iterTable instanceof EmbeddeableColumn)) {
 							fTable = dbSet.getTable(iterTable.getFKReferenceTable(c.getName()).getTableName());
 							c.setFTable(fTable);
-							if(fTable.getSingularName()!=null){
+							
 								final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
 								for(Column ftpk: ftPksCol){
 									if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
-										suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+										if(fTable.getSingularName()!=null){
+											suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										}else{
+											suggested = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										}
 										suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
 										suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
 										suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
@@ -108,7 +112,7 @@ public class JPABeanBuilder {
 										break;
 									}
 								}
-							}
+							
 						}
 					}
 				}
@@ -233,28 +237,31 @@ public class JPABeanBuilder {
 										ps.println("    */");
 									}
 								}
-							} else if (lineInLoop.indexOf("${tablebean.member.namedQuery}") >= 0) {																
+							} else if (lineInLoop.indexOf("${tablebean.member.namedQuery}") >= 0) {
 								String on = "";
 								String vn = "";
+								String vo = "";
 								if(		column.getName().equalsIgnoreCase("FECHA_CREACION")		|| 
 										column.getName().equalsIgnoreCase("CREADO_POR")			||
 										column.getName().equalsIgnoreCase("FECHA_MODIFICACION")	||
 										column.getName().equalsIgnoreCase("MODIFICADO_POR")){
 									// NO GENERATION
 								} else {
+									vo = table.getName().toLowerCase().substring(0, 1);
 									if(column.getFTable()!=null && column.getHyperColumnName()!=null){
-										on = column.getHyperColumnName();
-										vn = FormatString.firstLetterLowerCase(column.getHyperColumnObjectName());
-									} else if(column.getFTable()!=null){									
+										on = column.getHyperColumnObjectName();
+										vn = column.getHyperColumnObjectName();
+									} else if(column.getFTable()!=null){
 										on = column.getFTable().getJavaDeclaredName();
-										vn = FormatString.firstLetterLowerCase(column.getFTable().getJavaDeclaredName());
+										vn = column.getFTable().getJavaDeclaredObjectName();
 									} else{
 										on = column.getJavaDeclaredName();
 										vn = column.getJavaDeclaredObjectName();
 									}
 
-									lineInLoop = lineInLoop.replace("${tablebean.member.namedQuery}", "@NamedQuery(name = \""+table.getJavaDeclaredName()+
-											".findBy"+on+"\", query = \"SELECT "+table.getName().toLowerCase().charAt(0)+" FROM "+table.getJavaDeclaredName()+" "+table.getName().toLowerCase().charAt(0)+" WHERE "+table.getName().toLowerCase().charAt(0)+"."+vn+" = :"+vn+"\")");
+									lineInLoop = lineInLoop.replace("${tablebean.member.namedQuery}", 
+											"@NamedQuery(name = \""+table.getJavaDeclaredName()+
+											".findBy"+on+"\", query = \"SELECT "+vo+" FROM "+table.getJavaDeclaredName()+" "+vo+" WHERE "+table.getName().toLowerCase().charAt(0)+"."+vn+" = :"+vn+"\")");
 									ps.println(lineInLoop);
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.declaration}") >= 0) {
@@ -312,7 +319,7 @@ public class JPABeanBuilder {
 											}
 											String extraCoulmnDeclarationInfo = "";
 
-											ps.println("    @Basic(optional = false)");
+											ps.println("    //@Basic(optional = false)");
 											if (column.getJavaClassType().equals("java.lang.String")) {
 												extraCoulmnDeclarationInfo = ", length=" + column.getScale();
 												if (!column.isNullable()) {
@@ -322,13 +329,13 @@ public class JPABeanBuilder {
 												}
 											}
 											if (!column.isNullable()) {
-												ps.println("    @NotNull");
+												ps.println("    //@NotNull");
 											}
 											ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\" " + extraCoulmnDeclarationInfo + ", nullable="+column.isNullable()+"  )");
 
 											if (column.isAutoIncremment()) {
-												//ps.println("    @GeneratedValue(strategy=GenerationType.IDENTITY)");
-												ps.println("    @GeneratedValue(strategy=GenerationType.AUTO)");
+												ps.println("    @GeneratedValue(strategy=GenerationType.IDENTITY)");
+												ps.println("    //@GeneratedValue(strategy=GenerationType.AUTO)");
 											}
 										}
 										if (column.getJavaClassType().equals("java.util.Date")) {
@@ -642,7 +649,8 @@ public class JPABeanBuilder {
 						line = line.replace("${tablebean.jpa_talbe}", "");
 					} else {
 						line = line.replace("${tablebean.jpa_entity_or_embeddeable}", "@Entity");
-						line = line.replace("${tablebean.jpa_talbe}", "@Table(name = \"" + table.getName() + "\", catalog=\""+schemmaName+"\", schema = \"\" )");
+						//line = line.replace("${tablebean.jpa_talbe}", "@Table(name = \"" + table.getName() + "\", catalog=\""+schemmaName+"\", schema = \"\" )");
+						line = line.replace("${tablebean.jpa_talbe}", "@Table(name = \"" + table.getName() + "\")");
 						line = line.replace("${tablebean.id}", table.getJPAPK());
 						line = line.replace("${tablebean.id.javaClass}", table.getJPAPKClass().replace("java.lang.", ""));
 					}
@@ -665,8 +673,6 @@ public class JPABeanBuilder {
 			fos = null;
 		}
 	}
-
-	
 	
 	private static String membersParameters(Table table, DBTableSet dbSet) {
 		StringBuffer sb = new StringBuffer();
@@ -922,14 +928,16 @@ public class JPABeanBuilder {
 			}
 		}
 		System.err.println("----------------->>Analizing"); 
+		List<Column>            plainColumns   = new ArrayList();
+		List<EmbeddeableColumn> embededColumns = new ArrayList();
 		
 		for (Table iterTable: tablesForGeneration) {
 			System.err.println("\tAnaliznig Table: " + iterTable.getName());
 			if(iterTable.getSingularName()!=null){				
 				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
 			}
-			List<Column>            plainColumns   = new ArrayList();
-			List<EmbeddeableColumn> embededColumns = new ArrayList();
+			plainColumns   = new ArrayList();
+			embededColumns = new ArrayList();
 			
 			iterTable.setPlainColumns(plainColumns);
 			iterTable.setEmbededColumns(embededColumns);
@@ -954,20 +962,24 @@ public class JPABeanBuilder {
 						if (c.isForeignKey() && !(iterTable instanceof EmbeddeableColumn)) {
 							fTable = dbSet.getTable(iterTable.getFKReferenceTable(c.getName()).getTableName());
 							c.setFTable(fTable);
-							if(fTable.getSingularName()!=null){
-								final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
-								for(Column ftpk: ftPksCol){
-									if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
-										suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-										suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
-										suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
-										suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
-
-										c.setHyperColumnName(suggested);
-										break;
+							
+							final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
+							for(Column ftpk: ftPksCol){
+								if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+									if(fTable.getSingularName()!=null){
+										suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+									}else{
+										suggested = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
 									}
+									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
+									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
+									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+
+									c.setHyperColumnName(suggested);
+									break;
 								}
 							}
+							
 						}
 					}
 				}
@@ -1047,7 +1059,49 @@ public class JPABeanBuilder {
 		
 		System.err.println("================== @EJB Stateless Session BEAN CODE GENERATION ========================>>> ");
 		for (Table table : tablesForGeneration) {
-			
+			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
+			List<Column> definitiveColumns = new ArrayList();
+			while (columnsSortedColumnsForJPA.hasNext()) {
+				Column column = columnsSortedColumnsForJPA.next();
+				if(		column.getName().equalsIgnoreCase("FECHA_CREACION")		|| 
+						column.getName().equalsIgnoreCase("CREADO_POR")			||
+						column.getName().equalsIgnoreCase("FECHA_MODIFICACION")	||
+						column.getName().equalsIgnoreCase("MODIFICADO_POR")){
+					continue;
+				}
+				String suggested=null;
+				String suggestedObjectName=null;
+				String suggestedGettetObjectName=null;
+				String suggestedSettetObjectName=null;
+				Table fTable = null;
+				
+				if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
+					fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
+					column.setFTable(fTable);
+					
+					final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
+					for(Column ftpk: ftPksCol){
+						if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+							if(fTable.getSingularName()!=null){
+								suggested = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+							}else{
+								suggested = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+							}
+							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
+							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
+							suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+
+							column.setHyperColumnName(suggested);
+							break;
+						}
+					}					
+				} else {
+					fTable = null;
+				}				
+				definitiveColumns.add(column);
+				System.err.println("\t-->> DefinitiveColumn: " + column);
+			}
+
 			baseDir = new File(basePathRSB);
 
 			if (!baseDir.exists()) {
@@ -1112,6 +1166,60 @@ public class JPABeanBuilder {
 				line = line.replace("${rsbbean.package}"  , rsbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
+				
+				if(line.contains("${tablebean.prepareQuery}")){
+					line = line.replace("${tablebean.prepareQuery}", "");
+					for(Column ci:definitiveColumns){
+						String vn="";
+						String vo="";
+						String cmp = "!= null";
+						
+						if(ci.getHyperColumnName() != null){
+							vn = FormatString.getCadenaHungara(ci.getHyperColumnName());
+							vo = ci.getHyperColumnObjectName();
+						} else if( ci.getFTable()!= null){
+							vn = ci.getFTable().getSingularNameJavaDeclaredName();
+							vo = ci.getFTable().getSingularNameJavaDeclaredObjectName();
+						} else {
+							if(	ci.getJavaClassType().equals("int")   ||
+								ci.getJavaClassType().equals("long")  ||
+								ci.getJavaClassType().equals("double")){
+								cmp = "!= 0";
+							}
+							vn = ci.getJavaDeclaredName();
+							vo = ci.getJavaDeclaredObjectName();
+						}						
+						ps.println("			if(x.get"+vn+"() "+cmp+"){");
+						ps.println("			    paramAsigned++;");
+						ps.println("			    sbq.append(\" and x."+vo+" = :"+vo+"\");");
+						ps.println("			}");
+					}
+				} else if(line.contains("${tablebean.fillQuery}")){
+					line = line.replace("${tablebean.fillQuery}", "");
+					for(Column ci:definitiveColumns){						
+						String vn="";
+						String vo="";
+						String cmp = "!= null";
+						if(ci.getHyperColumnName() != null){
+							vn = FormatString.getCadenaHungara(ci.getHyperColumnName());
+							vo = ci.getHyperColumnObjectName();
+						} else if( ci.getFTable()!= null){
+							vn = ci.getFTable().getSingularNameJavaDeclaredName();
+							vo = ci.getFTable().getSingularNameJavaDeclaredObjectName();
+						} else {
+							if(	ci.getJavaClassType().equals("int")   ||
+								ci.getJavaClassType().equals("long")  ||
+								ci.getJavaClassType().equals("double")){
+								cmp = "!= (0) ";
+							}
+							vn = ci.getJavaDeclaredName();
+							vo = ci.getJavaDeclaredObjectName();
+						}						
+						ps.println("			if(x.get"+vn+"() "+cmp+"){");
+						ps.println("			    nq.setParameter(\""+vo+"\",x.get"+vn+"());");						
+						ps.println("			}");						
+					}
+				}
 				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
 				line = line.replace("${JPA.PU}", jpaPU);
 				ps.println(line);
