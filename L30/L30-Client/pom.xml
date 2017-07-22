@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.pmarlen</groupId>
+        <artifactId>L30</artifactId>
+        <version>11.0.1</version>
+    </parent>
+    <artifactId>L30-Client</artifactId>
+    <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.couchbase.lite</groupId>
+			<artifactId>couchbase-lite-java</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+	 <dependency>
+	  <groupId>${project.groupId}</groupId>
+	  <artifactId>L30-Backend-dto</artifactId>
+	  <version>${project.version}</version>
+	 </dependency>
+	</dependencies>
+</project>

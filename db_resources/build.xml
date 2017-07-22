@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<project name="L30_DB_TASKS" basedir="." default="HELP_DEV">
+	<!-- properties for override by -Dmysql.dbroot.user=xxx  -Dmysql.dbroot.password=yyyy  -->
+	<property name="admin.db.user"         value="define"/>
+	<property name="admin.db.password"     value="define"/>
+	
+	<property name="s1"     value="../L30-11/L30-Backend/L30-Backend-dto/src/main/java"/>
+	<property name="s2"     value="../L30-11/L30-Backend/L30-Backend-remote/src/main/java"/>
+	<property name="s3"     value="../L30-11/L30-Backend/L30-Backend-entity/src/main/java"/>
+	<property name="s4"     value="../L30-11/L30-Backend/L30-Backend-remote/src/main/java"/>
+	<property name="s5"     value="../L30-11/L30-Backend/L30-Backend-ejb/src/main/java"/>
+
+	<property name="p1"     value="com.pmarlen.l30.backend.dto"/>
+	<property name="p2"     value="com.pmarlen.l30.backend.assembler"/>
+	<property name="p3"     value="com.pmarlen.l30.backend.entity"/>
+	<property name="p4"     value="com.pmarlen.l30.backend.remote"/>
+	<property name="p5"     value="com.pmarlen.l30.backend.ejb"/>
+	
+    <path id="mvn_tracktopell_utils_classpath">
+		<fileset dir="${user.home}/.m2/repository/com/tracktopell/dbutil/SQLCommander/1.27/">
+            <include name="*.jar"/>
+		</fileset>
+		<fileset dir="${user.home}/.m2/repository/com/tracktopell/jpa-builder/1.12.8/">
+            <include name="*.jar"/>
+		</fileset>
+		<fileset dir="${user.home}/.m2/repository/mysql/mysql-connector-java/5.1.10">
+            <include name="**/mysql-connector-java*.jar"/>
+		</fileset>
+    </path>	
+	
+    <path id="local_tracktopell_utils_classpath">
+		<fileset dir="${basedir}/lib/">
+            <include name="*.jar"/>
+		</fileset>
+		<fileset dir="${basedir}/lib/dependency-jars">
+            <include name="*.jar"/>
+		</fileset>
+
+    </path>
+
+    <target name="HELP_DEV">
+         <echo message="   ant INIT_DB_DEVE -Dadmin.db.user=root  -Dadmin.db.password=root" />
+    </target>
+
+    <target name="HELP_4ARCHITECT">
+         <echo message="   ant GENERATE_ALL_SQL" />
+		 <echo message="   ant GENERATE_SRC_MVN" />
+		 <echo message="   ant GENERATE_SRC" />
+		 <echo message="   ant 1STD_DEV" />
+         <echo message="   ant INIT_DB_DEV   -Dadmin.db.user=root  -Dadmin.db.password=root" />
+		 <echo message="   ant INIT_DB_TST   -Dadmin.db.user=root  -Dadmin.db.password=root" />
+		 <echo message="   ant CHECK_UTIL_CP -Dadmin.db.user=root  -Dadmin.db.password=root" />
+		 <echo message="   ant X_MYSQL_DB    -Dadmin.db.user=root  -Dadmin.db.password=root" />
+		 <echo message="   ant X_MYSQL_DEV" />		 
+    </target>	
+	
+    <target name="CHECK_UTIL_CP">
+         <echo message="-->>CHECK_UTIL_CP: USER=${admin.db.user}, PASSWORD=${admin.db.password}" />	
+         
+         <java fork="true" failonerror="false" classname="com.tracktopell.dbutil.sqlcommander.Main"              
+			  classpathref="local_tracktopell_utils_classpath">
+         </java>
+		 <java fork="true" failonerror="false" classname="com.tracktopell.dao.builder.dbschema.VPModel2SQL"
+			  classpathref="local_tracktopell_utils_classpath">
+         </java>
+    </target>
+
+	
+   <target name="GENERATE_SQL_DEV">
+      <java fork="true" failonerror="yes" classname="com.tracktopell.dao.builder.dbschema.VPModel2SQL">
+         <arg line="model/exported/project.xml mysql L30_V11_DEV sql/CREATE_SCHEMMA_DEV.MYSQL.SQL {all}"/>
+		 <!--
+         <classpath refid="local_tracktopell_utils_classpath"/>
+		 -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+      </java>
+   </target>
+      
+   <target name="GENERATE_SQL_TST">
+      <java fork="true" failonerror="yes" classname="com.tracktopell.dao.builder.dbschema.VPModel2SQL">
+         <arg line="model/exported/project.xml mysql L30_V11_tst sql/CREATE_SCHEMMA_TST.MYSQL.SQL {all}"/>
+		 <!--
+         <classpath refid="local_tracktopell_utils_classpath"/>
+		 -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+      </java>
+   </target>
+
+   <target name="GENERATE_SQL_QAS">
+      <java fork="true" failonerror="yes" classname="com.tracktopell.dao.builder.dbschema.VPModel2SQL">
+         <arg line="model/exported/project.xml mysql L30_V11_qas sql/CREATE_SCHEMMA_QAS.MYSQL.SQL {all}"/>
+		 <!--
+         <classpath refid="local_tracktopell_utils_classpath"/>
+		 -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+      </java>
+   </target>
+   
+	<target name="GENERATE_DBUSERS_DEV">
+		<echo file="sql/CREATE_DBUSERS_DEV.MYSQL.SQL" message="use mysql;${line.separator}"                                                                                                                  append="false"/>
+		<echo file="sql/CREATE_DBUSERS_DEV.MYSQL.SQL" message="DELETE FROM user WHERE user='L30_DEV_USR';${line.separator}"                                                                             append="true"/>
+		<echo file="sql/CREATE_DBUSERS_DEV.MYSQL.SQL" message="GRANT SELECT,INSERT,UPDATE,DELETE ON L30_V11_DEV.* TO 'L30_DEV_USR'@'localhost' IDENTIFIED BY 'L30_DEV_PWD';${line.separator}"  append="true"/>
+        <echo file="sql/CREATE_DBUSERS_DEV.MYSQL.SQL" message="GRANT SELECT,INSERT,UPDATE,DELETE ON L30_V11_DEV.* TO 'L30_DEV_USR'@'%'         IDENTIFIED BY 'L30_DEV_PWD';${line.separator}"  append="true"/>            
+    </target>
+    <target name="GENERATE_DBUSERS_TST">
+        <echo file="sql/CREATE_DBUSERS_TST.MYSQL.SQL" message="use mysql;${line.separator}"                                                                                                                  append="false"/>
+        <echo file="sql/CREATE_DBUSERS_TST.MYSQL.SQL" message="DELETE FROM user WHERE user='L30_tst_USR';${line.separator}"                                                                             append="true"/>
+        <echo file="sql/CREATE_DBUSERS_TST.MYSQL.SQL" message="GRANT SELECT,INSERT,UPDATE,DELETE ON L30_tst_db.* TO 'L30_tst_USR'@'localhost' IDENTIFIED BY 'L30_tst_PWD';${line.separator}"  append="true"/>
+        <echo file="sql/CREATE_DBUSERS_TST.MYSQL.SQL" message="GRANT SELECT,INSERT,UPDATE,DELETE ON L30_tst_db.* TO 'L30_tst_USR'@'%'         IDENTIFIED BY 'L30_tst_PWD';${line.separator}"  append="true"/>            
+    </target>
+    <target name="GENERATE_DBUSERS_QAS">
+        <echo file="sql/CREATE_DBUSERS_QAS.MYSQL.SQL" message="use mysql;${line.separator}"                                                                                                                  append="false"/>
+        <echo file="sql/CREATE_DBUSERS_QAS.MYSQL.SQL" message="DELETE FROM user WHERE user='L30_qas_USR';${line.separator}"                                                                             append="true"/>
+        <echo file="sql/CREATE_DBUSERS_QAS.MYSQL.SQL" message="GRANT SELECT,INSERT,UPDATE,DELETE ON L30_qas_db.* TO 'L30_qas_USR'@'localhost' IDENTIFIED BY 'L30_qas_PWD';${line.separator}"  append="true"/>
+        <echo file="sql/CREATE_DBUSERS_QAS.MYSQL.SQL" message="GRANT SELECT,INSERT,UPDATE,DELETE ON L30_qas_db.* TO 'L30_qas_USR'@'%'         IDENTIFIED BY 'L30_qas_PWD';${line.separator}"  append="true"/>            
+    </target>
+   
+    <target name="GENERATE_ALL_SCHEMAS_SQL" depends="GENERATE_SQL_DEV,GENERATE_SQL_TST,GENERATE_SQL_QAS">
+        <echo message="------- GENERATING SQL ALL SCHEMMAS: USER=${admin.db.user}, PASSWORD=${admin.db.password}" />
+    </target>
+    <target name="GENERATE_DBUSERS_SQL" depends="GENERATE_DBUSERS_DEV,GENERATE_DBUSERS_TST,GENERATE_DBUSERS_QAS">
+        <echo message="------- GENERATING SQL ALL DB_USERS: USER=${admin.db.user}, PASSWORD=${admin.db.password}" />
+    </target>
+	
+    <target name="GENERATE_ALL_SQL" depends="GENERATE_ALL_SCHEMAS_SQL,GENERATE_DBUSERS_SQL">
+        <echo message="------- GENERATING GENERATE_ALL_SQL: USER=${admin.db.user}, PASSWORD=${admin.db.password}" />
+    </target>
+	
+    <target name="1STD_DEV">      
+      <echo message="------- INVOKING sql/FIRST_DATA_DEV.MYSQL.SQL: USER=L30_DEV_USR, PASSWORD=L30_DEV_PWD" />
+      <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
+            input="sql/FIRST_DATA_DEV.MYSQL.SQL">
+         <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost/L30_V11_DEV' -user L30_DEV_USR -password L30_DEV_PWD"/>
+		 <!--
+         <classpath refid="local_tracktopell_utils_classpath"/>
+		 -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+		 
+      </java>
+   </target>
+   
+    <target name="INIT_DB_DEV">
+        <echo message="------- INVOKING sql/CREATE_SCHEMMA_DEV.MYSQL.SQL: USER=${admin.db.user}, PASSWORD=${admin.db.password}" />
+        <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
+              input="sql/CREATE_SCHEMMA_DEV.MYSQL.SQL">
+           <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
+           <!--
+           <classpath refid="local_tracktopell_utils_classpath"/>
+		   -->
+		   <classpath refid="mvn_tracktopell_utils_classpath"/>
+		 
+         </java>
+      
+         <echo message="------- INVOKING sql/CREATE_DBUSERS_DEV.MYSQL.SQL: USER=${admin.db.user}, PASSWORD=${admin.db.password}" />
+           <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
+            input="sql/CREATE_DBUSERS_DEV.MYSQL.SQL">
+           <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
+           <!--
+           <classpath refid="local_tracktopell_utils_classpath"/>
+		   -->
+		   <classpath refid="mvn_tracktopell_utils_classpath"/>
+		 
+         </java>
+      
+      <echo message="------- INVOKING sql/FIRST_DATA_DEV.MYSQL.SQL: USER=L30_DEV_USR, PASSWORD=L30_DEV_PWD" />
+      <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
+            input="sql/FIRST_DATA_DEV.MYSQL.SQL">
+         <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost/L30_V11_DEV' -user L30_DEV_USR -password L30_DEV_PWD"/>
+         <!--
+         <classpath refid="local_tracktopell_utils_classpath"/>
+		 -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+		 
+      </java>
+   </target>
+   
+   <target name="INIT_DB_TST">
+        <echo message="------- INVOKING sql/CREATE_SCHEMMA_TST.MYSQL.SQL: USER=${admin.db.user}, PASSWORD=${admin.db.password}" />
+        <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
+              input="sql/CREATE_SCHEMMA_TST.MYSQL.SQL">
+           <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
+           <!--
+           <classpath refid="local_tracktopell_utils_classpath"/>
+		   -->
+		   <classpath refid="mvn_tracktopell_utils_classpath"/>
+           </java>
+      
+         <echo message="------- INVOKING sql/CREATE_DBUSERS_TST.MYSQL.SQL: USER=${admin.db.user}, PASSWORD=${admin.db.password}" />
+           <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
+            input="sql/CREATE_DBUSERS_TST.MYSQL.SQL">
+           <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
+           <!--
+           <classpath refid="local_tracktopell_utils_classpath"/>
+	  	   -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+         </java>
+      
+      <echo message="------- INVOKING sql/FIRST_DATA_TST.MYSQL.SQL: USER=L30_DEV_USR, PASSWORD=L30_DEV_PWD" />
+      <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
+            input="sql/FIRST_DATA_TST.MYSQL.SQL">
+         <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost/L30_V11_DEV' -user L30_DEV_USR -password L30_DEV_PWD"/>
+         <!--
+         <classpath refid="local_tracktopell_utils_classpath"/>
+		 -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+      </java>
+    </target>
+
+    <target name="CLEAN_GEN_SRC_MVN">
+      <delete includeemptydirs="true">
+	     <fileset dir="${s1}" includes="**/**" />
+		 <fileset dir="${s2}" includes="**/**" />
+		 <fileset dir="${s3}" includes="**/**" />
+		 <fileset dir="${s4}" includes="**/**" />
+		 <fileset dir="${s5}" includes="**/**" />
+      </delete>
+	  
+      <mkdir   dir="${s1}"/>
+	  <mkdir   dir="${s2}"/>
+	  <mkdir   dir="${s3}"/>
+	  <mkdir   dir="${s4}"/>
+	  <mkdir   dir="${s5}"/>
+    </target>	
+	
+   <target name="GENERATE_SRC_MVN" depends="CLEAN_GEN_SRC_MVN" >
+
+      <java fork="true" failonerror="yes" classname="com.tracktopell.dao.builder.jpa.VPModel2DTOAndBeans">
+         <arg line="model/exported/project.xml L30_V11_DEV ${p1} ${p2} ${p3} ${p4} ${p5} ${s1} ${s2} ${s3} ${s4} ${s5} L30_PU true {all}"/>
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+      </java>
+   </target>
+   
+    <target name="X_MYSQL_DEV">
+        <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main">
+		<echo message="mysql -u L30_DEV_USR -pL30_DEV_PWD L30_V11_DEV"/>
+        <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost/L30_V11_DEV' -user L30_DEV_USR -password L30_DEV_PWD"/>
+         <!--
+         <classpath refid="local_tracktopell_utils_classpath"/>
+		 -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+      </java>
+   </target>
+   
+   <target name="X_MYSQL_DB">
+        <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main">
+        <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
+         <!--
+         <classpath refid="local_tracktopell_utils_classpath"/>
+		 -->
+		 <classpath refid="mvn_tracktopell_utils_classpath"/>
+      </java>
+   </target>
+   
+</project>

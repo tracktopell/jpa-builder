@@ -1,0 +1,4 @@
+use mysql;
+DELETE FROM user WHERE user='L30_qas_USR';
+GRANT SELECT,INSERT,UPDATE,DELETE ON L30_qas_db.* TO 'L30_qas_USR'@'localhost' IDENTIFIED BY 'L30_qas_PWD';
+GRANT SELECT,INSERT,UPDATE,DELETE ON L30_qas_db.* TO 'L30_qas_USR'@'%'         IDENTIFIED BY 'L30_qas_PWD';
