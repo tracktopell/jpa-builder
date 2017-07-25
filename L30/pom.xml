@@ -13,6 +13,7 @@
 
   <modules>
     <module>L30-Backend</module>
+    <module>L30-DTO</module>
     <module>L30-Client</module>
   </modules>
 </project>

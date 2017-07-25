@@ -30,7 +30,7 @@
 		-->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>L30-Backend-dto</artifactId>
+            <artifactId>L30-DTO</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

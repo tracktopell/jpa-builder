@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.pmarlen</groupId>
-        <artifactId>L30-Backend</artifactId>
+        <artifactId>L30</artifactId>
         <version>11.0.1</version>
     </parent>
     <groupId>com.pmarlen</groupId>
-    <artifactId>L30-Backend-dto</artifactId>
+    <artifactId>L30-DTO</artifactId>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

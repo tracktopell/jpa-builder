@@ -13,7 +13,6 @@
   <name>L30-Backend</name>
   <modules>
     <module>L30-Backend-entity</module>	  
-    <module>L30-Backend-dto</module>
     <module>L30-Backend-ear</module>
     <module>L30-Backend-rest</module>
     <module>L30-Backend-ejb</module>
