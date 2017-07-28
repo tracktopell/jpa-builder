@@ -28,10 +28,17 @@ public class CatalogosSimplesMicroservice  implements CatalogosSimplesService {
 	@Context
 	private UriInfo context;
 	
-	//			   java:global/L30-Backend-ear-ear-1.0-SNAPSHOT/L30-Backend-ear-ejb-1.0-SNAPSHOT/EstadoFacade!com.smartdoc.backend.ejb.EstadoFacadeRemote
-	//			   java:global/L30-Backend-ear-ear-1.0-SNAPSHOT/L30-Backend-ear-ejb-1.0-SNAPSHOT/EstadoFacade
-	//			   java:module/EstadoFacade
-	@EJB(lookup = "java:global/L30-Backend-ear-ear-1.0-SNAPSHOT/L30-Backend-ear-ejb-1.0-SNAPSHOT/EstadoFacade")	
+//	java:global/L30-Backend-ear-11.0.1/L30-Backend-ejb-11.0.1/EstadoFacade!com.pmarlen.l30.backend.remote.EstadoFacadeRemote
+//	java:app/L30-Backend-ejb-11.0.1/EstadoFacade!com.pmarlen.l30.backend.remote.EstadoFacadeRemote
+//	java:module/EstadoFacade!com.pmarlen.l30.backend.remote.EstadoFacadeRemote
+
+//	java:jboss/exported/L30-Backend-ear-11.0.1/L30-Backend-ejb-11.0.1/EstadoFacade!com.pmarlen.l30.backend.remote.EstadoFacadeRemote
+
+//* java:global/L30-Backend-ear-11.0.1/L30-Backend-ejb-11.0.1/EstadoFacade
+//	java:app/L30-Backend-ejb-11.0.1/EstadoFacade
+//	java:module/EstadoFacade
+	
+	@EJB(lookup = "java:global/L30-Backend-ear-11.0.1/L30-Backend-ejb-11.0.1/EstadoFacade")	
 	EstadoFacadeRemote estadoFacade;
 	
 	/**

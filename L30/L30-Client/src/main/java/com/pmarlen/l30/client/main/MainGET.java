@@ -1,9 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.pmarlen.l30.client.main;
+
+import com.pmarlen.l30.api.CatalogosSimplesService;
+import com.pmarlen.l30.api.proxyclient.CatalogosSimplesJacksonProxyService;
 
 /**
  *
@@ -15,9 +14,10 @@ public class MainGET {
 	}
 	
 	private static void anotherCall(){
-		CatalogosSimplesService catalogosSimplesServicePROXY = 
-				new CatalogosSimplesJacksonProxyService("http://localhost:8080/SmartdocJEE7v5-ms1-1.0-SNAPSHOT/restapi/catalogos");
 		
-		System.out.println(catalogosSimplesServicePROXY.getRoles().toString());
+		CatalogosSimplesService catalogosSimplesServicePROXY = 
+				new CatalogosSimplesJacksonProxyService("http://localhost:8080/L30-Backend-rest/restapi/catalogos");
+		
+		System.out.println(catalogosSimplesServicePROXY.getEstados().toString());
 	}	
 }
