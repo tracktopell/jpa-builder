@@ -9,7 +9,7 @@ import javax.ejb.Remote;
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  * @version 1.12.8
- * @date 2017/07/21 18:00
+ * @date 2017/07/27 19:58
  */
 @Remote
 public interface UsuarioPerfilPKFacadeRemote {

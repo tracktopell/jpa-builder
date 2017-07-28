@@ -2,16 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-      <artifactId>L30-Backend</artifactId>
-      <groupId>com.pmarlen</groupId>
-      <version>11.0.1</version>
+       <groupId>com.pmarlen.l30.backend</groupId>
+       <artifactId>L30-Backend</artifactId>
+       <version>11.0.1</version>
     </parent>
 
-    <groupId>com.pmarlen</groupId>
+    <groupId>com.pmarlen.l30.backend</groupId>
     <artifactId>L30-Backend-ear</artifactId>
     <version>11.0.1</version>
     <packaging>ear</packaging>
-
     <name>L30-Backend-ear</name>
 
     <properties>
@@ -20,6 +19,21 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
   
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>L30-Backend-ejb</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>L30-Backend-rest</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -42,18 +56,4 @@
             </plugin>
         </plugins>
     </build>
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>L30-Backend-ejb</artifactId>
-            <type>ejb</type>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>L30-Backend-rest</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-    </dependencies>
 </project>

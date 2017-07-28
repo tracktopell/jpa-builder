@@ -4,11 +4,12 @@
 	<property name="admin.db.user"         value="define"/>
 	<property name="admin.db.password"     value="define"/>
 	
-	<property name="s1"     value="../L30-11/L30-Backend/L30-Backend-dto/src/main/java"/>
-	<property name="s2"     value="../L30-11/L30-Backend/L30-Backend-remote/src/main/java"/>
-	<property name="s3"     value="../L30-11/L30-Backend/L30-Backend-entity/src/main/java"/>
-	<property name="s4"     value="../L30-11/L30-Backend/L30-Backend-remote/src/main/java"/>
-	<property name="s5"     value="../L30-11/L30-Backend/L30-Backend-ejb/src/main/java"/>
+	<property name="s1"     value="../L30/L30-DTO/src/main/java"/>
+	<property name="s2"     value="../L30/L30-Backend/L30-Backend-remote/src/main/java"/>
+	<property name="s3"     value="../L30/L30-Backend/L30-Backend-entity/src/main/java"/>
+	<property name="s4"     value="../L30/L30-Backend/L30-Backend-remote/src/main/java"/>
+	<property name="s5"     value="../L30/L30-Backend/L30-Backend-ejb/src/main/java"/>
+	<property name="s6"     value="../L30/L30-Api/src/main/java"/>
 
 	<property name="p1"     value="com.pmarlen.l30.backend.dto"/>
 	<property name="p2"     value="com.pmarlen.l30.backend.assembler"/>
@@ -213,6 +214,7 @@
 		 <fileset dir="${s3}" includes="**/**" />
 		 <fileset dir="${s4}" includes="**/**" />
 		 <fileset dir="${s5}" includes="**/**" />
+		 <fileset dir="${s6}" includes="**/**" />
       </delete>
 	  
       <mkdir   dir="${s1}"/>
@@ -220,6 +222,7 @@
 	  <mkdir   dir="${s3}"/>
 	  <mkdir   dir="${s4}"/>
 	  <mkdir   dir="${s5}"/>
+	  <mkdir   dir="${s6}"/>
     </target>	
 	
    <target name="GENERATE_SRC_MVN" depends="CLEAN_GEN_SRC_MVN" >

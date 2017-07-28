@@ -3,14 +3,16 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>L30</artifactId>
-    <groupId>com.pmarlen</groupId>
+    <groupId>com.pmarlen.l30</groupId>
     <version>11.0.1</version>
   </parent>
-  <groupId>com.pmarlen</groupId>
+
+  <groupId>com.pmarlen.l30.backend</groupId>
   <artifactId>L30-Backend</artifactId>
   <version>11.0.1</version>
   <packaging>pom</packaging>
   <name>L30-Backend</name>
+
   <modules>
     <module>L30-Backend-entity</module>	  
     <module>L30-Backend-ear</module>

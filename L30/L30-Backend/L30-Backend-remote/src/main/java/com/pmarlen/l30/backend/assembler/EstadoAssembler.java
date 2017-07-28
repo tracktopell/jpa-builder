@@ -11,7 +11,7 @@ import com.pmarlen.l30.backend.entity.Estado;
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
  * @version 0.10.9
- * @date 2017/07/21 18:00
+ * @date 2017/07/27 19:58
  */
 
 public class EstadoAssembler {    
