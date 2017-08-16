@@ -20,5 +20,5 @@ public class MainGET {
 		
 		//System.out.println(catalogosSimplesServicePROXY.countEstados());
 		System.out.println(catalogosSimplesServicePROXY.getEstados().toString());
-	}	
+	}
 }
