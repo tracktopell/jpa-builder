@@ -26,12 +26,22 @@
             <type>ejb</type>
             <version>${project.version}</version>
         </dependency>
+		<!--
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>L30-Backend-remote</artifactId>
+            <type>ejb</type>
+            <version>${project.version}</version>
+        </dependency>
+		-->
+		<!--
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>L30-Backend-rest</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
+		-->
     </dependencies>
 
     <build>

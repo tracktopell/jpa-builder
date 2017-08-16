@@ -1,6 +1,8 @@
 package com.pmarlen.l30.backend.remote;
 
+import com.pmarlen.l30.backend.dto.EstadoDTO;
 import com.pmarlen.l30.backend.entity.Estado;
+import com.pmarlen.l30.helper.DataSortedModel;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -25,7 +27,11 @@ public interface EstadoFacadeRemote {
 	List<Estado> findAllLike(Estado entity);
 
 	List<Estado> findAll();
-
+	
+	List<Estado> findAllOrderBy(String field);
+	
+	List<Estado> findAllOrder(DataSortedModel<Estado> dsm);
+	
 	List<Estado> findRange(int[] range);
 
 	Long count();

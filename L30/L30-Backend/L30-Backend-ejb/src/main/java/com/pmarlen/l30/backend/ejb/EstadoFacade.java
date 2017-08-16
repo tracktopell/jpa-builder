@@ -1,6 +1,8 @@
-package com.pmarlen.l30.backend.remote;
+package com.pmarlen.l30.backend.ejb;
 
+import com.pmarlen.l30.backend.dto.EstadoDTO;
 import com.pmarlen.l30.backend.entity.Estado;
+import com.pmarlen.l30.backend.remote.EstadoFacadeRemote;
 
 import java.util.List;
 import javax.persistence.EntityManager;

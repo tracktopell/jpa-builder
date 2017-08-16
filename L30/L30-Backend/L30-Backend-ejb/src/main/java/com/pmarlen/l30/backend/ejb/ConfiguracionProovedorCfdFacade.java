@@ -1,6 +1,7 @@
-package com.pmarlen.l30.backend.remote;
+package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.ConfiguracionProovedorCfd;
+import com.pmarlen.l30.backend.remote.ConfiguracionProovedorCfdFacadeRemote;
 
 import java.util.List;
 import javax.persistence.EntityManager;

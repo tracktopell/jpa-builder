@@ -38,4 +38,36 @@ public class CatalogosSimplesJacksonProxyService  extends JacksonServiceProxy im
 		return l;
 	}
 	
+	@Override
+	public List<EstadoDTO> getEstadosOrderBy(String field) {
+		List<EstadoDTO> l=null;
+		WebTarget target = client.target(serviceEndpointURL+"/estados/orderby/"+field);
+				
+		String r = target.request(MediaType.APPLICATION_JSON).get(String.class);
+
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			l = mapper.readValue(r, new TypeReference<List<EstadoDTO>>(){});
+		}catch(IOException ioe){
+			ioe.printStackTrace(System.err);
+		}		
+		return l;
+	}
+
+	@Override
+	public int countEstados() {
+		int l=-1;
+		WebTarget target = client.target(serviceEndpointURL+"/countEstados");
+				
+		String r = target.request(MediaType.APPLICATION_JSON).get(String.class);
+
+		ObjectMapper mapper = new ObjectMapper();
+		try{
+			l = mapper.readValue(r, new TypeReference<Integer>(){});
+		}catch(IOException ioe){
+			ioe.printStackTrace(System.err);
+		}		
+		return l;
+	}
+	
 }

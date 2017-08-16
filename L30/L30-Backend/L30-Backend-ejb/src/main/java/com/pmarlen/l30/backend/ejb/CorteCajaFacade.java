@@ -1,6 +1,7 @@
-package com.pmarlen.l30.backend.remote;
+package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.CorteCaja;
+import com.pmarlen.l30.backend.remote.CorteCajaFacadeRemote;
 
 import java.util.List;
 import javax.persistence.EntityManager;

@@ -16,8 +16,9 @@ public class MainGET {
 	private static void anotherCall(){
 		
 		CatalogosSimplesService catalogosSimplesServicePROXY = 
-				new CatalogosSimplesJacksonProxyService("http://localhost:8080/L30-Backend-rest/restapi/catalogos");
+				new CatalogosSimplesJacksonProxyService("http://localhost:8080/L30-Backend-rest-11.0.1/restapi/catalogos");
 		
+		//System.out.println(catalogosSimplesServicePROXY.countEstados());
 		System.out.println(catalogosSimplesServicePROXY.getEstados().toString());
 	}	
 }

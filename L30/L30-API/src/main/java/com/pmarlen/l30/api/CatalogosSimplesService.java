@@ -13,5 +13,7 @@ import java.util.List;
  * @author alfredo
  */
 public interface CatalogosSimplesService {
-	List<EstadoDTO> getEstados();	
+	List<EstadoDTO> getEstados();
+	List<EstadoDTO> getEstadosOrderBy(String field);
+	int             countEstados();	
 }

@@ -1,6 +1,7 @@
-package com.pmarlen.l30.backend.remote;
+package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.UsuarioPerfil;
+import com.pmarlen.l30.backend.remote.UsuarioPerfilFacadeRemote;
 
 import java.util.List;
 import javax.persistence.EntityManager;
