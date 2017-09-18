@@ -262,7 +262,7 @@ public class WizzardControl implements ActionListener, WindowListener, ListSelec
 
 	@Override
 	public void windowClosing(WindowEvent we) {
-		int r = JOptionPane.showConfirmDialog(wizzardFrame, "Â¿Esta seguroi de salir ?",
+		int r = JOptionPane.showConfirmDialog(wizzardFrame, "¿Está seguro de salir ?",
 				"Salir", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		System.out.println("==>> ?" + r);
 		if (r == JOptionPane.OK_OPTION) {
