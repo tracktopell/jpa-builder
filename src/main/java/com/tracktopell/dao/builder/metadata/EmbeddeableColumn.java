@@ -239,4 +239,14 @@ public class EmbeddeableColumn extends Table implements Column{
 	public Table getFTable() {
 		return this.fTable;
 	}
+
+	@Override
+	public String getValueGetter() {
+		return null;
+	}
+
+	@Override
+	public String getValueCast() {
+		return null;
+	}
 }

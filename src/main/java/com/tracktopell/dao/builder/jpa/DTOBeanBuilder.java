@@ -46,7 +46,7 @@ public class DTOBeanBuilder {
 		BufferedReader br = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");		
 		Properties vp=VersionUtil.loadVersionProperties();
-		System.err.println("=============================>>> DTOs ");
+		System.err.println("=============================>>> MappingDTOsForJPABeans ");
 		
 		
 		Enumeration<String> tableNames = dbSet.getTableNames();
@@ -140,7 +140,7 @@ public class DTOBeanBuilder {
 			ps = new PrintStream(fos);
 
 			br = new BufferedReader(new InputStreamReader(
-					fos.getClass().getResourceAsStream("/templates/TableDTOBeanMapingJPABean.java.template")));
+					fos.getClass().getResourceAsStream("/templates/TableJsonDTOBeanMapingJPABean.java.template")));
 			String line = null;
 			ArrayList<String> linesToParse = null;
 			int nl = 0;
@@ -164,9 +164,12 @@ public class DTOBeanBuilder {
 						}
 
 						for (String lineInLoop : linesToParse) {
-							if (lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0) {
+							//System.err.println("===========================["+lineInLoop+".indexOf(${tablebean.member.valueGetter})] => "+(lineInLoop.indexOf("${tablebean.member.valueGetter}")));
+							if (lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0 || lineInLoop.indexOf("${tablebean.member.valueGetter}") >= 0) {
 								if (! (column instanceof EmbeddeableColumn) ){
 									lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
+									lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , column.getValueGetter());									
+									lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , column.getValueCast());
 									ps.println(lineInLoop);
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.javadocCommnet}") >= 0) {
@@ -317,7 +320,7 @@ public class DTOBeanBuilder {
 					line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 					line = line.replace("${date}", sdf.format(new Date()));
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
-					line = line.replace("${tablebean.name}", table.getName());
+					line = line.replace("${tablebean.name}", table.getName().toUpperCase());
 					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
 					line = line.replace("${tablebean.PKMembersParameters}", membersParameters(table, dbSet));
 

@@ -333,4 +333,38 @@ public class SimpleColumn implements Column {
 	public Table getFTable() {
 		return this.fTable;
 	}
+
+	@Override
+	public String getValueGetter() {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equals("Integer")){
+			return "getInt";
+		} else if(jc.equalsIgnoreCase("Double")){
+			return "getDouble";
+		} else if(jc.equalsIgnoreCase("Long")){
+			return "getLong";
+		} else if(jc.equalsIgnoreCase("Short")){
+			return "getShort";
+		} else if(jc.equalsIgnoreCase("Byte")){
+			return "getByte";
+		} else if(jc.equals("int")){
+			return "getInt";
+		} else  if(jc.equals("Date")){
+			return "getLong";
+		} else if(jc.equals("Timestamp")){
+			return "getLong";
+		}
+		return "get"+jc;
+	}
+	
+	@Override
+	public String getValueCast() {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equals("Date")){
+			return "new java.sql.Date";
+		} else if(jc.equals("Timestamp")){
+			return "new java.sql.Timestamp";
+		}
+		return "";
+	}	
 }

@@ -26,6 +26,8 @@ public interface Column {
     void setSqlType(String sqlType);
 
     String getJavaClassType();
+	
+	String getValueGetter();
 
     void setJavaClassType(String javaClassType) ;
 
@@ -110,4 +112,6 @@ public interface Column {
 	Table getFTable();
 	
 	Hashtable<String, String>  getMetaProperties();
+
+	String getValueCast();
 }

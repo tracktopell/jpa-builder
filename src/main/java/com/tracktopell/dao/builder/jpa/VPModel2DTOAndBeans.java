@@ -36,16 +36,19 @@ public class VPModel2DTOAndBeans {
 
             pathToVPProject		= args[0];
 			schemmaName         = args[1];
+			
 			dtoPackageBeanMember= args[2];
             asmPackageBeanMember= args[3];
 			jpaPackageBeanMember= args[4];
 			rsbPackageBeanMember= args[5];
 			esbPackageBeanMember= args[6];
-            basePathJPA			= args[7];
-			basePathDTO         = args[8];
-			basePathASM         = args[9];
+			
+			basePathDTO         = args[7];
+			basePathASM         = args[8];			
+            basePathJPA			= args[9];						
 			basePathRSB         = args[10];
 			basePathESB         = args[11];
+			
 			jpaPU				= args[12];
 			flatDTOs			= args[13].trim().equalsIgnoreCase("true");
             tableNames2Gen		= args[14].split(",");

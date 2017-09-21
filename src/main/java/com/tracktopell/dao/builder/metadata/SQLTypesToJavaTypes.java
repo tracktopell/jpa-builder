@@ -27,6 +27,9 @@ public class SQLTypesToJavaTypes {
         javaTypes.put("double", Double.class.toString().replace("class ", ""));
         javaTypes.put("integer", Integer.class.toString().replace("class ", ""));
         javaTypes.put("int", Integer.class.toString().replace("class ", ""));
+		javaTypes.put("smallint", Integer.class.toString().replace("class ", ""));
+		javaTypes.put("short", Short.class.toString().replace("class ", ""));		
+		javaTypes.put("tinyint", Short.class.toString().replace("class ", ""));
         javaTypes.put("float", Float.class.toString().replace("class ", ""));
         javaTypes.put("long", Long.class.toString().replace("class ", ""));
         
@@ -37,10 +40,12 @@ public class SQLTypesToJavaTypes {
         javaTypes.put("int_not_null", "int");
         javaTypes.put("float_not_null", "float");
         javaTypes.put("long_not_null", "long");
-        
+
+		javaTypes.put("nvarchar", String.class.toString().replace("class ", ""));
         javaTypes.put("varchar", String.class.toString().replace("class ", ""));
 		javaTypes.put("char", String.class.toString().replace("class ", ""));
         javaTypes.put("date", java.sql.Date.class.toString().replace("class ", ""));
+		javaTypes.put("time", java.sql.Time.class.toString().replace("class ", ""));
         javaTypes.put("datetime", java.sql.Date.class.toString().replace("class ", ""));
 		javaTypes.put("timestamp", java.sql.Timestamp.class.toString().replace("class ", ""));
         javaTypes.put("blob", "byte[]");
