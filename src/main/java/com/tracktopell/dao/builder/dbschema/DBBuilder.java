@@ -8,6 +8,7 @@ package com.tracktopell.dao.builder.dbschema;
 import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.metadata.Table;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -46,9 +47,24 @@ public abstract class DBBuilder {
             printAddIndexes(t,out);            
         }
     }
+	
+	protected void printDropSchema(String schemaName,DBTableSet dbSet,PrintStream out) {
+
+		List<Table> lt=dbSet.getTablesSortedForDrop();
+		
+        out.println("-- ============================= ELIMINADO DEL ESQUEMA DE LA BASE DE DATOS ====================");        
+        printDefinitionSchema(schemaName,dbSet,out);
+        out.println("-- ===================================== TABLES ("+lt.size()+") ===============================");
+        
+        for(Table t: lt) {            
+            out.println("DROP TABLE "+t.getName()+";");
+			out.println("");
+        }
+    
+	}
     
     protected abstract void printDefinitionSchema(String schemaName,DBTableSet dbSet,PrintStream out) ;
-
+	
     protected abstract void printDefinitionTable(Table currentTable, PrintStream out) ;
     
     protected abstract void printAddPKContraints(Table currentTable, PrintStream out) ;    

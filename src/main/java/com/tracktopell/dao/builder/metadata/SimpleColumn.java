@@ -341,14 +341,20 @@ public class SimpleColumn implements Column {
 			return "getInt";
 		} else if(jc.equalsIgnoreCase("Double")){
 			return "getDouble";
+		} else if(jc.equalsIgnoreCase("Float")){
+			return "getDouble";
 		} else if(jc.equalsIgnoreCase("Long")){
 			return "getLong";
 		} else if(jc.equalsIgnoreCase("Short")){
-			return "getShort";
+			return "getInt";
 		} else if(jc.equalsIgnoreCase("Byte")){
 			return "getByte";
 		} else if(jc.equals("int")){
 			return "getInt";
+		} else if(jc.equals("long")){
+			return "getLong";
+		} else if(jc.equals("Time")){
+			return "getLong";
 		} else  if(jc.equals("Date")){
 			return "getLong";
 		} else if(jc.equals("Timestamp")){
@@ -360,10 +366,19 @@ public class SimpleColumn implements Column {
 	@Override
 	public String getValueCast() {
 		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
-		if(jc.equals("Date")){
+		if(jc.equalsIgnoreCase("Float")){
+			return "(float)";
+		} else if(jc.equalsIgnoreCase("Short")){
+			return "(short)";
+		} else if(jc.equals("Date")){
+			return "new java.sql.Date";
+		} else if(jc.equals("Time")){
+			return "new java.sql.Time";
+		} else if(jc.equals("DateTime")){
 			return "new java.sql.Date";
 		} else if(jc.equals("Timestamp")){
 			return "new java.sql.Timestamp";
+		} else {
 		}
 		return "";
 	}	

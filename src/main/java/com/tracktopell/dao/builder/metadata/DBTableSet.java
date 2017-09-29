@@ -8,10 +8,16 @@ package com.tracktopell.dao.builder.metadata;
 import com.tracktopell.dao.builder.FormatString;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -74,27 +80,112 @@ public class DBTableSet {
         }
 		return result;
 	}
-    
-    public List<Table> getTablesSortedForCreation(){ 
-        ArrayList<Table> result =  new ArrayList<Table>();
-        Enumeration<Table> te = this.tables.elements();
-        Table iterTable = null;
+	
+	public List<Table> getTablesHasReferece(String foreignTableName){
+	    ArrayList<Table> result =  new ArrayList<Table>();
+	    Enumeration<Table> te = this.tables.elements();
+		Table iterTable = null;
+		te = this.tables.elements();        
         while (te.hasMoreElements()){
             iterTable = te.nextElement();
-            if(iterTable.countForeignKeys()==0)
-                result.add(iterTable);
+            if(iterTable.countForeignKeys()>0){
+				Hashtable<String, ReferenceTable> foreignKeys = iterTable.foreignKeys; 
+				int countRTfks=0;
+				for(ReferenceTable rt:foreignKeys.values()){
+					if(foreignTableName.equalsIgnoreCase(rt.getTableName())){
+						countRTfks++;
+					}
+				}
+				if(countRTfks > 0){
+					result.add(iterTable);
+				}
+			}
+        }	   
+	    return result;
+	}
+    
+    public List<Table> getTablesSortedForCreation(){ 
+        List<Table> result = getTablesSortedForDrop();
+
+		Collections.reverse(result);
+		
+        return result;        
+    }
+
+    public List<Table> getTablesSortedForDrop(){ 
+        ArrayList<Table> result =  new ArrayList<Table>();
+        Enumeration<Table> te = null;
+        Table iterTable = null;
+		Map<String,Integer> dropOrder=new LinkedHashMap<String,Integer>();
+		
+		te = this.tables.elements();
+        while (te.hasMoreElements()){
+            iterTable = te.nextElement();
+            dropOrder.put(iterTable.getName(),iterTable.countForeignKeys());			
         }
         
         te = this.tables.elements();        
         while (te.hasMoreElements()){
             iterTable = te.nextElement();
-            if(iterTable.countForeignKeys()>0)
-                result.add(iterTable);
+            if(iterTable.countForeignKeys()>0){
+				Hashtable<String, ReferenceTable> foreignKeys = iterTable.foreignKeys; 
+				int countRTfks=0;
+				for(ReferenceTable rt:foreignKeys.values()){
+					if(dropOrder.get(rt.getTableName()) > 0){
+						countRTfks++;
+					}
+				}
+				if(countRTfks > 0){
+					dropOrder.put(iterTable.getName(),dropOrder.get(iterTable.getName())*10);
+				}
+				//-----------------
+			}
+		}
+		
+		te = this.tables.elements();        
+        while (te.hasMoreElements()){
+            iterTable = te.nextElement();
+			if(iterTable.countForeignKeys()>0){
+				List<Table> tablesHasReferece = getTablesHasReferece(iterTable.getName());
+				for(Table frt: tablesHasReferece){
+					dropOrder.put(frt.getName(),dropOrder.get(frt.getName())*10);
+					
+					List<Table> tablesHasReferece2 = getTablesHasReferece(frt.getName());
+					for(Table frt2: tablesHasReferece2){
+						dropOrder.put(frt2.getName(),dropOrder.get(frt2.getName())+10);
+					}
+					
+				}
+			}
         }
-
+		
+		dropOrder = sortByValue(dropOrder,false);
+		//System.err.println("=>dropOrder: after :"+dropOrder.toString().replace(",", ",\n\t"));		
+		for(String to:dropOrder.keySet()){
+			result.add(this.tables.get(to));
+		}
+		
         return result;        
     } 
-    
+	
+	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map,boolean create) {
+        List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
+        Collections.sort( list, new Comparator<Map.Entry<K, V>>() {
+            public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+				if(create)
+					return (o1.getValue()).compareTo( o2.getValue() );
+				else
+					return (o2.getValue()).compareTo( o1.getValue() );
+            }
+        });
+
+        Map<K, V> result = new LinkedHashMap<K, V>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+	
     
     private Hashtable<String,Table> getTables(){
         if(this.tables == null){

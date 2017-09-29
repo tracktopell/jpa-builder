@@ -192,7 +192,7 @@ public class DTOBeanBuilder {
 									EmbeddeableColumn eColumn = (EmbeddeableColumn)column;
 									ps.println("    // " + column.getJavaDeclaredObjectName() + " EmbedableColumn ID References: FKs {"+eColumn.getFKs()+"}");
 								} else {
-									ps.println("    // Simple: PK?"+column.isPrimaryKey()+", FK?"+column.isForeignKey()+", class="+column.getJavaClassType()+", o="+column.getJavaDeclaredObjectName());
+									//ps.println("    // Simple: PK?"+column.isPrimaryKey()+", FK?"+column.isForeignKey()+", class="+column.getJavaClassType()+", o="+column.getJavaDeclaredObjectName());
 									ps.println("    private " + column.getJavaClassType().replace("java.lang.", "") + " " + column.getJavaDeclaredObjectName() + ";");
 								}
 

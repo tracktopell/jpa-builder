@@ -22,15 +22,16 @@ public class VPModel2SQL {
         String  rdbms            = null;
         String  schemmaName      = null;
         String  outputPath       = null;
+		String  outputDropPath   = null;
         String[]tableNames2Gen   = null;
         try {
 			Properties vp=VersionUtil.loadVersionProperties();
-			if( args.length != 5) {
+			if( args.length != 6) {
 				System.err.println("==================== Tracktopell VPModel2SQL ======================");
 				System.err.println("\t  BUILD: \t"+vp.getProperty(VersionUtil.BUILT_TIMESTAMP));
 				System.err.println("\tVERSION: \t"+vp.getProperty(VersionUtil.PROJECT_VERSION));
 
-                System.err.println("use: <java ...> com.tracktopell.dao.builder.dbschema.VPModel2SQL  pathToVPProject  rdbms  catalog  basePath  [ tableNames2GenList,Separated,By,Comma | {all} ]" );
+                System.err.println("use: <java ...> com.tracktopell.dao.builder.dbschema.VPModel2SQL  pathToVPProject  rdbms  catalog  baseCreatePath baseDropPath [ tableNames2GenList,Separated,By,Comma | {all} ]" );
                 System.exit(1);
             }
 
@@ -39,7 +40,8 @@ public class VPModel2SQL {
             rdbms            = args[1];
             schemmaName      = args[2];
             outputPath       = args[3];
-            tableNames2Gen   = args[4].split(",");
+			outputDropPath   = args[4];
+            tableNames2Gen   = args[5].split(",");
 
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
@@ -58,6 +60,8 @@ public class VPModel2SQL {
             DBBuilder dbBuilder = null;
             if(rdbms.equalsIgnoreCase("mysql")) {
                 dbBuilder = DBBuilderFactory.getInstance("com.tracktopell.dao.builder.dbschema.mysql.MySQLDBBuilder");
+            } else if(rdbms.equalsIgnoreCase("mssqlserver")) {
+                dbBuilder = DBBuilderFactory.getInstance("com.tracktopell.dao.builder.dbschema.mssqlserver.SQLServerDBBuilder");
             } else if(rdbms.equalsIgnoreCase("derby")) {
                 dbBuilder = DBBuilderFactory.getInstance("com.tracktopell.dao.builder.dbschema.derby.DerbyDBBuilder");
             } else {
@@ -65,6 +69,10 @@ public class VPModel2SQL {
 			}
             System.out.println("->createDBSchema:");
             dbBuilder.createDBSchema(schemmaName, dbSet, new PrintStream(new FileOutputStream(outputPath)));
+			
+			System.out.println("->createDropDBSchema:");            
+			dbBuilder.printDropSchema(schemmaName, dbSet, new PrintStream(new FileOutputStream(outputDropPath)));
+			
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }
