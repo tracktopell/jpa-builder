@@ -1178,7 +1178,7 @@ public class JPABeanBuilder {
 				line = line.replace("${date}", sdf.format(new Date()));
 				line = line.replace("${rssbean.package}"  , rsbPackageBeanMember);
 				line = line.replace("${ssbinterface.package}", rsbPackageBeanMember);
-				line = line.replace("${tablebean.declaredInterface}", table.getJavaDeclaredName()+"RemoteFacade");
+				line = line.replace("${tablebean.declaredInterface}", table.getJavaDeclaredName()+"FacadeRemote");
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
@@ -1533,7 +1533,7 @@ public class JPABeanBuilder {
 				line = line.replace("${date}", sdf.format(new Date()));
 				line = line.replace("${lssbean.package}"  , lsbPackageBeanMember);
 				line = line.replace("${ssbinterface.package}", lsbPackageBeanMember);
-				line = line.replace("${tablebean.declaredInterface}", table.getJavaDeclaredName()+"LocalFacade");				
+				line = line.replace("${tablebean.declaredInterface}", table.getJavaDeclaredName()+"FacadeLocal");				
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
