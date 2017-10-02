@@ -1171,7 +1171,7 @@ public class JPABeanBuilder {
 			sourceFile = new File(fileName);
 			fos = new FileOutputStream(sourceFile);
 			ps = new PrintStream(fos);
-			br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/RSSB.java.template")));
+			br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/SSB.java.template")));
 
 			while ((line = br.readLine()) != null) {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
@@ -1526,7 +1526,7 @@ public class JPABeanBuilder {
 			sourceFile = new File(fileName);
 			fos = new FileOutputStream(sourceFile);
 			ps = new PrintStream(fos);
-			br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/LSSB.java.template")));
+			br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/SSB.java.template")));
 
 			while ((line = br.readLine()) != null) {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
