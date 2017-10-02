@@ -1,4 +1,4 @@
-package ${rsbbean.package};
+package ${ssbean.package};
 
 import java.util.List;
 import javax.persistence.EntityManager;
