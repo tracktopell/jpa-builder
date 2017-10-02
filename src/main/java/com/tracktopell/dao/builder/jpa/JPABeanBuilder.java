@@ -1552,10 +1552,15 @@ public class JPABeanBuilder {
 							vn = ci.getFTable().getSingularNameJavaDeclaredName();
 							vo = ci.getFTable().getSingularNameJavaDeclaredObjectName();
 						} else {
-							if(	ci.getJavaClassType().equals("int")   ||
-								ci.getJavaClassType().equals("long")  ||
-								ci.getJavaClassType().equals("double")){
-								cmp = "!= 0";
+							if(	ci.getJavaClassType().equals("byte") ||
+								ci.getJavaClassType().equals("short") ||
+								ci.getJavaClassType().equals("int")   ||
+								ci.getJavaClassType().equals("long")  ){
+								cmp = " != 0";
+							} else if(	ci.getJavaClassType().equals("double")){
+								cmp = " != 0.0";
+							} else if(	ci.getJavaClassType().equals("float")){
+								cmp = " != 0.0f";
 							}
 							vn = ci.getJavaDeclaredName();
 							vo = ci.getJavaDeclaredObjectName();
@@ -1578,10 +1583,15 @@ public class JPABeanBuilder {
 							vn = ci.getFTable().getSingularNameJavaDeclaredName();
 							vo = ci.getFTable().getSingularNameJavaDeclaredObjectName();
 						} else {
-							if(	ci.getJavaClassType().equals("int")   ||
-								ci.getJavaClassType().equals("long")  ||
-								ci.getJavaClassType().equals("double")){
-								cmp = "!= (0) ";
+							if(	ci.getJavaClassType().equals("byte") ||
+								ci.getJavaClassType().equals("short") ||
+								ci.getJavaClassType().equals("int")   ||
+								ci.getJavaClassType().equals("long")  ){
+								cmp = " != 0";
+							} else if(	ci.getJavaClassType().equals("double")){
+								cmp = " != 0.0";
+							} else if(	ci.getJavaClassType().equals("float")){
+								cmp = " != 0.0f";
 							}
 							vn = ci.getJavaDeclaredName();
 							vo = ci.getJavaDeclaredObjectName();
