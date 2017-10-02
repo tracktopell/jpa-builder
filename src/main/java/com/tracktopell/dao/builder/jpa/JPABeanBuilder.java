@@ -1060,7 +1060,7 @@ public class JPABeanBuilder {
 		while ((line = br.readLine()) != null) {
 			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 			line = line.replace("${date}", sdf.format(new Date()));
-			line = line.replace("${rsbbean.package}"  , rsbPackageBeanMember);			
+			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 			ps.println(line);
 		}
 		br.close();
@@ -1410,8 +1410,8 @@ public class JPABeanBuilder {
 		
 		while ((line = br.readLine()) != null) {
 			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
-			line = line.replace("${date}", sdf.format(new Date()));
-			line = line.replace("${rsbbean.package}"  , lsbPackageBeanMember);			
+			line = line.replace("${date}", sdf.format(new Date()));			
+			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 			ps.println(line);
 		}
 		br.close();
