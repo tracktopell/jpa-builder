@@ -1,4 +1,4 @@
-package ${lsbbean.package};
+package ${lssbean.package};
 
 import ${tablebean.package}.${tablebean.declaredName};
 import java.util.List;
