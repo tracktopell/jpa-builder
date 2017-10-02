@@ -7,7 +7,7 @@ import static javax.ejb.TransactionAttributeType.REQUIRED;
 import static javax.ejb.TransactionAttributeType.SUPPORTS;
 
 /**
- * ESB JPA Entity AbstractFacade.
+ * SSB JPA Entity AbstractFacade.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  * @version ${version}

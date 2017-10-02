@@ -906,7 +906,7 @@ public class JPABeanBuilder {
 		}
 	}
 
-	static void buildRSSB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String rsbPackageBeanMember, String esbPackageBeanMember, String basePathJPA, String basePathRSB, String basePathESB) 
+	static void buildRSSB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String rsbPackageBeanMember, String ssbPackageBeanMember, String basePathJPA, String basePathRSB, String basePathESB) 
 		throws IOException{
 				String fileName;
 		File baseDir = null;
@@ -1043,7 +1043,7 @@ public class JPABeanBuilder {
 			baseDir.mkdirs();
 		}
 
-		fileName = esbPackageBeanMember.replace(".", File.separator) + File.separator;
+		fileName = ssbPackageBeanMember.replace(".", File.separator) + File.separator;
 
 		dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
 		if (!dirSourceFile.exists()) {
@@ -1135,7 +1135,8 @@ public class JPABeanBuilder {
 			while ((line = br.readLine()) != null) {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
-				line = line.replace("${rsbbean.package}"  , rsbPackageBeanMember);
+				line = line.replace("${rssbean.package}"  , rsbPackageBeanMember);
+				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);				
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
 				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
@@ -1156,7 +1157,7 @@ public class JPABeanBuilder {
 				baseDir.mkdirs();
 			}
 
-			fileName = esbPackageBeanMember.replace(".", File.separator) + File.separator;
+			fileName = ssbPackageBeanMember.replace(".", File.separator) + File.separator;
 
 			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
 			if (!dirSourceFile.exists()) {
@@ -1173,7 +1174,8 @@ public class JPABeanBuilder {
 			while ((line = br.readLine()) != null) {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
-				line = line.replace("${rsbbean.package}"  , rsbPackageBeanMember);
+				line = line.replace("${rssbean.package}"  , rsbPackageBeanMember);
+				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
 				
@@ -1255,7 +1257,7 @@ public class JPABeanBuilder {
 
 	}
 
-	static void buildLSSB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String lsbPackageBeanMember, String esbPackageBeanMember, String basePathJPA, String basePathLSB, String basePathESB) 
+	static void buildLSSB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String lsbPackageBeanMember, String ssbPackageBeanMember, String basePathJPA, String basePathLSB, String basePathESB) 
 		throws IOException{
 				String fileName;
 		File baseDir = null;
@@ -1392,7 +1394,7 @@ public class JPABeanBuilder {
 			baseDir.mkdirs();
 		}
 
-		fileName = esbPackageBeanMember.replace(".", File.separator) + File.separator;
+		fileName = ssbPackageBeanMember.replace(".", File.separator) + File.separator;
 
 		dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
 		if (!dirSourceFile.exists()) {
@@ -1484,7 +1486,8 @@ public class JPABeanBuilder {
 			while ((line = br.readLine()) != null) {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
-				line = line.replace("${rsbbean.package}"  , lsbPackageBeanMember);
+				line = line.replace("${lssbean.package}"  , lsbPackageBeanMember);
+				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
 				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
@@ -1505,7 +1508,7 @@ public class JPABeanBuilder {
 				baseDir.mkdirs();
 			}
 
-			fileName = esbPackageBeanMember.replace(".", File.separator) + File.separator;
+			fileName = ssbPackageBeanMember.replace(".", File.separator) + File.separator;
 
 			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
 			if (!dirSourceFile.exists()) {
@@ -1522,7 +1525,8 @@ public class JPABeanBuilder {
 			while ((line = br.readLine()) != null) {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
-				line = line.replace("${rsbbean.package}"  , lsbPackageBeanMember);
+				line = line.replace("${lssbean.package}"  , lsbPackageBeanMember);
+				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
 				
