@@ -109,6 +109,15 @@ public class DTOBeanBuilder {
 								
 								column.setHyperColumnName(suggested);
 								break;
+							} else {
+								suggested = column.getName().toUpperCase();								
+
+								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
+								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
+								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+
+								column.setHyperColumnName(suggested);
+								break;
 							}
 						}					
 					
@@ -437,6 +446,15 @@ public class DTOBeanBuilder {
 								
 								column.setHyperColumnName(suggested);
 								break;
+							} else {
+								suggested = column.getName().toUpperCase();								
+
+								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
+								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
+								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+
+								column.setHyperColumnName(suggested);
+								break;
 							}
 						}					
 					
@@ -579,7 +597,7 @@ public class DTOBeanBuilder {
 				} else if (line.indexOf("${dtoCopyedToJpaMembers.code}") >= 0) {
 					for (Column column : definitiveColumns) {
 						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {							
-							if( column.getHyperColumnName()!=null){								
+							if( column.getHyperColumnName()!=null){						
 								ps.println("        "+column.getFTable().getJavaDeclaredName()+"DTO "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO = new "+column.getFTable().getJavaDeclaredName()+"DTO();");
 								ps.println("        "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO.set"+FormatString.getCadenaHungara(column.getFTable().getJPAPK())+"( dtoEntity.get" + FormatString.getCadenaHungara(column.getName())+ "());");								
 								ps.println("        jpaEntity." + column.getHyperColumnSetterName() + "( "+column.getFTable().getJavaDeclaredName()+"Assembler.buildJpaEntity( "+FormatString.firstLetterLowerCase(column.getHyperColumnObjectName())+"DTO ));");
