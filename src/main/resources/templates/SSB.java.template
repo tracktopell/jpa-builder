@@ -1,7 +1,9 @@
 package ${ssbean.package};
 
 import ${tablebean.package}.${tablebean.declaredName};
+// bug ? ${ssbinterface.package}
 import ${ssbinterface.package}.${tablebean.declaredInterface};
+// <- bug ${tablebean.declaredInterface}
 
 import java.util.List;
 import javax.persistence.EntityManager;
