@@ -20,17 +20,21 @@ public class VPModel2DTOAndBeans {
 		String   jpaPackageBeanMember= null;
 		String   esbPackageBeanMember= null;
 		String   rsbPackageBeanMember= null;
+		String   lsbPackageBeanMember= null;
         String   basePathJPA         = null;
 		String   basePathDTO         = null;
 		String   basePathASM         = null;
 		String   basePathESB         = null;
 		String   basePathRSB         = null;
+		String   basePathLSB         = null;
 		String   jpaPU               = null;
         String[] tableNames2Gen   = null;
         boolean  flatDTOs         = false;
 		try {
             if( args.length != 15 ) {
-                System.err.println("use: <java ...> VPModel2DTOAndBeans  pathToVPProject catalog dtoPackageBeanMember asmPackageBeanMember jpaPackageBeanMember rsbPackageBeanMember esbPackageBeanMember basePathJPA basePathDTO basePathASM basePathRSB basePathESB jpaPU  flatDTOs  [ tableNames2GenList,Separated,By,Comma | {all} ]" );
+                System.err.println("use: <java ...> VPModel2DTOAndBeans  "+
+						"pathToVPProject catalog dtoPackageBeanMember asmPackageBeanMember jpaPackageBeanMember rsbPackageBeanMember lsbPackageBeanMember esbPackageBeanMember "+
+						"basePathJPA     basePathDTO basePathASM basePathRSB basePathLSB basePathESB jpaPU  flatDTOs  [ tableNames2GenList,Separated,By,Comma | {all} ]" );
                 System.exit(1);
             }
 
@@ -41,17 +45,19 @@ public class VPModel2DTOAndBeans {
             asmPackageBeanMember= args[3];
 			jpaPackageBeanMember= args[4];
 			rsbPackageBeanMember= args[5];
-			esbPackageBeanMember= args[6];
+			lsbPackageBeanMember= args[6];
+			esbPackageBeanMember= args[7];
 			
-			basePathDTO         = args[7];
-			basePathASM         = args[8];			
-            basePathJPA			= args[9];						
-			basePathRSB         = args[10];
-			basePathESB         = args[11];
+			basePathDTO         = args[8];
+			basePathASM         = args[9];			
+            basePathJPA			= args[10];						
+			basePathRSB         = args[11];
+			basePathLSB         = args[12];
+			basePathESB         = args[13];
 			
-			jpaPU				= args[12];
-			flatDTOs			= args[13].trim().equalsIgnoreCase("true");
-            tableNames2Gen		= args[14].split(",");
+			jpaPU				= args[14];
+			flatDTOs			= args[15].trim().equalsIgnoreCase("true");
+            tableNames2Gen		= args[16].split(",");
 
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
@@ -73,7 +79,9 @@ public class VPModel2DTOAndBeans {
 			
 			JPABeanBuilder.buildMappingBeans(dbSet, schemmaName, jpaPackageBeanMember, basePathJPA);
 			
-			JPABeanBuilder.buildESB(dbSet, jpaPU, jpaPackageBeanMember, rsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathRSB, basePathESB);
+			//JPABeanBuilder.buildRSSB(dbSet, jpaPU, jpaPackageBeanMember, rsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathRSB, basePathESB);
+			
+			JPABeanBuilder.buildLSSB(dbSet, jpaPU, jpaPackageBeanMember, lsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathLSB, basePathESB);
             
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
