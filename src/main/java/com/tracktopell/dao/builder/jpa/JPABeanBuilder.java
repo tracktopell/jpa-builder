@@ -1061,6 +1061,7 @@ public class JPABeanBuilder {
 			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 			line = line.replace("${date}", sdf.format(new Date()));
 			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
+			line = line.replace("${ssbinterface.package}", rsbPackageBeanMember);
 			ps.println(line);
 		}
 		br.close();
@@ -1136,6 +1137,7 @@ public class JPABeanBuilder {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
 				line = line.replace("${rssbean.package}"  , rsbPackageBeanMember);
+				line = line.replace("${ssbinterface.package}", rsbPackageBeanMember);
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);				
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
@@ -1175,6 +1177,8 @@ public class JPABeanBuilder {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
 				line = line.replace("${rssbean.package}"  , rsbPackageBeanMember);
+				line = line.replace("${ssbinterface.package}", rsbPackageBeanMember);
+				line = line.replace("${tablebean.declaredInterface}", table.getJavaDeclaredName()+"RemoteFacade");
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
@@ -1412,6 +1416,7 @@ public class JPABeanBuilder {
 			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 			line = line.replace("${date}", sdf.format(new Date()));			
 			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
+			line = line.replace("${ssbinterface.package}", lsbPackageBeanMember);
 			ps.println(line);
 		}
 		br.close();
@@ -1487,6 +1492,7 @@ public class JPABeanBuilder {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
 				line = line.replace("${lssbean.package}"  , lsbPackageBeanMember);
+				line = line.replace("${ssbinterface.package}", lsbPackageBeanMember);
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
@@ -1526,6 +1532,8 @@ public class JPABeanBuilder {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
 				line = line.replace("${lssbean.package}"  , lsbPackageBeanMember);
+				line = line.replace("${ssbinterface.package}", lsbPackageBeanMember);
+				line = line.replace("${tablebean.declaredInterface}", table.getJavaDeclaredName()+"LocalFacade");				
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
