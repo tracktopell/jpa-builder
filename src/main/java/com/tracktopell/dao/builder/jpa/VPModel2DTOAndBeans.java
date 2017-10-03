@@ -28,13 +28,14 @@ public class VPModel2DTOAndBeans {
 		String   basePathRSB         = null;
 		String   basePathLSB         = null;
 		String   jpaPU               = null;
+		String   interfaceToImpl     = null;
         String[] tableNames2Gen   = null;
         boolean  flatDTOs         = false;
 		try {
             if( args.length != 17 ) {
                 System.err.println("use: <java ...> VPModel2DTOAndBeans  "+
 						"pathToVPProject catalog dtoPackageBeanMember asmPackageBeanMember jpaPackageBeanMember rsbPackageBeanMember lsbPackageBeanMember esbPackageBeanMember "+
-						"basePathJPA     basePathDTO basePathASM basePathRSB basePathLSB basePathESB jpaPU  flatDTOs  [ tableNames2GenList,Separated,By,Comma | {all} ]" );
+						"basePathJPA     basePathDTO basePathASM basePathRSB basePathLSB basePathESB jpaPU  flatDTOs [ @Remote | @Local ] [ tableNames2GenList,Separated,By,Comma | {all} ]" );
                 System.exit(1);
             }
 
@@ -57,7 +58,8 @@ public class VPModel2DTOAndBeans {
 			
 			jpaPU				= args[14];
 			flatDTOs			= args[15].trim().equalsIgnoreCase("true");
-            tableNames2Gen		= args[16].split(",");
+			interfaceToImpl		= args[16];
+            tableNames2Gen		= args[17].split(",");
 
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
@@ -79,10 +81,11 @@ public class VPModel2DTOAndBeans {
 			
 			JPABeanBuilder.buildMappingBeans(dbSet, schemmaName, jpaPackageBeanMember, basePathJPA);
 			
-			JPABeanBuilder.buildRSSB(dbSet, jpaPU, jpaPackageBeanMember, rsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathRSB, basePathESB);
-			
-			//JPABeanBuilder.buildLSSB(dbSet, jpaPU, jpaPackageBeanMember, lsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathLSB, basePathESB);
-            
+			if(interfaceToImpl.equals("@Remote")){
+				JPABeanBuilder.buildRSSB(dbSet, jpaPU, jpaPackageBeanMember, rsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathRSB, basePathESB);
+			} else if(interfaceToImpl.equals("@Local")){
+				JPABeanBuilder.buildLSSB(dbSet, jpaPU, jpaPackageBeanMember, lsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathLSB, basePathESB);
+			}
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
             System.exit(2);

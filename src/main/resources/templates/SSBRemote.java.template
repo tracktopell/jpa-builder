@@ -1,4 +1,4 @@
-package ${rsbbean.package};
+package ${rssbean.package};
 
 import ${tablebean.package}.${tablebean.declaredName};
 import java.util.List;
