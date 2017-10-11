@@ -21,7 +21,7 @@
 		<fileset dir="${user.home}/.m2/repository/com/tracktopell/dbutil/SQLCommander/1.27/">
             <include name="*.jar"/>
 		</fileset>
-		<fileset dir="${user.home}/.m2/repository/com/tracktopell/jpa-builder/1.12.8/">
+		<fileset dir="${user.home}/.m2/repository/com/tracktopell/jpa-builder/1.14.1/">
             <include name="*.jar"/>
 		</fileset>
 		<fileset dir="${user.home}/.m2/repository/mysql/mysql-connector-java/5.1.10">
@@ -69,30 +69,21 @@
 	
    <target name="GENERATE_SQL_DEV">
       <java fork="true" failonerror="yes" classname="com.tracktopell.dao.builder.dbschema.VPModel2SQL">
-         <arg line="model/exported/project.xml mysql L30_V11_DEV sql/CREATE_SCHEMMA_DEV.MYSQL.SQL {all}"/>
-		 <!--
-         <classpath refid="local_tracktopell_utils_classpath"/>
-		 -->
+         <arg line="model/exported/project.xml mysql L30_V11_DEV sql/CREATE_SCHEMMA_DEV.MYSQL.SQL sql/DROP_SCHEMMA_DEV.MYSQL.SQL {all}"/>
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
       </java>
    </target>
       
    <target name="GENERATE_SQL_TST">
       <java fork="true" failonerror="yes" classname="com.tracktopell.dao.builder.dbschema.VPModel2SQL">
-         <arg line="model/exported/project.xml mysql L30_V11_tst sql/CREATE_SCHEMMA_TST.MYSQL.SQL {all}"/>
-		 <!--
-         <classpath refid="local_tracktopell_utils_classpath"/>
-		 -->
+         <arg line="model/exported/project.xml mysql L30_V11_tst sql/CREATE_SCHEMMA_TST.MYSQL.SQL sql/DROP_SCHEMMA_DEV.MYSQL.SQL {all}"/>
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
       </java>
    </target>
 
    <target name="GENERATE_SQL_QAS">
       <java fork="true" failonerror="yes" classname="com.tracktopell.dao.builder.dbschema.VPModel2SQL">
-         <arg line="model/exported/project.xml mysql L30_V11_qas sql/CREATE_SCHEMMA_QAS.MYSQL.SQL {all}"/>
-		 <!--
-         <classpath refid="local_tracktopell_utils_classpath"/>
-		 -->
+         <arg line="model/exported/project.xml mysql L30_V11_qas sql/CREATE_SCHEMMA_QAS.MYSQL.SQL sql/DROP_SCHEMMA_DEV.MYSQL.SQL {all}"/>
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
       </java>
    </target>
@@ -132,9 +123,6 @@
       <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
             input="sql/FIRST_DATA_DEV.MYSQL.SQL">
          <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost/L30_V11_DEV' -user L30_DEV_USR -password L30_DEV_PWD"/>
-		 <!--
-         <classpath refid="local_tracktopell_utils_classpath"/>
-		 -->
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
 		 
       </java>
@@ -145,9 +133,6 @@
         <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
               input="sql/CREATE_SCHEMMA_DEV.MYSQL.SQL">
            <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
-           <!--
-           <classpath refid="local_tracktopell_utils_classpath"/>
-		   -->
 		   <classpath refid="mvn_tracktopell_utils_classpath"/>
 		 
          </java>
@@ -156,9 +141,6 @@
            <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
             input="sql/CREATE_DBUSERS_DEV.MYSQL.SQL">
            <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
-           <!--
-           <classpath refid="local_tracktopell_utils_classpath"/>
-		   -->
 		   <classpath refid="mvn_tracktopell_utils_classpath"/>
 		 
          </java>
@@ -167,9 +149,6 @@
       <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
             input="sql/FIRST_DATA_DEV.MYSQL.SQL">
          <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost/L30_V11_DEV' -user L30_DEV_USR -password L30_DEV_PWD"/>
-         <!--
-         <classpath refid="local_tracktopell_utils_classpath"/>
-		 -->
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
 		 
       </java>
@@ -180,9 +159,6 @@
         <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
               input="sql/CREATE_SCHEMMA_TST.MYSQL.SQL">
            <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
-           <!--
-           <classpath refid="local_tracktopell_utils_classpath"/>
-		   -->
 		   <classpath refid="mvn_tracktopell_utils_classpath"/>
            </java>
       
@@ -190,9 +166,6 @@
            <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
             input="sql/CREATE_DBUSERS_TST.MYSQL.SQL">
            <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
-           <!--
-           <classpath refid="local_tracktopell_utils_classpath"/>
-	  	   -->
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
          </java>
       
@@ -200,14 +173,12 @@
       <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main"
             input="sql/FIRST_DATA_TST.MYSQL.SQL">
          <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost/L30_V11_DEV' -user L30_DEV_USR -password L30_DEV_PWD"/>
-         <!--
-         <classpath refid="local_tracktopell_utils_classpath"/>
-		 -->
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
       </java>
     </target>
 
     <target name="CLEAN_GEN_SRC_MVN">
+		<!--
       <delete includeemptydirs="true">
 	     <fileset dir="${s1}" includes="**/**" />
 		 <fileset dir="${s2}" includes="**/**" />
@@ -223,6 +194,7 @@
 	  <mkdir   dir="${s4}"/>
 	  <mkdir   dir="${s5}"/>
 	  <mkdir   dir="${s6}"/>
+		-->
     </target>	
 	
    <target name="GENERATE_SRC_MVN" depends="CLEAN_GEN_SRC_MVN" >
@@ -237,9 +209,6 @@
         <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main">
 		<echo message="mysql -u L30_DEV_USR -pL30_DEV_PWD L30_V11_DEV"/>
         <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost/L30_V11_DEV' -user L30_DEV_USR -password L30_DEV_PWD"/>
-         <!--
-         <classpath refid="local_tracktopell_utils_classpath"/>
-		 -->
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
       </java>
    </target>
@@ -247,9 +216,6 @@
    <target name="X_MYSQL_DB">
         <java fork="true" failonerror="yes" classname="com.tracktopell.dbutil.sqlcommander.Main">
         <arg line="-driverClass com.mysql.jdbc.Driver -url 'jdbc:mysql://localhost' -user ${admin.db.user} -password ${admin.db.password}"/>
-         <!--
-         <classpath refid="local_tracktopell_utils_classpath"/>
-		 -->
 		 <classpath refid="mvn_tracktopell_utils_classpath"/>
       </java>
    </target>
