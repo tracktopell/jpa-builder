@@ -112,7 +112,68 @@ public class DBTableSet {
         return result;        
     }
 
-    public List<Table> getTablesSortedForDrop(){ 
+	private int getProdCascadeReferences(Table t){
+		
+		List<Table> tablesHasReferece = getTablesHasReferece(t.getName());
+		
+		int s = tablesHasReferece.size();		
+		int p=0;
+		System.err.println("\t=>getProdCascadeReferences("+t.getName()+"):");
+		for(Table tr: tablesHasReferece){
+			if(tr.getName().equalsIgnoreCase(t.getName())){
+				continue;
+			}
+			p = getProdCascadeReferences(tr);
+			System.err.println("\t\t=>getProdCascadeReferences("+t.getName()+")<-("+tr.getName()+") + "+p);
+			s += p;
+			
+		}
+		System.err.println("\t=>getProdCascadeReferences("+t.getName()+") = "+s);
+		
+		return s;		
+	}
+	
+	public List<Table> getTablesSortedForDrop(){ 
+		ArrayList<Table> result =  new ArrayList<Table>();
+        Enumeration<Table> te1 = null;
+		
+		Table iterTable = null;
+		
+		Map<String,Integer> dropOrder=new LinkedHashMap<String,Integer>();
+		
+		te1 = this.tables.elements();
+        while (te1.hasMoreElements()){
+            iterTable = te1.nextElement();
+			List<Table> tablesHasReferece = getTablesHasReferece(iterTable.getName());			
+			int s = getProdCascadeReferences(iterTable);
+			dropOrder.put(iterTable.getName(),s);
+
+		}
+//		
+//		Enumeration<Table> te2 = this.tables.elements();
+//		while (te2.hasMoreElements()){
+//			iterInnerTable = te2.nextElement();
+//			List<Table> tablesHasReferece = getTablesHasReferece(iterInnerTable.getName());
+//			int s = 0;
+//			for(Table tr: tablesHasReferece){
+//				s+= getProdCascadeReferences(iterInnerTable,tr);				
+//			}
+//			System.err.println("=>result 1.5:"+iterInnerTable.getName()+":"+dropOrder.get(iterInnerTable.getName()) + " + "+s);
+//			dropOrder.put(iterInnerTable.getName(), dropOrder.get(iterInnerTable.getName()) + s);			
+//		}
+//				
+		dropOrder = sortByValue(dropOrder,true);
+		
+		System.err.println("=>result :"+dropOrder);
+		
+		for(String to:dropOrder.keySet()){
+			result.add(this.tables.get(to));
+		}
+		
+		return result; 		
+	}
+	/*
+    public List<Table> _getTablesSortedForDrop(){ 
         ArrayList<Table> result =  new ArrayList<Table>();
         Enumeration<Table> te = null;
         Table iterTable = null;
@@ -167,6 +228,7 @@ public class DBTableSet {
 		
         return result;        
     } 
+	*/
 	
 	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map,boolean create) {
         List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());

@@ -32,7 +32,7 @@ public class VPModel2DTOAndBeans {
         String[] tableNames2Gen   = null;
         boolean  flatDTOs         = false;
 		try {
-            if( args.length != 17 ) {
+            if( args.length != 18 ) {
                 System.err.println("use: <java ...> VPModel2DTOAndBeans  "+
 						"pathToVPProject catalog dtoPackageBeanMember asmPackageBeanMember jpaPackageBeanMember rsbPackageBeanMember lsbPackageBeanMember esbPackageBeanMember "+
 						"basePathJPA     basePathDTO basePathASM basePathRSB basePathLSB basePathESB jpaPU  flatDTOs [ @Remote | @Local ] [ tableNames2GenList,Separated,By,Comma | {all} ]" );
