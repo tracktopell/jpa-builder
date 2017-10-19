@@ -27,15 +27,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+// Hibernate Validator 5x is not compatible with validation-api 1.0.x
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Size;
 
 /**
  * Class for mapping JPA Entity of Table PRODUCTO_SUCURSAL.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 @Entity
@@ -61,7 +62,8 @@ public class ProductoSucursal implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "CANTIDAD_1RA" , nullable=false)
     private int cantidad1ra;
     
@@ -70,7 +72,8 @@ public class ProductoSucursal implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "PRECIO_1RA" , nullable=false)
     private double precio1ra;
     
@@ -79,7 +82,8 @@ public class ProductoSucursal implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "CANTIDAD_OPO" , nullable=false)
     private int cantidadOpo;
     
@@ -88,7 +92,8 @@ public class ProductoSucursal implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "PRECIO_OPO" , nullable=false)
     private double precioOpo;
     
@@ -97,7 +102,8 @@ public class ProductoSucursal implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "CANTIDAD_REG" , nullable=false)
     private int cantidadReg;
     
@@ -106,7 +112,8 @@ public class ProductoSucursal implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "PRECIO_REG" , nullable=false)
     private double precioReg;
     

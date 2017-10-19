@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table USUARIO.
+ * Class for mapping Json DTO Entity of Table USUARIO.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class UsuarioDTO implements java.io.Serializable {
@@ -17,67 +25,56 @@ public class UsuarioDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * email
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=email
     private String email;
     
     /**
     * password
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=password
     private String password;
     
     /**
     * telefonos
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=telefonos
     private String telefonos;
     
     /**
     * habilitado
     */
-    // Simple: PK?false, FK?false, class=int, o=habilitado
     private int habilitado;
     
     /**
     * nombre
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=nombre
     private String nombre;
     
     /**
     * apellido paterno
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=apellidoPaterno
     private String apellidoPaterno;
     
     /**
     * apellido materno
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=apellidoMaterno
     private String apellidoMaterno;
     
     /**
     * fecha registro
     */
-    // Simple: PK?false, FK?false, class=java.sql.Timestamp, o=fechaRegistro
     private java.sql.Timestamp fechaRegistro;
     
     /**
     * fecha ult  cambio
     */
-    // Simple: PK?false, FK?false, class=java.sql.Timestamp, o=fechaUltCambio
     private java.sql.Timestamp fechaUltCambio;
     
     /**
     * sucursal id
     */
-    // Simple: PK?false, FK?true, class=int, o=sucursalId
     private int sucursalId;
 
     /** 
@@ -202,23 +199,43 @@ public class UsuarioDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("UsuarioDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("email" ).append("=").append(email).append("|");
-		sb.append("password" ).append("=").append(password).append("|");
-		sb.append("telefonos" ).append("=").append(telefonos).append("|");
-		sb.append("habilitado" ).append("=").append(habilitado).append("|");
-		sb.append("nombre" ).append("=").append(nombre).append("|");
-		sb.append("apellidoPaterno" ).append("=").append(apellidoPaterno).append("|");
-		sb.append("apellidoMaterno" ).append("=").append(apellidoMaterno).append("|");
-		sb.append("fechaRegistro" ).append("=").append(fechaRegistro).append("|");
-		sb.append("fechaUltCambio" ).append("=").append(fechaUltCambio).append("|");
-		sb.append("sucursalId" ).append("=").append(sucursalId).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("email", this.email);
+		jsonObj.put("password", this.password);
+		jsonObj.put("telefonos", this.telefonos);
+		jsonObj.put("habilitado", this.habilitado);
+		jsonObj.put("nombre", this.nombre);
+		jsonObj.put("apellidoPaterno", this.apellidoPaterno);
+		jsonObj.put("apellidoMaterno", this.apellidoMaterno);
+		jsonObj.put("fechaRegistro", this.fechaRegistro);
+		jsonObj.put("fechaUltCambio", this.fechaUltCambio);
+		jsonObj.put("sucursalId", this.sucursalId);
+		return jsonObj.toString();
     }
+
+	public static UsuarioDTO create(String json) throws IllegalArgumentException{
+		UsuarioDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.email = (jObj.getString("email"));
+		x.password = (jObj.getString("password"));
+		x.telefonos = (jObj.getString("telefonos"));
+		x.habilitado = (jObj.getInt("habilitado"));
+		x.nombre = (jObj.getString("nombre"));
+		x.apellidoPaterno = (jObj.getString("apellidoPaterno"));
+		x.apellidoMaterno = (jObj.getString("apellidoMaterno"));
+		x.fechaRegistro = new java.sql.Timestamp(jObj.getLong("fechaRegistro"));
+		x.fechaUltCambio = new java.sql.Timestamp(jObj.getLong("fechaUltCambio"));
+		x.sucursalId = (jObj.getInt("sucursalId"));
+		
+		return x;
+	}
 
 }

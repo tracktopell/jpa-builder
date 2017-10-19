@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table MOVIMIENTO_OPERATIVO.
+ * Class for mapping Json DTO Entity of Table MOVIMIENTO_OPERATIVO.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class MovimientoOperativoDTO implements java.io.Serializable {
@@ -17,49 +25,41 @@ public class MovimientoOperativoDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * motivo
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=motivo
     private String motivo;
     
     /**
     * fecha
     */
-    // Simple: PK?false, FK?false, class=java.sql.Timestamp, o=fecha
     private java.sql.Timestamp fecha;
     
     /**
     * sucursal id origen
     */
-    // Simple: PK?false, FK?true, class=int, o=sucursalIdOrigen
     private int sucursalIdOrigen;
     
     /**
     * almacen origen
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=almacenOrigen
     private String almacenOrigen;
     
     /**
     * sucursal id destino
     */
-    // Simple: PK?false, FK?true, class=int, o=sucursalIdDestino
     private int sucursalIdDestino;
     
     /**
     * almacen destino
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=almacenDestino
     private String almacenDestino;
     
     /**
     * tipo mov
     */
-    // Simple: PK?false, FK?false, class=int, o=tipoMov
     private int tipoMov;
 
     /** 
@@ -160,20 +160,37 @@ public class MovimientoOperativoDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("MovimientoOperativoDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("motivo" ).append("=").append(motivo).append("|");
-		sb.append("fecha" ).append("=").append(fecha).append("|");
-		sb.append("sucursalIdOrigen" ).append("=").append(sucursalIdOrigen).append("|");
-		sb.append("almacenOrigen" ).append("=").append(almacenOrigen).append("|");
-		sb.append("sucursalIdDestino" ).append("=").append(sucursalIdDestino).append("|");
-		sb.append("almacenDestino" ).append("=").append(almacenDestino).append("|");
-		sb.append("tipoMov" ).append("=").append(tipoMov).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("motivo", this.motivo);
+		jsonObj.put("fecha", this.fecha);
+		jsonObj.put("sucursalIdOrigen", this.sucursalIdOrigen);
+		jsonObj.put("almacenOrigen", this.almacenOrigen);
+		jsonObj.put("sucursalIdDestino", this.sucursalIdDestino);
+		jsonObj.put("almacenDestino", this.almacenDestino);
+		jsonObj.put("tipoMov", this.tipoMov);
+		return jsonObj.toString();
     }
+
+	public static MovimientoOperativoDTO create(String json) throws IllegalArgumentException{
+		MovimientoOperativoDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.motivo = (jObj.getString("motivo"));
+		x.fecha = new java.sql.Timestamp(jObj.getLong("fecha"));
+		x.sucursalIdOrigen = (jObj.getInt("sucursalIdOrigen"));
+		x.almacenOrigen = (jObj.getString("almacenOrigen"));
+		x.sucursalIdDestino = (jObj.getInt("sucursalIdDestino"));
+		x.almacenDestino = (jObj.getString("almacenDestino"));
+		x.tipoMov = (jObj.getInt("tipoMov"));
+		
+		return x;
+	}
 
 }

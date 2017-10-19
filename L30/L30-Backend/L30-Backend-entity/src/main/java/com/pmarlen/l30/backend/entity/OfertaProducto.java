@@ -27,15 +27,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+// Hibernate Validator 5x is not compatible with validation-api 1.0.x
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Size;
 
 /**
  * Class for mapping JPA Entity of Table OFERTA_PRODUCTO.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 @Entity
@@ -59,6 +60,7 @@ public class OfertaProducto implements java.io.Serializable {
     
     @Id
     //@Basic(optional = false)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
     //@NotNull
     @Column(name = "ID" , nullable=false  )
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -94,7 +96,8 @@ public class OfertaProducto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "FECHA_INICIAL" , nullable=false)
     private java.sql.Date fechaInicial;
     
@@ -103,7 +106,8 @@ public class OfertaProducto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "FECHA_FINAL" , nullable=false)
     private java.sql.Date fechaFinal;
 

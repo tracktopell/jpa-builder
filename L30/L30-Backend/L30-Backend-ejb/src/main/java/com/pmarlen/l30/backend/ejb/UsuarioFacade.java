@@ -1,7 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.Usuario;
-import com.pmarlen.l30.backend.remote.UsuarioFacadeRemote;
+import com.pmarlen.l30.backend.local.UsuarioFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table USUARIO.
+ * SSB JPA Entity of Table USUARIO.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class UsuarioFacade extends AbstractFacade<Usuario> implements UsuarioFacadeRemote {
+public class UsuarioFacade extends AbstractFacade<Usuario> implements UsuarioFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;
@@ -55,7 +55,7 @@ public class UsuarioFacade extends AbstractFacade<Usuario> implements UsuarioFac
 			    paramAsigned++;
 			    sbq.append(" and x.telefonos = :telefonos");
 			}
-			if(x.getHabilitado() != 0){
+			if(x.getHabilitado()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.habilitado = :habilitado");
 			}
@@ -103,7 +103,7 @@ public class UsuarioFacade extends AbstractFacade<Usuario> implements UsuarioFac
 			if(x.getTelefonos() != null){
 			    nq.setParameter("telefonos",x.getTelefonos());
 			}
-			if(x.getHabilitado() != (0) ){
+			if(x.getHabilitado()  != 0){
 			    nq.setParameter("habilitado",x.getHabilitado());
 			}
 			if(x.getNombre() != null){

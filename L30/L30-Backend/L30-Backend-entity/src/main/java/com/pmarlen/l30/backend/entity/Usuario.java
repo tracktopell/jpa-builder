@@ -27,15 +27,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+// Hibernate Validator 5x is not compatible with validation-api 1.0.x
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Size;
 
 /**
  * Class for mapping JPA Entity of Table USUARIO.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 @Entity
@@ -64,6 +65,7 @@ public class Usuario implements java.io.Serializable {
     
     @Id
     //@Basic(optional = false)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
     //@NotNull
     @Column(name = "ID" , nullable=false  )
     private Integer id;
@@ -73,7 +75,7 @@ public class Usuario implements java.io.Serializable {
     */
     
     @Basic(optional = true)
-    @Size(max = 128)
+    //@Size(max = 128)
     @Column(name = "EMAIL" , length=128, nullable=true)
     private String email;
     
@@ -82,8 +84,9 @@ public class Usuario implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 128)
     @Column(name = "PASSWORD" , length=128, nullable=false)
     private String password;
     
@@ -92,7 +95,7 @@ public class Usuario implements java.io.Serializable {
     */
     
     @Basic(optional = true)
-    @Size(max = 64)
+    //@Size(max = 64)
     @Column(name = "TELEFONOS" , length=64, nullable=true)
     private String telefonos;
     
@@ -101,7 +104,8 @@ public class Usuario implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "HABILITADO" , nullable=false)
     private int habilitado;
     
@@ -110,8 +114,9 @@ public class Usuario implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 64)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 64)
     @Column(name = "NOMBRE" , length=64, nullable=false)
     private String nombre;
     
@@ -120,7 +125,7 @@ public class Usuario implements java.io.Serializable {
     */
     
     @Basic(optional = true)
-    @Size(max = 64)
+    //@Size(max = 64)
     @Column(name = "APELLIDO_PATERNO" , length=64, nullable=true)
     private String apellidoPaterno;
     
@@ -129,7 +134,7 @@ public class Usuario implements java.io.Serializable {
     */
     
     @Basic(optional = true)
-    @Size(max = 64)
+    //@Size(max = 64)
     @Column(name = "APELLIDO_MATERNO" , length=64, nullable=true)
     private String apellidoMaterno;
     
@@ -138,7 +143,8 @@ public class Usuario implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "FECHA_REGISTRO" , nullable=false)
     private java.sql.Timestamp fechaRegistro;
     

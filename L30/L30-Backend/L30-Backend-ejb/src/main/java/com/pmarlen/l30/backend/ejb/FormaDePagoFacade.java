@@ -1,7 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.FormaDePago;
-import com.pmarlen.l30.backend.remote.FormaDePagoFacadeRemote;
+import com.pmarlen.l30.backend.local.FormaDePagoFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table FORMA_DE_PAGO.
+ * SSB JPA Entity of Table FORMA_DE_PAGO.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class FormaDePagoFacade extends AbstractFacade<FormaDePago> implements FormaDePagoFacadeRemote {
+public class FormaDePagoFacade extends AbstractFacade<FormaDePago> implements FormaDePagoFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;

@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table PRODUCTO_SUCURSAL.
+ * Class for mapping Json DTO Entity of Table PRODUCTO_SUCURSAL.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class ProductoSucursalDTO implements java.io.Serializable {
@@ -22,49 +30,41 @@ public class ProductoSucursalDTO implements java.io.Serializable {
     /**
     * cantidad 1ra
     */
-    // Simple: PK?false, FK?false, class=int, o=cantidad1ra
     private int cantidad1ra;
     
     /**
     * precio 1ra
     */
-    // Simple: PK?false, FK?false, class=double, o=precio1ra
     private double precio1ra;
     
     /**
     * cantidad opo
     */
-    // Simple: PK?false, FK?false, class=int, o=cantidadOpo
     private int cantidadOpo;
     
     /**
     * precio opo
     */
-    // Simple: PK?false, FK?false, class=double, o=precioOpo
     private double precioOpo;
     
     /**
     * cantidad reg
     */
-    // Simple: PK?false, FK?false, class=int, o=cantidadReg
     private int cantidadReg;
     
     /**
     * precio reg
     */
-    // Simple: PK?false, FK?false, class=double, o=precioReg
     private double precioReg;
     
     /**
     * producto codigo barras
     */
-    // Simple: PK?true, FK?true, class=java.lang.String, o=productoCodigoBarras
     private String productoCodigoBarras;
     
     /**
     * sucursal id
     */
-    // Simple: PK?true, FK?true, class=java.lang.Integer, o=sucursalId
     private Integer sucursalId;
 
     /** 
@@ -167,20 +167,37 @@ public class ProductoSucursalDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("ProductoSucursalDTO{");
-		sb.append("cantidad1ra" ).append("=").append(cantidad1ra).append("|");
-		sb.append("precio1ra" ).append("=").append(precio1ra).append("|");
-		sb.append("cantidadOpo" ).append("=").append(cantidadOpo).append("|");
-		sb.append("precioOpo" ).append("=").append(precioOpo).append("|");
-		sb.append("cantidadReg" ).append("=").append(cantidadReg).append("|");
-		sb.append("precioReg" ).append("=").append(precioReg).append("|");
-		sb.append("productoCodigoBarras" ).append("=").append(productoCodigoBarras).append("|");
-		sb.append("sucursalId" ).append("=").append(sucursalId).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("cantidad1ra", this.cantidad1ra);
+		jsonObj.put("precio1ra", this.precio1ra);
+		jsonObj.put("cantidadOpo", this.cantidadOpo);
+		jsonObj.put("precioOpo", this.precioOpo);
+		jsonObj.put("cantidadReg", this.cantidadReg);
+		jsonObj.put("precioReg", this.precioReg);
+		jsonObj.put("productoCodigoBarras", this.productoCodigoBarras);
+		jsonObj.put("sucursalId", this.sucursalId);
+		return jsonObj.toString();
     }
+
+	public static ProductoSucursalDTO create(String json) throws IllegalArgumentException{
+		ProductoSucursalDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.cantidad1ra = (jObj.getInt("cantidad1ra"));
+		x.precio1ra = (jObj.getDouble("precio1ra"));
+		x.cantidadOpo = (jObj.getInt("cantidadOpo"));
+		x.precioOpo = (jObj.getDouble("precioOpo"));
+		x.cantidadReg = (jObj.getInt("cantidadReg"));
+		x.precioReg = (jObj.getDouble("precioReg"));
+		x.productoCodigoBarras = (jObj.getString("productoCodigoBarras"));
+		x.sucursalId = (jObj.getInt("sucursalId"));
+		
+		return x;
+	}
 
 }

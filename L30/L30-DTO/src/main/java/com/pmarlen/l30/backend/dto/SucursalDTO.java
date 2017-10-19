@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table SUCURSAL.
+ * Class for mapping Json DTO Entity of Table SUCURSAL.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class SucursalDTO implements java.io.Serializable {
@@ -17,55 +25,46 @@ public class SucursalDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * tipo
     */
-    // Simple: PK?false, FK?false, class=int, o=tipo
     private int tipo;
     
     /**
     * clave
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=clave
     private String clave;
     
     /**
     * nombre
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=nombre
     private String nombre;
     
     /**
     * direccion
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=direccion
     private String direccion;
     
     /**
     * telefonos
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=telefonos
     private String telefonos;
     
     /**
     * descuento myoreo habilitado
     */
-    // Simple: PK?false, FK?false, class=int, o=descuentoMyoreoHabilitado
     private int descuentoMyoreoHabilitado;
     
     /**
     * venta reg habilitado
     */
-    // Simple: PK?false, FK?false, class=int, o=ventaRegHabilitado
     private int ventaRegHabilitado;
     
     /**
     * venta opo
     */
-    // Simple: PK?false, FK?false, class=int, o=ventaOpo
     private int ventaOpo;
 
     /** 
@@ -174,21 +173,39 @@ public class SucursalDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("SucursalDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("tipo" ).append("=").append(tipo).append("|");
-		sb.append("clave" ).append("=").append(clave).append("|");
-		sb.append("nombre" ).append("=").append(nombre).append("|");
-		sb.append("direccion" ).append("=").append(direccion).append("|");
-		sb.append("telefonos" ).append("=").append(telefonos).append("|");
-		sb.append("descuentoMyoreoHabilitado" ).append("=").append(descuentoMyoreoHabilitado).append("|");
-		sb.append("ventaRegHabilitado" ).append("=").append(ventaRegHabilitado).append("|");
-		sb.append("ventaOpo" ).append("=").append(ventaOpo).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("tipo", this.tipo);
+		jsonObj.put("clave", this.clave);
+		jsonObj.put("nombre", this.nombre);
+		jsonObj.put("direccion", this.direccion);
+		jsonObj.put("telefonos", this.telefonos);
+		jsonObj.put("descuentoMyoreoHabilitado", this.descuentoMyoreoHabilitado);
+		jsonObj.put("ventaRegHabilitado", this.ventaRegHabilitado);
+		jsonObj.put("ventaOpo", this.ventaOpo);
+		return jsonObj.toString();
     }
+
+	public static SucursalDTO create(String json) throws IllegalArgumentException{
+		SucursalDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.tipo = (jObj.getInt("tipo"));
+		x.clave = (jObj.getString("clave"));
+		x.nombre = (jObj.getString("nombre"));
+		x.direccion = (jObj.getString("direccion"));
+		x.telefonos = (jObj.getString("telefonos"));
+		x.descuentoMyoreoHabilitado = (jObj.getInt("descuentoMyoreoHabilitado"));
+		x.ventaRegHabilitado = (jObj.getInt("ventaRegHabilitado"));
+		x.ventaOpo = (jObj.getInt("ventaOpo"));
+		
+		return x;
+	}
 
 }

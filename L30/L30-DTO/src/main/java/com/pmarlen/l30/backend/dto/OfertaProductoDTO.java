@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table OFERTA_PRODUCTO.
+ * Class for mapping Json DTO Entity of Table OFERTA_PRODUCTO.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class OfertaProductoDTO implements java.io.Serializable {
@@ -17,37 +25,31 @@ public class OfertaProductoDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * producto codigo barras
     */
-    // Simple: PK?false, FK?true, class=java.lang.String, o=productoCodigoBarras
     private String productoCodigoBarras;
     
     /**
     * sucursal id
     */
-    // Simple: PK?false, FK?true, class=int, o=sucursalId
     private int sucursalId;
     
     /**
     * promocion id
     */
-    // Simple: PK?false, FK?true, class=int, o=promocionId
     private int promocionId;
     
     /**
     * fecha inicial
     */
-    // Simple: PK?false, FK?false, class=java.sql.Date, o=fechaInicial
     private java.sql.Date fechaInicial;
     
     /**
     * fecha final
     */
-    // Simple: PK?false, FK?false, class=java.sql.Date, o=fechaFinal
     private java.sql.Date fechaFinal;
 
     /** 
@@ -132,18 +134,33 @@ public class OfertaProductoDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("OfertaProductoDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("productoCodigoBarras" ).append("=").append(productoCodigoBarras).append("|");
-		sb.append("sucursalId" ).append("=").append(sucursalId).append("|");
-		sb.append("promocionId" ).append("=").append(promocionId).append("|");
-		sb.append("fechaInicial" ).append("=").append(fechaInicial).append("|");
-		sb.append("fechaFinal" ).append("=").append(fechaFinal).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("productoCodigoBarras", this.productoCodigoBarras);
+		jsonObj.put("sucursalId", this.sucursalId);
+		jsonObj.put("promocionId", this.promocionId);
+		jsonObj.put("fechaInicial", this.fechaInicial);
+		jsonObj.put("fechaFinal", this.fechaFinal);
+		return jsonObj.toString();
     }
+
+	public static OfertaProductoDTO create(String json) throws IllegalArgumentException{
+		OfertaProductoDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.productoCodigoBarras = (jObj.getString("productoCodigoBarras"));
+		x.sucursalId = (jObj.getInt("sucursalId"));
+		x.promocionId = (jObj.getInt("promocionId"));
+		x.fechaInicial = new java.sql.Date(jObj.getLong("fechaInicial"));
+		x.fechaFinal = new java.sql.Date(jObj.getLong("fechaFinal"));
+		
+		return x;
+	}
 
 }

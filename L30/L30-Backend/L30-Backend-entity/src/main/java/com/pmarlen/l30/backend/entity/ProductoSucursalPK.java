@@ -15,8 +15,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+// Hibernate Validator 5x is not compatible with validation-api 1.0.x
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Size;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -24,8 +26,8 @@ import javax.xml.bind.annotation.XmlTransient;
  * Class for mapping JPA Embedable PK of Table PRODUCTO_SUCURSAL_P_K.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 @Embeddable
@@ -35,13 +37,15 @@ public class ProductoSucursalPK implements java.io.Serializable {
     private static final long serialVersionUID = 1880587981;
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 128)
     @Column(name = "PRODUCTO_CODIGO_BARRAS", nullable= false)
     private String productoCodigoBarras;
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "SUCURSAL_ID", nullable= false)
     private Integer sucursalId;
 

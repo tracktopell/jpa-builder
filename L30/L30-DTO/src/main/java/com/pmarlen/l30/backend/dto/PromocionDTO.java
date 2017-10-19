@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table PROMOCION.
+ * Class for mapping Json DTO Entity of Table PROMOCION.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class PromocionDTO implements java.io.Serializable {
@@ -17,19 +25,16 @@ public class PromocionDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * nombre
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=nombre
     private String nombre;
     
     /**
     * regla aritmetica
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=reglaAritmetica
     private String reglaAritmetica;
 
     /** 
@@ -90,15 +95,27 @@ public class PromocionDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("PromocionDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("nombre" ).append("=").append(nombre).append("|");
-		sb.append("reglaAritmetica" ).append("=").append(reglaAritmetica).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("nombre", this.nombre);
+		jsonObj.put("reglaAritmetica", this.reglaAritmetica);
+		return jsonObj.toString();
     }
+
+	public static PromocionDTO create(String json) throws IllegalArgumentException{
+		PromocionDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.nombre = (jObj.getString("nombre"));
+		x.reglaAritmetica = (jObj.getString("reglaAritmetica"));
+		
+		return x;
+	}
 
 }

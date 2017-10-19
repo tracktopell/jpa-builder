@@ -1,7 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.ProductoSucursal;
-import com.pmarlen.l30.backend.remote.ProductoSucursalFacadeRemote;
+import com.pmarlen.l30.backend.local.ProductoSucursalFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table PRODUCTO_SUCURSAL.
+ * SSB JPA Entity of Table PRODUCTO_SUCURSAL.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class ProductoSucursalFacade extends AbstractFacade<ProductoSucursal> implements ProductoSucursalFacadeRemote {
+public class ProductoSucursalFacade extends AbstractFacade<ProductoSucursal> implements ProductoSucursalFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;
@@ -43,27 +43,27 @@ public class ProductoSucursalFacade extends AbstractFacade<ProductoSucursal> imp
 			    paramAsigned++;
 			    sbq.append(" and x.productoSucursalPK = :productoSucursalPK");
 			}
-			if(x.getCantidad1ra() != 0){
+			if(x.getCantidad1ra()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.cantidad1ra = :cantidad1ra");
 			}
-			if(x.getPrecio1ra() != 0){
+			if(x.getPrecio1ra()  != 0.0){
 			    paramAsigned++;
 			    sbq.append(" and x.precio1ra = :precio1ra");
 			}
-			if(x.getCantidadOpo() != 0){
+			if(x.getCantidadOpo()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.cantidadOpo = :cantidadOpo");
 			}
-			if(x.getPrecioOpo() != 0){
+			if(x.getPrecioOpo()  != 0.0){
 			    paramAsigned++;
 			    sbq.append(" and x.precioOpo = :precioOpo");
 			}
-			if(x.getCantidadReg() != 0){
+			if(x.getCantidadReg()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.cantidadReg = :cantidadReg");
 			}
-			if(x.getPrecioReg() != 0){
+			if(x.getPrecioReg()  != 0.0){
 			    paramAsigned++;
 			    sbq.append(" and x.precioReg = :precioReg");
 			}
@@ -86,22 +86,22 @@ public class ProductoSucursalFacade extends AbstractFacade<ProductoSucursal> imp
 			if(x.getProductoSucursalPK() != null){
 			    nq.setParameter("productoSucursalPK",x.getProductoSucursalPK());
 			}
-			if(x.getCantidad1ra() != (0) ){
+			if(x.getCantidad1ra()  != 0){
 			    nq.setParameter("cantidad1ra",x.getCantidad1ra());
 			}
-			if(x.getPrecio1ra() != (0) ){
+			if(x.getPrecio1ra()  != 0.0){
 			    nq.setParameter("precio1ra",x.getPrecio1ra());
 			}
-			if(x.getCantidadOpo() != (0) ){
+			if(x.getCantidadOpo()  != 0){
 			    nq.setParameter("cantidadOpo",x.getCantidadOpo());
 			}
-			if(x.getPrecioOpo() != (0) ){
+			if(x.getPrecioOpo()  != 0.0){
 			    nq.setParameter("precioOpo",x.getPrecioOpo());
 			}
-			if(x.getCantidadReg() != (0) ){
+			if(x.getCantidadReg()  != 0){
 			    nq.setParameter("cantidadReg",x.getCantidadReg());
 			}
-			if(x.getPrecioReg() != (0) ){
+			if(x.getPrecioReg()  != 0.0){
 			    nq.setParameter("precioReg",x.getPrecioReg());
 			}
 			if(x.getProductoproducto() != null){

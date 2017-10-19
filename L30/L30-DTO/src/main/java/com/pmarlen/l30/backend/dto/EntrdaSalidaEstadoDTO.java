@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table ENTRDA_SALIDA_ESTADO.
+ * Class for mapping Json DTO Entity of Table ENTRDA_SALIDA_ESTADO.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class EntrdaSalidaEstadoDTO implements java.io.Serializable {
@@ -17,37 +25,31 @@ public class EntrdaSalidaEstadoDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * entrada salida id
     */
-    // Simple: PK?false, FK?true, class=int, o=entradaSalidaId
     private int entradaSalidaId;
     
     /**
     * fecha
     */
-    // Simple: PK?false, FK?false, class=java.lang.Integer, o=fecha
     private Integer fecha;
     
     /**
     * comentarios
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=comentarios
     private String comentarios;
     
     /**
     * estado id
     */
-    // Simple: PK?false, FK?true, class=int, o=estadoId
     private int estadoId;
     
     /**
     * usuario id
     */
-    // Simple: PK?false, FK?true, class=int, o=usuarioId
     private int usuarioId;
 
     /** 
@@ -132,18 +134,33 @@ public class EntrdaSalidaEstadoDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("EntrdaSalidaEstadoDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("entradaSalidaId" ).append("=").append(entradaSalidaId).append("|");
-		sb.append("fecha" ).append("=").append(fecha).append("|");
-		sb.append("comentarios" ).append("=").append(comentarios).append("|");
-		sb.append("estadoId" ).append("=").append(estadoId).append("|");
-		sb.append("usuarioId" ).append("=").append(usuarioId).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("entradaSalidaId", this.entradaSalidaId);
+		jsonObj.put("fecha", this.fecha);
+		jsonObj.put("comentarios", this.comentarios);
+		jsonObj.put("estadoId", this.estadoId);
+		jsonObj.put("usuarioId", this.usuarioId);
+		return jsonObj.toString();
     }
+
+	public static EntrdaSalidaEstadoDTO create(String json) throws IllegalArgumentException{
+		EntrdaSalidaEstadoDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.entradaSalidaId = (jObj.getInt("entradaSalidaId"));
+		x.fecha = (jObj.getInt("fecha"));
+		x.comentarios = (jObj.getString("comentarios"));
+		x.estadoId = (jObj.getInt("estadoId"));
+		x.usuarioId = (jObj.getInt("usuarioId"));
+		
+		return x;
+	}
 
 }

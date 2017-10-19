@@ -1,7 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.Sucursal;
-import com.pmarlen.l30.backend.remote.SucursalFacadeRemote;
+import com.pmarlen.l30.backend.local.SucursalFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table SUCURSAL.
+ * SSB JPA Entity of Table SUCURSAL.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class SucursalFacade extends AbstractFacade<Sucursal> implements SucursalFacadeRemote {
+public class SucursalFacade extends AbstractFacade<Sucursal> implements SucursalFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;
@@ -43,7 +43,7 @@ public class SucursalFacade extends AbstractFacade<Sucursal> implements Sucursal
 			    paramAsigned++;
 			    sbq.append(" and x.id = :id");
 			}
-			if(x.getTipo() != 0){
+			if(x.getTipo()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.tipo = :tipo");
 			}
@@ -63,15 +63,15 @@ public class SucursalFacade extends AbstractFacade<Sucursal> implements Sucursal
 			    paramAsigned++;
 			    sbq.append(" and x.telefonos = :telefonos");
 			}
-			if(x.getDescuentoMyoreoHabilitado() != 0){
+			if(x.getDescuentoMyoreoHabilitado()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.descuentoMyoreoHabilitado = :descuentoMyoreoHabilitado");
 			}
-			if(x.getVentaRegHabilitado() != 0){
+			if(x.getVentaRegHabilitado()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.ventaRegHabilitado = :ventaRegHabilitado");
 			}
-			if(x.getVentaOpo() != 0){
+			if(x.getVentaOpo()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.ventaOpo = :ventaOpo");
 			}
@@ -86,7 +86,7 @@ public class SucursalFacade extends AbstractFacade<Sucursal> implements Sucursal
 			if(x.getId() != null){
 			    nq.setParameter("id",x.getId());
 			}
-			if(x.getTipo() != (0) ){
+			if(x.getTipo()  != 0){
 			    nq.setParameter("tipo",x.getTipo());
 			}
 			if(x.getClave() != null){
@@ -101,13 +101,13 @@ public class SucursalFacade extends AbstractFacade<Sucursal> implements Sucursal
 			if(x.getTelefonos() != null){
 			    nq.setParameter("telefonos",x.getTelefonos());
 			}
-			if(x.getDescuentoMyoreoHabilitado() != (0) ){
+			if(x.getDescuentoMyoreoHabilitado()  != 0){
 			    nq.setParameter("descuentoMyoreoHabilitado",x.getDescuentoMyoreoHabilitado());
 			}
-			if(x.getVentaRegHabilitado() != (0) ){
+			if(x.getVentaRegHabilitado()  != 0){
 			    nq.setParameter("ventaRegHabilitado",x.getVentaRegHabilitado());
 			}
-			if(x.getVentaOpo() != (0) ){
+			if(x.getVentaOpo()  != 0){
 			    nq.setParameter("ventaOpo",x.getVentaOpo());
 			}
 			

@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table CLIENTE.
+ * Class for mapping Json DTO Entity of Table CLIENTE.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class ClienteDTO implements java.io.Serializable {
@@ -17,79 +25,66 @@ public class ClienteDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * rfc
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=rfc
     private String rfc;
     
     /**
     * razon social
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=razonSocial
     private String razonSocial;
     
     /**
     * nombre establecimiento
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=nombreEstablecimiento
     private String nombreEstablecimiento;
     
     /**
     * direccion facturacion
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=direccionFacturacion
     private String direccionFacturacion;
     
     /**
     * telefonos
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=telefonos
     private String telefonos;
     
     /**
     * banco
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=banco
     private String banco;
     
     /**
     * num cuenta
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=numCuenta
     private String numCuenta;
     
     /**
     * email
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=email
     private String email;
     
     /**
     * referencia
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=referencia
     private String referencia;
     
     /**
     * contacto
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=contacto
     private String contacto;
     
     /**
     * ubicacion lat
     */
-    // Simple: PK?false, FK?false, class=java.lang.Double, o=ubicacionLat
     private Double ubicacionLat;
     
     /**
     * ubicacion lon
     */
-    // Simple: PK?false, FK?false, class=java.lang.Double, o=ubicacionLon
     private Double ubicacionLon;
 
     /** 
@@ -230,25 +225,47 @@ public class ClienteDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("ClienteDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("rfc" ).append("=").append(rfc).append("|");
-		sb.append("razonSocial" ).append("=").append(razonSocial).append("|");
-		sb.append("nombreEstablecimiento" ).append("=").append(nombreEstablecimiento).append("|");
-		sb.append("direccionFacturacion" ).append("=").append(direccionFacturacion).append("|");
-		sb.append("telefonos" ).append("=").append(telefonos).append("|");
-		sb.append("banco" ).append("=").append(banco).append("|");
-		sb.append("numCuenta" ).append("=").append(numCuenta).append("|");
-		sb.append("email" ).append("=").append(email).append("|");
-		sb.append("referencia" ).append("=").append(referencia).append("|");
-		sb.append("contacto" ).append("=").append(contacto).append("|");
-		sb.append("ubicacionLat" ).append("=").append(ubicacionLat).append("|");
-		sb.append("ubicacionLon" ).append("=").append(ubicacionLon).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("rfc", this.rfc);
+		jsonObj.put("razonSocial", this.razonSocial);
+		jsonObj.put("nombreEstablecimiento", this.nombreEstablecimiento);
+		jsonObj.put("direccionFacturacion", this.direccionFacturacion);
+		jsonObj.put("telefonos", this.telefonos);
+		jsonObj.put("banco", this.banco);
+		jsonObj.put("numCuenta", this.numCuenta);
+		jsonObj.put("email", this.email);
+		jsonObj.put("referencia", this.referencia);
+		jsonObj.put("contacto", this.contacto);
+		jsonObj.put("ubicacionLat", this.ubicacionLat);
+		jsonObj.put("ubicacionLon", this.ubicacionLon);
+		return jsonObj.toString();
     }
+
+	public static ClienteDTO create(String json) throws IllegalArgumentException{
+		ClienteDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.rfc = (jObj.getString("rfc"));
+		x.razonSocial = (jObj.getString("razonSocial"));
+		x.nombreEstablecimiento = (jObj.getString("nombreEstablecimiento"));
+		x.direccionFacturacion = (jObj.getString("direccionFacturacion"));
+		x.telefonos = (jObj.getString("telefonos"));
+		x.banco = (jObj.getString("banco"));
+		x.numCuenta = (jObj.getString("numCuenta"));
+		x.email = (jObj.getString("email"));
+		x.referencia = (jObj.getString("referencia"));
+		x.contacto = (jObj.getString("contacto"));
+		x.ubicacionLat = (jObj.getDouble("ubicacionLat"));
+		x.ubicacionLon = (jObj.getDouble("ubicacionLon"));
+		
+		return x;
+	}
 
 }

@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table CFD.
+ * Class for mapping Json DTO Entity of Table CFD.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class CfdDTO implements java.io.Serializable {
@@ -17,43 +25,36 @@ public class CfdDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * cfd id origen
     */
-    // Simple: PK?false, FK?true, class=java.lang.Integer, o=cfdIdOrigen
     private Integer cfdIdOrigen;
     
     /**
     * entrada salida id
     */
-    // Simple: PK?false, FK?true, class=int, o=entradaSalidaId
     private int entradaSalidaId;
     
     /**
     * tipo
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=tipo
     private String tipo;
     
     /**
     * num cfd
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=numCfd
     private String numCfd;
     
     /**
     * ultimo error
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=ultimoError
     private String ultimoError;
     
     /**
     * contenido original
     */
-    // Simple: PK?false, FK?false, class=byte[], o=contenidoOriginal
     private byte[] contenidoOriginal;
 
     /** 
@@ -146,19 +147,35 @@ public class CfdDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("CfdDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("cfdIdOrigen" ).append("=").append(cfdIdOrigen).append("|");
-		sb.append("entradaSalidaId" ).append("=").append(entradaSalidaId).append("|");
-		sb.append("tipo" ).append("=").append(tipo).append("|");
-		sb.append("numCfd" ).append("=").append(numCfd).append("|");
-		sb.append("ultimoError" ).append("=").append(ultimoError).append("|");
-		sb.append("contenidoOriginal" ).append("=").append(contenidoOriginal).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("cfdIdOrigen", this.cfdIdOrigen);
+		jsonObj.put("entradaSalidaId", this.entradaSalidaId);
+		jsonObj.put("tipo", this.tipo);
+		jsonObj.put("numCfd", this.numCfd);
+		jsonObj.put("ultimoError", this.ultimoError);
+		jsonObj.put("contenidoOriginal", this.contenidoOriginal);
+		return jsonObj.toString();
     }
+
+	public static CfdDTO create(String json) throws IllegalArgumentException{
+		CfdDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.cfdIdOrigen = (jObj.getInt("cfdIdOrigen"));
+		x.entradaSalidaId = (jObj.getInt("entradaSalidaId"));
+		x.tipo = (jObj.getString("tipo"));
+		x.numCfd = (jObj.getString("numCfd"));
+		x.ultimoError = (jObj.getString("ultimoError"));
+		x.contenidoOriginal = (jObj.getbyte[]("contenidoOriginal"));
+		
+		return x;
+	}
 
 }

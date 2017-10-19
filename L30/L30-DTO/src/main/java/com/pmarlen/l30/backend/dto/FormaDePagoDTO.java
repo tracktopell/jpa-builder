@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table FORMA_DE_PAGO.
+ * Class for mapping Json DTO Entity of Table FORMA_DE_PAGO.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class FormaDePagoDTO implements java.io.Serializable {
@@ -17,13 +25,11 @@ public class FormaDePagoDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * descripcion
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=descripcion
     private String descripcion;
 
     /** 
@@ -76,14 +82,25 @@ public class FormaDePagoDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("FormaDePagoDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("descripcion" ).append("=").append(descripcion).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("descripcion", this.descripcion);
+		return jsonObj.toString();
     }
+
+	public static FormaDePagoDTO create(String json) throws IllegalArgumentException{
+		FormaDePagoDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.descripcion = (jObj.getString("descripcion"));
+		
+		return x;
+	}
 
 }

@@ -1,7 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.CorteCaja;
-import com.pmarlen.l30.backend.remote.CorteCajaFacadeRemote;
+import com.pmarlen.l30.backend.local.CorteCajaFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table CORTE_CAJA.
+ * SSB JPA Entity of Table CORTE_CAJA.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class CorteCajaFacade extends AbstractFacade<CorteCaja> implements CorteCajaFacadeRemote {
+public class CorteCajaFacade extends AbstractFacade<CorteCaja> implements CorteCajaFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;
@@ -47,7 +47,7 @@ public class CorteCajaFacade extends AbstractFacade<CorteCaja> implements CorteC
 			    paramAsigned++;
 			    sbq.append(" and x.sucursalsucursal = :sucursalsucursal");
 			}
-			if(x.getTipoEvento() != 0){
+			if(x.getTipoEvento()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.tipoEvento = :tipoEvento");
 			}
@@ -79,7 +79,7 @@ public class CorteCajaFacade extends AbstractFacade<CorteCaja> implements CorteC
 			    paramAsigned++;
 			    sbq.append(" and x.comentarios = :comentarios");
 			}
-			if(x.getCaja() != 0){
+			if(x.getCaja()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.caja = :caja");
 			}
@@ -97,7 +97,7 @@ public class CorteCajaFacade extends AbstractFacade<CorteCaja> implements CorteC
 			if(x.getSucursalsucursal() != null){
 			    nq.setParameter("sucursalsucursal",x.getSucursalsucursal());
 			}
-			if(x.getTipoEvento() != (0) ){
+			if(x.getTipoEvento()  != 0){
 			    nq.setParameter("tipoEvento",x.getTipoEvento());
 			}
 			if(x.getUsuariousuario() != null){
@@ -121,7 +121,7 @@ public class CorteCajaFacade extends AbstractFacade<CorteCaja> implements CorteC
 			if(x.getComentarios() != null){
 			    nq.setParameter("comentarios",x.getComentarios());
 			}
-			if(x.getCaja() != (0) ){
+			if(x.getCaja()  != 0){
 			    nq.setParameter("caja",x.getCaja());
 			}
 			

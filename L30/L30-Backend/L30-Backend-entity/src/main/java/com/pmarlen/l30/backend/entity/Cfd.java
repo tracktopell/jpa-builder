@@ -27,15 +27,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+// Hibernate Validator 5x is not compatible with validation-api 1.0.x
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Size;
 
 /**
  * Class for mapping JPA Entity of Table CFD.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 @Entity
@@ -60,6 +61,7 @@ public class Cfd implements java.io.Serializable {
     
     @Id
     //@Basic(optional = false)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
     //@NotNull
     @Column(name = "ID" , nullable=false  )
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -87,8 +89,9 @@ public class Cfd implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 8)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 8)
     @Column(name = "TIPO" , length=8, nullable=false)
     private String tipo;
     
@@ -97,8 +100,9 @@ public class Cfd implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 128)
     @Column(name = "NUM_CFD" , length=128, nullable=false)
     private String numCfd;
     
@@ -107,7 +111,7 @@ public class Cfd implements java.io.Serializable {
     */
     
     @Basic(optional = true)
-    @Size(max = 1024)
+    //@Size(max = 1024)
     @Column(name = "ULTIMO_ERROR" , length=1024, nullable=true)
     private String ultimoError;
     

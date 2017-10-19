@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table CONFIGURACION_PROOVEDOR_CFD.
+ * Class for mapping Json DTO Entity of Table CONFIGURACION_PROOVEDOR_CFD.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class ConfiguracionProovedorCfdDTO implements java.io.Serializable {
@@ -17,43 +25,36 @@ public class ConfiguracionProovedorCfdDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * sucursal id
     */
-    // Simple: PK?false, FK?true, class=int, o=sucursalId
     private int sucursalId;
     
     /**
     * prioridad
     */
-    // Simple: PK?false, FK?false, class=int, o=prioridad
     private int prioridad;
     
     /**
     * proveedor cfd
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=proveedorCfd
     private String proveedorCfd;
     
     /**
     * usuario cfd
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=usuarioCfd
     private String usuarioCfd;
     
     /**
     * password cfd
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=passwordCfd
     private String passwordCfd;
     
     /**
     * serie cfd
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=serieCfd
     private String serieCfd;
 
     /** 
@@ -146,19 +147,35 @@ public class ConfiguracionProovedorCfdDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("ConfiguracionProovedorCfdDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("sucursalId" ).append("=").append(sucursalId).append("|");
-		sb.append("prioridad" ).append("=").append(prioridad).append("|");
-		sb.append("proveedorCfd" ).append("=").append(proveedorCfd).append("|");
-		sb.append("usuarioCfd" ).append("=").append(usuarioCfd).append("|");
-		sb.append("passwordCfd" ).append("=").append(passwordCfd).append("|");
-		sb.append("serieCfd" ).append("=").append(serieCfd).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("sucursalId", this.sucursalId);
+		jsonObj.put("prioridad", this.prioridad);
+		jsonObj.put("proveedorCfd", this.proveedorCfd);
+		jsonObj.put("usuarioCfd", this.usuarioCfd);
+		jsonObj.put("passwordCfd", this.passwordCfd);
+		jsonObj.put("serieCfd", this.serieCfd);
+		return jsonObj.toString();
     }
+
+	public static ConfiguracionProovedorCfdDTO create(String json) throws IllegalArgumentException{
+		ConfiguracionProovedorCfdDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.sucursalId = (jObj.getInt("sucursalId"));
+		x.prioridad = (jObj.getInt("prioridad"));
+		x.proveedorCfd = (jObj.getString("proveedorCfd"));
+		x.usuarioCfd = (jObj.getString("usuarioCfd"));
+		x.passwordCfd = (jObj.getString("passwordCfd"));
+		x.serieCfd = (jObj.getString("serieCfd"));
+		
+		return x;
+	}
 
 }

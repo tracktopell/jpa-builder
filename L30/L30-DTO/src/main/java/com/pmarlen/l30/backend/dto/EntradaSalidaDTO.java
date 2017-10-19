@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table ENTRADA_SALIDA.
+ * Class for mapping Json DTO Entity of Table ENTRADA_SALIDA.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class EntradaSalidaDTO implements java.io.Serializable {
@@ -17,55 +25,46 @@ public class EntradaSalidaDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * tipo mov
     */
-    // Simple: PK?false, FK?false, class=int, o=tipoMov
     private int tipoMov;
     
     /**
     * fecha creo
     */
-    // Simple: PK?false, FK?false, class=java.sql.Timestamp, o=fechaCreo
     private java.sql.Timestamp fechaCreo;
     
     /**
     * estado id actual
     */
-    // Simple: PK?false, FK?true, class=int, o=estadoIdActual
     private int estadoIdActual;
     
     /**
     * cliente id
     */
-    // Simple: PK?false, FK?true, class=int, o=clienteId
     private int clienteId;
     
     /**
     * forma de pago id
     */
-    // Simple: PK?false, FK?true, class=int, o=formaDePagoId
     private int formaDePagoId;
     
     /**
     * metodo de pago id
     */
-    // Simple: PK?false, FK?true, class=int, o=metodoDePagoId
     private int metodoDePagoId;
     
     /**
     * usuario id creo
     */
-    // Simple: PK?false, FK?true, class=int, o=usuarioIdCreo
     private int usuarioIdCreo;
     
     /**
     * usuarioid
     */
-    // Simple: PK?false, FK?true, class=int, o=usuarioid
     private int usuarioid;
 
     /** 
@@ -174,21 +173,39 @@ public class EntradaSalidaDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("EntradaSalidaDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("tipoMov" ).append("=").append(tipoMov).append("|");
-		sb.append("fechaCreo" ).append("=").append(fechaCreo).append("|");
-		sb.append("estadoIdActual" ).append("=").append(estadoIdActual).append("|");
-		sb.append("clienteId" ).append("=").append(clienteId).append("|");
-		sb.append("formaDePagoId" ).append("=").append(formaDePagoId).append("|");
-		sb.append("metodoDePagoId" ).append("=").append(metodoDePagoId).append("|");
-		sb.append("usuarioIdCreo" ).append("=").append(usuarioIdCreo).append("|");
-		sb.append("usuarioid" ).append("=").append(usuarioid).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("tipoMov", this.tipoMov);
+		jsonObj.put("fechaCreo", this.fechaCreo);
+		jsonObj.put("estadoIdActual", this.estadoIdActual);
+		jsonObj.put("clienteId", this.clienteId);
+		jsonObj.put("formaDePagoId", this.formaDePagoId);
+		jsonObj.put("metodoDePagoId", this.metodoDePagoId);
+		jsonObj.put("usuarioIdCreo", this.usuarioIdCreo);
+		jsonObj.put("usuarioid", this.usuarioid);
+		return jsonObj.toString();
     }
+
+	public static EntradaSalidaDTO create(String json) throws IllegalArgumentException{
+		EntradaSalidaDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.tipoMov = (jObj.getInt("tipoMov"));
+		x.fechaCreo = new java.sql.Timestamp(jObj.getLong("fechaCreo"));
+		x.estadoIdActual = (jObj.getInt("estadoIdActual"));
+		x.clienteId = (jObj.getInt("clienteId"));
+		x.formaDePagoId = (jObj.getInt("formaDePagoId"));
+		x.metodoDePagoId = (jObj.getInt("metodoDePagoId"));
+		x.usuarioIdCreo = (jObj.getInt("usuarioIdCreo"));
+		x.usuarioid = (jObj.getInt("usuarioid"));
+		
+		return x;
+	}
 
 }

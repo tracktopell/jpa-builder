@@ -1,7 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.ProductoSucursalPK;
-import com.pmarlen.l30.backend.remote.ProductoSucursalPKFacadeRemote;
+import com.pmarlen.l30.backend.local.ProductoSucursalPKFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table PRODUCTO_SUCURSAL_P_K.
+ * SSB JPA Entity of Table PRODUCTO_SUCURSAL_P_K.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class ProductoSucursalPKFacade extends AbstractFacade<ProductoSucursalPK> implements ProductoSucursalPKFacadeRemote {
+public class ProductoSucursalPKFacade extends AbstractFacade<ProductoSucursalPK> implements ProductoSucursalPKFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;

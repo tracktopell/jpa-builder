@@ -1,8 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
-import com.pmarlen.l30.backend.dto.EstadoDTO;
 import com.pmarlen.l30.backend.entity.Estado;
-import com.pmarlen.l30.backend.remote.EstadoFacadeRemote;
+import com.pmarlen.l30.backend.local.EstadoFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -11,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table ESTADO.
+ * SSB JPA Entity of Table ESTADO.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class EstadoFacade extends AbstractFacade<Estado> implements EstadoFacadeRemote {
+public class EstadoFacade extends AbstractFacade<Estado> implements EstadoFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;

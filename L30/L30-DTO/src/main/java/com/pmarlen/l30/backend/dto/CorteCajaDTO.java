@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table CORTE_CAJA.
+ * Class for mapping Json DTO Entity of Table CORTE_CAJA.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class CorteCajaDTO implements java.io.Serializable {
@@ -17,67 +25,56 @@ public class CorteCajaDTO implements java.io.Serializable {
     /**
     * id
     */
-    // Simple: PK?true, FK?false, class=java.lang.Integer, o=id
     private Integer id;
     
     /**
     * sucursal id
     */
-    // Simple: PK?false, FK?true, class=int, o=sucursalId
     private int sucursalId;
     
     /**
     * tipo evento
     */
-    // Simple: PK?false, FK?false, class=int, o=tipoEvento
     private int tipoEvento;
     
     /**
     * usuario id
     */
-    // Simple: PK?false, FK?true, class=int, o=usuarioId
     private int usuarioId;
     
     /**
     * fecha
     */
-    // Simple: PK?false, FK?false, class=java.sql.Timestamp, o=fecha
     private java.sql.Timestamp fecha;
     
     /**
     * fecha uap
     */
-    // Simple: PK?false, FK?false, class=java.sql.Timestamp, o=fechaUap
     private java.sql.Timestamp fechaUap;
     
     /**
     * saldo inicial
     */
-    // Simple: PK?false, FK?false, class=java.lang.Double, o=saldoInicial
     private Double saldoInicial;
     
     /**
     * saldo final
     */
-    // Simple: PK?false, FK?false, class=java.lang.Double, o=saldoFinal
     private Double saldoFinal;
     
     /**
     * usuario id autorizo
     */
-    // Simple: PK?false, FK?true, class=int, o=usuarioIdAutorizo
     private int usuarioIdAutorizo;
     
     /**
     * comentarios
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=comentarios
     private String comentarios;
     
     /**
     * caja
     */
-    // Simple: PK?false, FK?false, class=int, o=caja
     private int caja;
 
     /** 
@@ -202,23 +199,43 @@ public class CorteCajaDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("CorteCajaDTO{");
-		sb.append("id" ).append("=").append(id).append("|");
-		sb.append("sucursalId" ).append("=").append(sucursalId).append("|");
-		sb.append("tipoEvento" ).append("=").append(tipoEvento).append("|");
-		sb.append("usuarioId" ).append("=").append(usuarioId).append("|");
-		sb.append("fecha" ).append("=").append(fecha).append("|");
-		sb.append("fechaUap" ).append("=").append(fechaUap).append("|");
-		sb.append("saldoInicial" ).append("=").append(saldoInicial).append("|");
-		sb.append("saldoFinal" ).append("=").append(saldoFinal).append("|");
-		sb.append("usuarioIdAutorizo" ).append("=").append(usuarioIdAutorizo).append("|");
-		sb.append("comentarios" ).append("=").append(comentarios).append("|");
-		sb.append("caja" ).append("=").append(caja).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", this.id);
+		jsonObj.put("sucursalId", this.sucursalId);
+		jsonObj.put("tipoEvento", this.tipoEvento);
+		jsonObj.put("usuarioId", this.usuarioId);
+		jsonObj.put("fecha", this.fecha);
+		jsonObj.put("fechaUap", this.fechaUap);
+		jsonObj.put("saldoInicial", this.saldoInicial);
+		jsonObj.put("saldoFinal", this.saldoFinal);
+		jsonObj.put("usuarioIdAutorizo", this.usuarioIdAutorizo);
+		jsonObj.put("comentarios", this.comentarios);
+		jsonObj.put("caja", this.caja);
+		return jsonObj.toString();
     }
+
+	public static CorteCajaDTO create(String json) throws IllegalArgumentException{
+		CorteCajaDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.id = (jObj.getInt("id"));
+		x.sucursalId = (jObj.getInt("sucursalId"));
+		x.tipoEvento = (jObj.getInt("tipoEvento"));
+		x.usuarioId = (jObj.getInt("usuarioId"));
+		x.fecha = new java.sql.Timestamp(jObj.getLong("fecha"));
+		x.fechaUap = new java.sql.Timestamp(jObj.getLong("fechaUap"));
+		x.saldoInicial = (jObj.getDouble("saldoInicial"));
+		x.saldoFinal = (jObj.getDouble("saldoFinal"));
+		x.usuarioIdAutorizo = (jObj.getInt("usuarioIdAutorizo"));
+		x.comentarios = (jObj.getString("comentarios"));
+		x.caja = (jObj.getInt("caja"));
+		
+		return x;
+	}
 
 }

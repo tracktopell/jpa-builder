@@ -27,15 +27,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+// Hibernate Validator 5x is not compatible with validation-api 1.0.x
+//import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.Size;
 
 /**
  * Class for mapping JPA Entity of Table PRODUCTO.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 @Entity
@@ -69,7 +70,8 @@ public class Producto implements java.io.Serializable {
     
     @Id
     //@Basic(optional = false)
-    @Size(min = 1, max = 128)
+    //@Size(min = 1, max = 128)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
     //@NotNull
     @Column(name = "CODIGO_BARRAS" , length=128, nullable=false  )
     private String codigoBarras;
@@ -79,8 +81,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 128)
     @Column(name = "CODIGO_SHCP" , length=128, nullable=false)
     private String codigoShcp;
     
@@ -89,8 +92,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 255)
     @Column(name = "NOMBRE" , length=255, nullable=false)
     private String nombre;
     
@@ -99,8 +103,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 255)
     @Column(name = "INDUSTRIA" , length=255, nullable=false)
     private String industria;
     
@@ -109,8 +114,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 255)
     @Column(name = "MARCA" , length=255, nullable=false)
     private String marca;
     
@@ -119,8 +125,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 255)
     @Column(name = "LINEA" , length=255, nullable=false)
     private String linea;
     
@@ -129,8 +136,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 128)
     @Column(name = "PRESENTACION" , length=128, nullable=false)
     private String presentacion;
     
@@ -139,8 +147,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 32)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 32)
     @Column(name = "ABREBIATURA" , length=32, nullable=false)
     private String abrebiatura;
     
@@ -149,7 +158,8 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "UNIDADES_X_CAJA" , nullable=false)
     private int unidadesXCaja;
     
@@ -158,8 +168,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 16)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 16)
     @Column(name = "CONTENIDO" , length=16, nullable=false)
     private String contenido;
     
@@ -168,8 +179,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 8)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 8)
     @Column(name = "UNIDAD_MEDIDA" , length=8, nullable=false)
     private String unidadMedida;
     
@@ -178,8 +190,9 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 10)
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
+    //@Size(min = 1, max = 10)
     @Column(name = "UNIDAD_EMPAQUE" , length=10, nullable=false)
     private String unidadEmpaque;
     
@@ -188,7 +201,8 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "COSTO" , nullable=false)
     private double costo;
     
@@ -205,7 +219,8 @@ public class Producto implements java.io.Serializable {
     */
     
     @Basic(optional = false)
-    @NotNull
+    // Hibernate Validator 5x is not compatible with validation-api 1.0.x
+    //@NotNull
     @Column(name = "HABILITADO" , nullable=false)
     private int habilitado;
     

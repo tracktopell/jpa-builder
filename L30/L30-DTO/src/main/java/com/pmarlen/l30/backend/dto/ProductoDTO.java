@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table PRODUCTO.
+ * Class for mapping Json DTO Entity of Table PRODUCTO.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class ProductoDTO implements java.io.Serializable {
@@ -17,97 +25,81 @@ public class ProductoDTO implements java.io.Serializable {
     /**
     * codigo barras
     */
-    // Simple: PK?true, FK?false, class=java.lang.String, o=codigoBarras
     private String codigoBarras;
     
     /**
     * codigo shcp
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=codigoShcp
     private String codigoShcp;
     
     /**
     * nombre
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=nombre
     private String nombre;
     
     /**
     * industria
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=industria
     private String industria;
     
     /**
     * marca
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=marca
     private String marca;
     
     /**
     * linea
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=linea
     private String linea;
     
     /**
     * presentacion
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=presentacion
     private String presentacion;
     
     /**
     * abrebiatura
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=abrebiatura
     private String abrebiatura;
     
     /**
     * unidades x caja
     */
-    // Simple: PK?false, FK?false, class=int, o=unidadesXCaja
     private int unidadesXCaja;
     
     /**
     * contenido
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=contenido
     private String contenido;
     
     /**
     * unidad medida
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=unidadMedida
     private String unidadMedida;
     
     /**
     * unidad empaque
     */
-    // Simple: PK?false, FK?false, class=java.lang.String, o=unidadEmpaque
     private String unidadEmpaque;
     
     /**
     * costo
     */
-    // Simple: PK?false, FK?false, class=double, o=costo
     private double costo;
     
     /**
     * costo venta
     */
-    // Simple: PK?false, FK?false, class=java.lang.Double, o=costoVenta
     private Double costoVenta;
     
     /**
     * habilitado
     */
-    // Simple: PK?false, FK?false, class=int, o=habilitado
     private int habilitado;
     
     /**
     * poco
     */
-    // Simple: PK?false, FK?false, class=java.lang.Integer, o=poco
     private Integer poco;
 
     /** 
@@ -272,28 +264,53 @@ public class ProductoDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("ProductoDTO{");
-		sb.append("codigoBarras" ).append("=").append(codigoBarras).append("|");
-		sb.append("codigoShcp" ).append("=").append(codigoShcp).append("|");
-		sb.append("nombre" ).append("=").append(nombre).append("|");
-		sb.append("industria" ).append("=").append(industria).append("|");
-		sb.append("marca" ).append("=").append(marca).append("|");
-		sb.append("linea" ).append("=").append(linea).append("|");
-		sb.append("presentacion" ).append("=").append(presentacion).append("|");
-		sb.append("abrebiatura" ).append("=").append(abrebiatura).append("|");
-		sb.append("unidadesXCaja" ).append("=").append(unidadesXCaja).append("|");
-		sb.append("contenido" ).append("=").append(contenido).append("|");
-		sb.append("unidadMedida" ).append("=").append(unidadMedida).append("|");
-		sb.append("unidadEmpaque" ).append("=").append(unidadEmpaque).append("|");
-		sb.append("costo" ).append("=").append(costo).append("|");
-		sb.append("costoVenta" ).append("=").append(costoVenta).append("|");
-		sb.append("habilitado" ).append("=").append(habilitado).append("|");
-		sb.append("poco" ).append("=").append(poco).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("codigoBarras", this.codigoBarras);
+		jsonObj.put("codigoShcp", this.codigoShcp);
+		jsonObj.put("nombre", this.nombre);
+		jsonObj.put("industria", this.industria);
+		jsonObj.put("marca", this.marca);
+		jsonObj.put("linea", this.linea);
+		jsonObj.put("presentacion", this.presentacion);
+		jsonObj.put("abrebiatura", this.abrebiatura);
+		jsonObj.put("unidadesXCaja", this.unidadesXCaja);
+		jsonObj.put("contenido", this.contenido);
+		jsonObj.put("unidadMedida", this.unidadMedida);
+		jsonObj.put("unidadEmpaque", this.unidadEmpaque);
+		jsonObj.put("costo", this.costo);
+		jsonObj.put("costoVenta", this.costoVenta);
+		jsonObj.put("habilitado", this.habilitado);
+		jsonObj.put("poco", this.poco);
+		return jsonObj.toString();
     }
+
+	public static ProductoDTO create(String json) throws IllegalArgumentException{
+		ProductoDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.codigoBarras = (jObj.getString("codigoBarras"));
+		x.codigoShcp = (jObj.getString("codigoShcp"));
+		x.nombre = (jObj.getString("nombre"));
+		x.industria = (jObj.getString("industria"));
+		x.marca = (jObj.getString("marca"));
+		x.linea = (jObj.getString("linea"));
+		x.presentacion = (jObj.getString("presentacion"));
+		x.abrebiatura = (jObj.getString("abrebiatura"));
+		x.unidadesXCaja = (jObj.getInt("unidadesXCaja"));
+		x.contenido = (jObj.getString("contenido"));
+		x.unidadMedida = (jObj.getString("unidadMedida"));
+		x.unidadEmpaque = (jObj.getString("unidadEmpaque"));
+		x.costo = (jObj.getDouble("costo"));
+		x.costoVenta = (jObj.getDouble("costoVenta"));
+		x.habilitado = (jObj.getInt("habilitado"));
+		x.poco = (jObj.getInt("poco"));
+		
+		return x;
+	}
 
 }

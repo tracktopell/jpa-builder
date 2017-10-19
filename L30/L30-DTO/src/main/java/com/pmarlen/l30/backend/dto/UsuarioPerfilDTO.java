@@ -2,12 +2,20 @@ package com.pmarlen.l30.backend.dto;
 
 import java.util.Objects;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
- * Class for mapping DTO Entity of Table USUARIO_PERFIL.
+ * Class for mapping Json DTO Entity of Table USUARIO_PERFIL.
  * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 
 public class UsuarioPerfilDTO implements java.io.Serializable {
@@ -22,7 +30,6 @@ public class UsuarioPerfilDTO implements java.io.Serializable {
     /**
     * usuario id
     */
-    // Simple: PK?true, FK?true, class=java.lang.Integer, o=usuarioId
     private Integer usuarioId;
 
     /** 
@@ -69,13 +76,23 @@ public class UsuarioPerfilDTO implements java.io.Serializable {
     	return true;
     }
 
+	/**
+    * @Returns JSon String
+    */
     @Override
     public String toString() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("UsuarioPerfilDTO{");
-		sb.append("usuarioId" ).append("=").append(usuarioId).append("|");
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
-		return sb.toString();
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("usuarioId", this.usuarioId);
+		return jsonObj.toString();
     }
+
+	public static UsuarioPerfilDTO create(String json) throws IllegalArgumentException{
+		UsuarioPerfilDTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		x.usuarioId = (jObj.getInt("usuarioId"));
+		
+		return x;
+	}
 
 }

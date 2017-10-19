@@ -1,7 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.Producto;
-import com.pmarlen.l30.backend.remote.ProductoFacadeRemote;
+import com.pmarlen.l30.backend.local.ProductoFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table PRODUCTO.
+ * SSB JPA Entity of Table PRODUCTO.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class ProductoFacade extends AbstractFacade<Producto> implements ProductoFacadeRemote {
+public class ProductoFacade extends AbstractFacade<Producto> implements ProductoFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;
@@ -71,7 +71,7 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
 			    paramAsigned++;
 			    sbq.append(" and x.abrebiatura = :abrebiatura");
 			}
-			if(x.getUnidadesXCaja() != 0){
+			if(x.getUnidadesXCaja()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.unidadesXCaja = :unidadesXCaja");
 			}
@@ -87,7 +87,7 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
 			    paramAsigned++;
 			    sbq.append(" and x.unidadEmpaque = :unidadEmpaque");
 			}
-			if(x.getCosto() != 0){
+			if(x.getCosto()  != 0.0){
 			    paramAsigned++;
 			    sbq.append(" and x.costo = :costo");
 			}
@@ -95,7 +95,7 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
 			    paramAsigned++;
 			    sbq.append(" and x.costoVenta = :costoVenta");
 			}
-			if(x.getHabilitado() != 0){
+			if(x.getHabilitado()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.habilitado = :habilitado");
 			}
@@ -135,7 +135,7 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
 			if(x.getAbrebiatura() != null){
 			    nq.setParameter("abrebiatura",x.getAbrebiatura());
 			}
-			if(x.getUnidadesXCaja() != (0) ){
+			if(x.getUnidadesXCaja()  != 0){
 			    nq.setParameter("unidadesXCaja",x.getUnidadesXCaja());
 			}
 			if(x.getContenido() != null){
@@ -147,13 +147,13 @@ public class ProductoFacade extends AbstractFacade<Producto> implements Producto
 			if(x.getUnidadEmpaque() != null){
 			    nq.setParameter("unidadEmpaque",x.getUnidadEmpaque());
 			}
-			if(x.getCosto() != (0) ){
+			if(x.getCosto()  != 0.0){
 			    nq.setParameter("costo",x.getCosto());
 			}
 			if(x.getCostoVenta() != null){
 			    nq.setParameter("costoVenta",x.getCostoVenta());
 			}
-			if(x.getHabilitado() != (0) ){
+			if(x.getHabilitado()  != 0){
 			    nq.setParameter("habilitado",x.getHabilitado());
 			}
 			if(x.getPoco() != null){

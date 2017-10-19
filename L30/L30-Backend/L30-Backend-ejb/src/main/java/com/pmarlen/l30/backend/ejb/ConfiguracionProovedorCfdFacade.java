@@ -1,7 +1,7 @@
 package com.pmarlen.l30.backend.ejb;
 
 import com.pmarlen.l30.backend.entity.ConfiguracionProovedorCfd;
-import com.pmarlen.l30.backend.remote.ConfiguracionProovedorCfdFacadeRemote;
+import com.pmarlen.l30.backend.local.ConfiguracionProovedorCfdFacadeLocal;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,14 +10,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * ESB JPA Entity of Table CONFIGURACION_PROOVEDOR_CFD.
+ * SSB JPA Entity of Table CONFIGURACION_PROOVEDOR_CFD.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version 1.12.8
- * @date 2017/07/27 19:58
+ * @version 1.14.1
+ * @date 2017/10/19 00:02
  */
 @Stateless
-public class ConfiguracionProovedorCfdFacade extends AbstractFacade<ConfiguracionProovedorCfd> implements ConfiguracionProovedorCfdFacadeRemote {
+public class ConfiguracionProovedorCfdFacade extends AbstractFacade<ConfiguracionProovedorCfd> implements ConfiguracionProovedorCfdFacadeLocal {
 
 	@PersistenceContext(unitName = "L30_PU")
 	private EntityManager em;
@@ -47,7 +47,7 @@ public class ConfiguracionProovedorCfdFacade extends AbstractFacade<Configuracio
 			    paramAsigned++;
 			    sbq.append(" and x.sucursalsucursal = :sucursalsucursal");
 			}
-			if(x.getPrioridad() != 0){
+			if(x.getPrioridad()  != 0){
 			    paramAsigned++;
 			    sbq.append(" and x.prioridad = :prioridad");
 			}
@@ -81,7 +81,7 @@ public class ConfiguracionProovedorCfdFacade extends AbstractFacade<Configuracio
 			if(x.getSucursalsucursal() != null){
 			    nq.setParameter("sucursalsucursal",x.getSucursalsucursal());
 			}
-			if(x.getPrioridad() != (0) ){
+			if(x.getPrioridad()  != 0){
 			    nq.setParameter("prioridad",x.getPrioridad());
 			}
 			if(x.getProveedorCfd() != null){
