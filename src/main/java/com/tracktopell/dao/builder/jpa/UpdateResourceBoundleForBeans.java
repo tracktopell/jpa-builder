@@ -13,21 +13,20 @@ public class UpdateResourceBoundleForBeans {
 
     public static void main(String[] args) {
         String  pathToVPProject         = null;
+		String  basePath                = null;
+		String  prefixTableLabel        = null;
         String[]tableNames2Gen          = null;
         try {
-			//int argc=0;
-			//System.err.print("\t->UpdateResourceBoundleForBeans args.length="+args.length);				
-			//for(String argx:args){					
-			//	System.err.print("\t->args["+(argc++)+"]="+argx);				
-			//}
-
-            if( args.length != 2) {
-                System.err.print("use: <java ...> UpdateResourceBoundleForBeans pathToVPProject  tableNames2GenList,Separated,By,Comma" );
+		
+            if( args.length != 4) {
+                System.err.print("use: <java ...> UpdateResourceBoundleForBeans pathToVPProject  basePath  prefixTableLabel [ tableNames2GenList,Separated,By,Comma | {all} ] " );
                 System.exit(1);
             }
 
             pathToVPProject         = args[0];
-            tableNames2Gen			= args[1].split(",");
+			basePath                = args[1];
+			prefixTableLabel        = args[2];
+            tableNames2Gen			= args[3].split(",");
 
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
@@ -39,7 +38,7 @@ public class UpdateResourceBoundleForBeans {
                 dbSet = dbSet.copyJustSelectedNames(tableNames2Gen);
             }
 
-            JPABeanBuilder.buildReourceBoundleBeans(dbSet, "");
+            JPABeanBuilder.buildReourceBoundleBeans(dbSet, basePath, prefixTableLabel);
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);

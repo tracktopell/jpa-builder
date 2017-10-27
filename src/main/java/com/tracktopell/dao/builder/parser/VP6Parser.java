@@ -195,6 +195,8 @@ public class VP6Parser {
                                     currentTable.setLabel(keyValueProp[1].trim());
                                 } else if(keyValueProp[0].trim().equals("singularName")){
                                     currentTable.setSingularName(keyValueProp[1].trim());
+                                } else if(keyValueProp[0].trim().equals("auditable")&& keyValueProp[1].trim().equals("true")){
+                                    currentTable.setAuditable(true);
                                 }
                             }                        
                         }
@@ -258,14 +260,15 @@ public class VP6Parser {
                 } else if (qName.equals("BooleanProperty") && currentColumn!=null && attributes.getValue("name").equals("nullable")){
                     currentColumn.setNullable(attributes.getValue("value").equals("true"));
                 } else if (qName.equals("StringProperty") && currentColumn!=null && attributes.getValue("name").equals("idGenerator") && attributes.getValue("value")!=null){
-                    //System.err.println("\t\t("+attributes.getValue("value")+") found for "+currentTable.getName()+"."+currentColumn.getName());
+					
                     if(attributes.getValue("value").equals("increment") || attributes.getValue("value").equals("identity")) {
-                        currentColumn.setAutoIncremment(true);
-                        //System.err.println("\t\t\t++ currentColumn.setAutoIncremment(true) = "+currentColumn.isAutoIncremment());
+                        currentColumn.setAutoIncremment(true);                        
                     }
                     
                 } else if (qName.equals("BooleanProperty") && currentColumn!=null && attributes.getValue("name").equals("primaryKey")){
                     currentColumn.setPrimaryKey(attributes.getValue("value").equals("true"));
+                } else if (qName.equals("BooleanProperty") && currentColumn!=null && attributes.getValue("name").equals("unique")){
+                    currentColumn.setUnique(attributes.getValue("value").equals("true"));
                 } else if (qName.equals("IntegerProperty") && currentColumn!=null && attributes.getValue("name").equals("length")){
                     currentColumn.setScale(Integer.parseInt(attributes.getValue("value")));
                 } else if (qName.equals("IntegerProperty") && currentColumn!=null && attributes.getValue("name").equals("scale")){

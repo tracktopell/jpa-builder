@@ -834,17 +834,24 @@ public class JPABeanBuilder {
 		}
 	}
 
-	public static void buildReourceBoundleBeans(DBTableSet dbSet, String basePath)
+	public static void buildReourceBoundleBeans(DBTableSet dbSet, String basePath,String prefixTableLabel)
 			throws Exception {
-		String fileName;
 		File baseDir = null;
-		File dirSourceFile = null;
 		File sourceFile = null;
 
 		FileOutputStream fos = null;
 		PrintStream ps = null;
-		BufferedReader br = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		
+		baseDir = new File(basePath);
+		if(!baseDir.exists()){
+			baseDir.mkdirs();
+		}
+		
+		sourceFile = new File(baseDir, "model_i18n_es.properties");
+		fos =  new FileOutputStream(sourceFile);
+		ps = new PrintStream(ps);
+		
 		String collectionClass = "Collection";
 
 		Enumeration<String> tableNames = dbSet.getTableNames();
@@ -852,7 +859,7 @@ public class JPABeanBuilder {
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
 			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
-				//System.err.println("-->> + " + simpleTable.getName());
+				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
 				Iterator<Column> itFKC = simpleTable.getSortedColumnsForJPA();
@@ -860,36 +867,30 @@ public class JPABeanBuilder {
 				while (itFKC.hasNext()) {
 					Column cctJpaC = itFKC.next();
 					if (cctJpaC instanceof EmbeddeableColumn) {
-						//System.err.println("\t-->> + " + cctJpaC.getName());
-						tablesForGeneration.add((EmbeddeableColumn) cctJpaC);
-						addedAsFKEmbedded = true;
+						System.err.println("\t-->>SKIPING DTO + " + cctJpaC.getName());	
 					}
 				}
 
 				if (addedAsFKEmbedded) {
 				}
-
-			} else {
-				//System.err.println("-->> [X] Many 2 Many : " + simpleTable.getName());
 			}
-
 		}
 		//System.err.println("==============================>>> ");
 		for (Table table : tablesForGeneration) {
 
 			//System.err.println("-->> generating: " + table.getJavaDeclaredName() + ".java :" + table);
-			System.out.println("LABEL_" + table.getJavaDeclaredName().toUpperCase() + " = " + table.getLabel().toUpperCase());
+			ps.println("LABEL_" + table.getJavaDeclaredName().toUpperCase() + " = " + table.getLabel().toUpperCase());
 			String tableLabel = table.getLabel().toUpperCase();
 			char lastLetter = tableLabel.toCharArray()[tableLabel.length() - 1];
 			if (lastLetter == 'A' || lastLetter == 'E' || lastLetter == 'I' || lastLetter == 'O' || lastLetter == 'U') {
-				System.out.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = CATALOGO DE " + tableLabel + "S");
+				ps.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = "+prefixTableLabel+" " + tableLabel + "S");
 			} else {
-				System.out.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = CATALOGO DE " + tableLabel.toUpperCase() + "ES");
+				ps.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = "+prefixTableLabel+" " + tableLabel.toUpperCase() + "ES");
 			}
 
-			System.out.println("LABEL_NEW_" + table.getJavaDeclaredName().toUpperCase() + " = AGREGAR " + table.getLabel().toUpperCase());
-			System.out.println("LABEL_EDIT_" + table.getJavaDeclaredName().toUpperCase() + " = EDITAR " + table.getLabel().toUpperCase());
-			System.out.println();
+			ps.println("LABEL_NEW_" + table.getJavaDeclaredName().toUpperCase() + " = AGREGAR " + table.getLabel().toUpperCase());
+			ps.println("LABEL_EDIT_" + table.getJavaDeclaredName().toUpperCase() + " = EDITAR " + table.getLabel().toUpperCase());
+			ps.println();
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
 			List<Column> definitiveColumns = new ArrayList();
 			while (columnsSortedColumnsForJPA.hasNext()) {
@@ -897,13 +898,13 @@ public class JPABeanBuilder {
 				definitiveColumns.add(c);
 				//System.err.println("\t-->> DefinitiveColumn: " + c);
 
-				System.out.println("LABEL_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + c.getLabel().toUpperCase());
-				System.out.println("TEXT_MAXCHARS_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + c.getScale());
-				System.out.println("INPUT_REQUIRED_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + (!c.isNullable()));
-
+				ps.println("LABEL_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + c.getLabel().toUpperCase());
+				ps.println("TEXT_MAXCHARS_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + c.getScale());
+				ps.println("INPUT_REQUIRED_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + (!c.isNullable()));
 			}
-			System.out.println();
+			ps.println();
 		}
+		fos.close();
 	}
 
 	static void buildRSSB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String rsbPackageBeanMember, String ssbPackageBeanMember, String basePathJPA, String basePathRSB, String basePathESB) 

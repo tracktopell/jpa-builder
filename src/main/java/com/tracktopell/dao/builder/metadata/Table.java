@@ -19,6 +19,7 @@ public class Table {
 	protected String label;
 	protected boolean transactionalTable;
 	protected boolean preferredSingularName;
+	protected boolean auditable;	
 	protected Hashtable<String, Column> columns;
 	protected Hashtable<String, ReferenceTable> foreignKeys;
 	protected List<Index> indexes;
@@ -1074,6 +1075,12 @@ public class Table {
 	public boolean isPreferredSingularName() {
 		return preferredSingularName;
 	}
-
 	
+	public void setAuditable(boolean b) {
+		this.auditable= b;
+	}
+
+	public boolean isAuditable() {
+		return auditable;
+	}	
 }

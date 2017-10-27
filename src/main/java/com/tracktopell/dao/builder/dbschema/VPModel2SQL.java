@@ -55,7 +55,7 @@ public class VPModel2SQL {
             }
 
             System.err.println("====================== END PARSE XML ========================");
-            System.err.println("->" + dbSet);
+            //System.err.println("->" + dbSet);
 
             DBBuilder dbBuilder = null;
             if(rdbms.equalsIgnoreCase("mysql")) {

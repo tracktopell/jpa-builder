@@ -34,8 +34,10 @@ public class VPModel2DTOAndBeans {
 		try {
             if( args.length != 18 ) {
                 System.err.println("use: <java ...> VPModel2DTOAndBeans  "+
-						"pathToVPProject catalog dtoPackageBeanMember asmPackageBeanMember jpaPackageBeanMember rsbPackageBeanMember lsbPackageBeanMember esbPackageBeanMember "+
-						"basePathJPA     basePathDTO basePathASM basePathRSB basePathLSB basePathESB jpaPU  flatDTOs [ @Remote | @Local ] [ tableNames2GenList,Separated,By,Comma | {all} ]" );
+						"pathToVPProject SCHEMA "+
+						"dtoPackageBeanMember asmPackageBeanMember jpaPackageBeanMember rsbPackageBeanMember lsbPackageBeanMember esbPackageBeanMember "+
+						"basePathDTO          basePathASM          basePathJPA          basePathRSB          basePathLSB          basePathESB "+
+						"jpaPU  flatDTOs [ @Remote | @Local ] [ tableNames2GenList,Separated,By,Comma | {all} ]" );
                 System.exit(1);
             }
 
@@ -65,6 +67,7 @@ public class VPModel2DTOAndBeans {
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
 
             //System.err.println("DBBuilderFactory ->vpModels=" + vpModels);
+			
             DBTableSet dbSet;
             dbSet = VP6Parser.loadFromXMLWithVPModels(new FileInputStream(pathToVPProject), vpModels);
 

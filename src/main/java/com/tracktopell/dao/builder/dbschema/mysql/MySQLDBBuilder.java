@@ -123,7 +123,32 @@ public class MySQLDBBuilder extends DBBuilder{
             }
         }        
     }
-
+    /**
+     * prints the alter talble for add constraints
+     */
+    protected void printAddUniqueContraints(Table currentTable, PrintStream out) {
+        Iterator<Column> it = currentTable.getSortedColumns();
+        Column col = null;
+        while(it.hasNext()) {
+            col = it.next();
+            
+            if(col.isUnique()) {                
+                ReferenceTable rt = currentTable.getFKReferenceTable(col.getName());
+                
+                out.print("ALTER TABLE ");
+                out.print(currentTable.getName().toUpperCase());
+                out.print(" ADD CONSTRAINT ");
+				out.print(currentTable.getName().toUpperCase());
+				out.print("_");				
+				out.print(col.getName().toUpperCase());
+				out.print("_UC ");
+				out.print("UNIQUE (");
+                out.print(col.getName().toUpperCase());                
+                out.println(");");
+            }
+        }        
+    }
+	
     @Override
     protected void printAddIndexes(Table currentTable, PrintStream out) {
         

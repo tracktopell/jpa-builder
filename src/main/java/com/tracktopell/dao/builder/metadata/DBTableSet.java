@@ -118,17 +118,17 @@ public class DBTableSet {
 		
 		int s = tablesHasReferece.size();		
 		int p=0;
-		System.err.println("\t=>getProdCascadeReferences("+t.getName()+"):");
+		//System.err.println("\t=>getProdCascadeReferences("+t.getName()+"):");
 		for(Table tr: tablesHasReferece){
 			if(tr.getName().equalsIgnoreCase(t.getName())){
 				continue;
 			}
 			p = getProdCascadeReferences(tr);
-			System.err.println("\t\t=>getProdCascadeReferences("+t.getName()+")<-("+tr.getName()+") + "+p);
+			//System.err.println("\t\t=>getProdCascadeReferences("+t.getName()+")<-("+tr.getName()+") + "+p);
 			s += p;
 			
 		}
-		System.err.println("\t=>getProdCascadeReferences("+t.getName()+") = "+s);
+		//System.err.println("\t=>getProdCascadeReferences("+t.getName()+") = "+s);
 		
 		return s;		
 	}
@@ -164,7 +164,7 @@ public class DBTableSet {
 //				
 		dropOrder = sortByValue(dropOrder,true);
 		
-		System.err.println("=>result :"+dropOrder);
+//		System.err.println("=>result :"+dropOrder);
 		
 		for(String to:dropOrder.keySet()){
 			result.add(this.tables.get(to));

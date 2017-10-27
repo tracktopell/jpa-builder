@@ -38,6 +38,10 @@ public interface Column {
     boolean isPrimaryKey() ;
 
     void setPrimaryKey(boolean primaryKey) ;
+
+	boolean isUnique() ;
+
+    void setUnique(boolean uniqe) ;
     
     boolean isNullable() ;
 

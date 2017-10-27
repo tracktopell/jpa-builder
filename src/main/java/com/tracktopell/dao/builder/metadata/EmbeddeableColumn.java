@@ -249,4 +249,14 @@ public class EmbeddeableColumn extends Table implements Column{
 	public String getValueCast() {
 		return null;
 	}
+
+	@Override
+	public boolean isUnique() {
+		throw new UnsupportedOperationException("Not supported for EmbeddeableColumn");
+	}
+
+	@Override
+	public void setUnique(boolean uniqe) {
+		throw new UnsupportedOperationException("Not supported for EmbeddeableColumn");
+	}
 }

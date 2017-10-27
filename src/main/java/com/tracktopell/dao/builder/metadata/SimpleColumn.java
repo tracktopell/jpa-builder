@@ -22,6 +22,7 @@ public class SimpleColumn implements Column {
 	private String label;
 	private boolean autoIncremment;
 	private boolean primaryKey;
+	private boolean uniqe;
 	private boolean foreignKey;
 	private boolean nullable;
 	private boolean foreignDescription;
@@ -382,4 +383,14 @@ public class SimpleColumn implements Column {
 		}
 		return "";
 	}	
+
+	@Override
+	public boolean isUnique() {
+		return uniqe;
+	}
+
+	@Override
+	public void setUnique(boolean uniqe) {
+		this.uniqe = uniqe;
+	}
 }
