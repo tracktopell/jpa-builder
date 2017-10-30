@@ -850,7 +850,8 @@ public class JPABeanBuilder {
 		
 		sourceFile = new File(baseDir, "model_i18n_es.properties");
 		fos =  new FileOutputStream(sourceFile);
-		ps = new PrintStream(ps);
+		System.err.println("Tring to write to -->> + " + sourceFile.getAbsolutePath());
+		ps = new PrintStream(fos);
 		
 		String collectionClass = "Collection";
 
@@ -875,34 +876,39 @@ public class JPABeanBuilder {
 				}
 			}
 		}
-		//System.err.println("==============================>>> ");
-		for (Table table : tablesForGeneration) {
+		try{
+			for (Table table : tablesForGeneration) {
 
-			//System.err.println("-->> generating: " + table.getJavaDeclaredName() + ".java :" + table);
-			ps.println("LABEL_" + table.getJavaDeclaredName().toUpperCase() + " = " + table.getLabel().toUpperCase());
-			String tableLabel = table.getLabel().toUpperCase();
-			char lastLetter = tableLabel.toCharArray()[tableLabel.length() - 1];
-			if (lastLetter == 'A' || lastLetter == 'E' || lastLetter == 'I' || lastLetter == 'O' || lastLetter == 'U') {
-				ps.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = "+prefixTableLabel+" " + tableLabel + "S");
-			} else {
-				ps.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = "+prefixTableLabel+" " + tableLabel.toUpperCase() + "ES");
+				ps.println("# -------- Labels Entity: " + table.getName());
+				ps.println("L_" + table.getJavaDeclaredName() + " = " + table.getLabel().toUpperCase());
+				String tableLabel = table.getLabel().toUpperCase();
+				char lastLetter = tableLabel.toCharArray()[tableLabel.length() - 1];
+				if (lastLetter == 'A' || lastLetter == 'E' || lastLetter == 'I' || lastLetter == 'O' || lastLetter == 'U') {
+					//ps.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = "+prefixTableLabel+" " + tableLabel + "S");
+				} else {
+					//ps.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = "+prefixTableLabel+" " + tableLabel.toUpperCase() + "ES");
+				}
+
+				//ps.println("LABEL_NEW_" + table.getJavaDeclaredName().toUpperCase() + " = AGREGAR " + table.getLabel().toUpperCase());
+				//ps.println("LABEL_EDIT_" + table.getJavaDeclaredName().toUpperCase() + " = EDITAR " + table.getLabel().toUpperCase());
+
+				Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
+				List<Column> definitiveColumns = new ArrayList();
+				while (columnsSortedColumnsForJPA.hasNext()) {
+					Column c = columnsSortedColumnsForJPA.next();
+					definitiveColumns.add(c);
+					//System.err.println("\t-->> DefinitiveColumn: " + c);
+					String c_javaDeclaredName = c.getJavaDeclaredName();
+					String c_label = c.getLabel()!=null?c.getLabel():c.getName();
+
+					ps.println("L_" + table.getJavaDeclaredName() + "." + c_javaDeclaredName + " = " + c_label.toUpperCase());
+					//ps.println("TEXT_MAXCHARS_" + table.getJavaDeclaredName().toUpperCase() + "_" + c_javaDeclaredName.toUpperCase() + " = " + c.getScale());
+					//ps.println("INPUT_REQUIRED_" + table.getJavaDeclaredName().toUpperCase() + "_" + c_javaDeclaredName.toUpperCase() + " = " + (!c.isNullable()));
+				}
+				ps.println();
 			}
-
-			ps.println("LABEL_NEW_" + table.getJavaDeclaredName().toUpperCase() + " = AGREGAR " + table.getLabel().toUpperCase());
-			ps.println("LABEL_EDIT_" + table.getJavaDeclaredName().toUpperCase() + " = EDITAR " + table.getLabel().toUpperCase());
-			ps.println();
-			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
-			List<Column> definitiveColumns = new ArrayList();
-			while (columnsSortedColumnsForJPA.hasNext()) {
-				Column c = columnsSortedColumnsForJPA.next();
-				definitiveColumns.add(c);
-				//System.err.println("\t-->> DefinitiveColumn: " + c);
-
-				ps.println("LABEL_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + c.getLabel().toUpperCase());
-				ps.println("TEXT_MAXCHARS_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + c.getScale());
-				ps.println("INPUT_REQUIRED_" + table.getJavaDeclaredName().toUpperCase() + "_" + c.getJavaDeclaredName().toUpperCase() + " = " + (!c.isNullable()));
-			}
-			ps.println();
+		}catch(Exception ex){
+			ex.printStackTrace(System.err);
 		}
 		fos.close();
 	}
