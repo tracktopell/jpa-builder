@@ -26,8 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
  * Class for mapping JPA Embedable PK of Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version ${version}
- * @date ${date}
  */
 
 ${tablebean.jpa_entity_or_embeddeable}

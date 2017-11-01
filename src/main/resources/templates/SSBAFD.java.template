@@ -12,11 +12,11 @@ import static javax.ejb.TransactionAttributeType.SUPPORTS;
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
 
-public abstract class AbstractFacade<T> {
+public abstract class AbstractDTOFacade<T,V> {
 
 	private Class<T> entityClass;
 
-	public AbstractFacade(Class<T> entityClass) {
+	public AbstractDTOFacade(Class<T> entityClass) {
 		this.entityClass = entityClass;
 	}
 

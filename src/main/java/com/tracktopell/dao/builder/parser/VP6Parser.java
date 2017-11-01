@@ -191,12 +191,14 @@ public class VP6Parser {
                                 String[] keyValueProp = prp.trim().split("=");
                                 if(keyValueProp[0].trim().equals("transactional") && keyValueProp[1].trim().equals("true")){
                                     currentTable.setTransactionalTable(true);
-                                } else if(keyValueProp[0].trim().equals("label")){
-                                    currentTable.setLabel(keyValueProp[1].trim());
-                                } else if(keyValueProp[0].trim().equals("singularName")){
+                                } else if(keyValueProp[0].trim().equals("label") && keyValueProp.length==2){
+                                    currentTable.setLabel(keyValueProp[1].replace("\"","").replace("'","").trim());
+                                } else if(keyValueProp[0].trim().equals("singularName") && keyValueProp.length==2){
                                     currentTable.setSingularName(keyValueProp[1].trim());
-                                } else if(keyValueProp[0].trim().equals("auditable")&& keyValueProp[1].trim().equals("true")){
-                                    currentTable.setAuditable(true);
+                                } else if(keyValueProp[0].trim().equals("auditable") && keyValueProp.length==2){
+									if(keyValueProp[1].trim().equals("true")){
+										currentTable.setAuditable(true);
+									}
                                 }
                             }                        
                         }

@@ -45,9 +45,13 @@ public class DerbyDBBuilder extends DBBuilder{
                     col.getSqlType().toLowerCase().equals("float") || 
                     col.getSqlType().toLowerCase().equals("numeric")) {
                 out.print("DOUBLE");
-            } else if(col.getSqlType().toLowerCase().startsWith("int") ||
-                    col.getSqlType().toLowerCase().startsWith("tinyint")) {
-                out.print("INTEGER");
+            } else if(	col.getSqlType().toLowerCase().startsWith("int") || 
+						col.getSqlType().toLowerCase().startsWith("integer")) {
+				out.print("INTEGER");
+            } else if(col.getSqlType().toLowerCase().startsWith("tinyint")) {
+                out.print("SMALLINT");
+            } else if(col.getSqlType().toLowerCase().startsWith("bigint")) {
+                out.print("BIGINT");
             } else {
                 out.print(col.getSqlType().toUpperCase());
             }
@@ -114,7 +118,7 @@ public class DerbyDBBuilder extends DBBuilder{
         while(it.hasNext()) {
             col = it.next();
             
-            if(col.isUnique()) {
+            if(col.isUnique() && !col.isPrimaryKey()) {
                 ReferenceTable rt = currentTable.getFKReferenceTable(col.getName());
                 
                 out.print("ALTER TABLE ");

@@ -139,7 +139,7 @@ public class SQLServerDBBuilder extends DBBuilder{
         while(it.hasNext()) {
             col = it.next();
             
-            if(col.isUnique()) {                
+            if(col.isUnique() && !col.isPrimaryKey()) {             
                 ReferenceTable rt = currentTable.getFKReferenceTable(col.getName());
                 
                 out.print("ALTER TABLE ");

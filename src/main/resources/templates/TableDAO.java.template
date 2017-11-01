@@ -1,10 +1,7 @@
 /**
  * ${tablebean.declaredName}DAO
  *
- * Created ${date}
- *
- * @author tracktopell :: DAO Builder
- * http://www.tracktopell.com.mx
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
 
 package ${dao.package};

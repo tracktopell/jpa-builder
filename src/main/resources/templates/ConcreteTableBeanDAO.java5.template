@@ -1,10 +1,7 @@
 /**
  * ${rdbms.name}${tablebean.name}DAO
  *
- * Created ${date}
- *
- * @author tracktopell :: DAO Builder
- * http://www.tracktopell.com.mx
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
  */
 
 package ${concretedao.package};

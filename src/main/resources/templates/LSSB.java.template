@@ -13,8 +13,6 @@ import javax.persistence.TypedQuery;
  * Local StatelessSession Bean for local access JPA Entity of Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version ${version}
- * @date ${date}
  */
 @Stateless
 public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.declaredName}> implements ${tablebean.declaredName}FacadeLocal {

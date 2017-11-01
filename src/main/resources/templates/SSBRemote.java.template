@@ -8,8 +8,6 @@ import javax.ejb.Remote;
  * JPA Entity @Remote Facade Interface.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version ${version}
- * @date ${date}
  */
 @Remote
 public interface ${tablebean.declaredName}FacadeRemote {

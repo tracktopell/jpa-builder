@@ -13,8 +13,6 @@ import javax.persistence.TypedQuery;
  * Remote StatelessSession Bean for remote access JPA Entity of Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version ${version}
- * @date ${date}
  */
 
 @Stateless

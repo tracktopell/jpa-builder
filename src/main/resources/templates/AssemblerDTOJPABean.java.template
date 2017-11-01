@@ -10,8 +10,6 @@ import ${tableJPAbean.package}.${tablebean.declaredName};
  * Class for Asembler DTO Entity and JPA Entity for Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
- * @version 0.10.9
- * @date ${date}
  */
 
 public class ${tablebean.declaredName}Assembler {    
