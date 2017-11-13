@@ -6,8 +6,6 @@ import java.util.Objects;
  * Class for mapping DTO Entity of Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version ${version}
- * @date ${date}
  */
 
 public class ${tablebean.declaredName}DTO implements java.io.Serializable {

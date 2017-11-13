@@ -6,8 +6,6 @@ import java.io.Serializable
  * Class for mapping Grails Domain class of Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
- * @version 0.8.5
- * @date ${date}
  */
 
 class ${tablebean.declaredName} implements Serializable {

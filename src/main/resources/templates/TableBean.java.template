@@ -10,8 +10,6 @@ package ${tablebean.package};
  * Clase para mapear la Tabla ${tablebean.name}
  * 
  * @author Alfredo Estrada, @email aegonzalez@taeit.com
- * @version 1.0
- * @date ${date}
  */
 
 public class ${tablebean.name} {

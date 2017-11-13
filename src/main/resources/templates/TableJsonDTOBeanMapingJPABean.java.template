@@ -14,8 +14,6 @@ import org.json.JSONObject;
  * @See https://stleary.github.io/JSON-java/
  *
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version ${version}
- * @date ${date}
  */
 
 public class ${tablebean.declaredName}DTO implements java.io.Serializable {

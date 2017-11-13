@@ -1,4 +1,3 @@
-
 package ${tablebean.package};
 
 import java.io.Serializable;
@@ -12,8 +11,6 @@ import java.text.SimpleDateFormat;
  * Class for mapping DTO Entity of Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
- * @version 0.10.9
- * @date ${date}
  */
 
 public class ${tablebean.declaredName} implements java.io.Serializable {

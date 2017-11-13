@@ -35,8 +35,6 @@ import javax.persistence.TemporalType;
  * Class for mapping JPA Entity of Table ${tablebean.name}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
- * @version ${version}
- * @date ${date}
  */
 
 ${tablebean.jpa_entity_or_embeddeable}
