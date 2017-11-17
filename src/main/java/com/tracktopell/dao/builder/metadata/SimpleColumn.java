@@ -100,6 +100,9 @@ public class SimpleColumn implements Column {
 			sb.append(farFKDescription);
 			sb.append("#");
 		}
+        if (foreignDescription ) {
+			sb.append(" <-FK_Desk ");			
+		}
 		return sb.toString();
 	}
 

@@ -315,7 +315,14 @@ public class Table {
 
 		Iterator<Column> ic = getSortedColumns();
 		sb.append("\t");
-		sb.append(this.name);
+        if(auditable){
+            sb.append("*[");
+            sb.append(this.name);
+            sb.append("]*");
+        } else{
+            sb.append(this.name);
+        }
+		
 		sb.append(" {\n");
 		while (ic.hasNext()) {
 			sb.append("\t\t");

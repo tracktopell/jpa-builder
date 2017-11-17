@@ -59,7 +59,7 @@ public class CodeBuilder {
 				while (itFKC.hasNext()) {
 					Column cctJpaC = itFKC.next();
 					if (cctJpaC instanceof EmbeddeableColumn) {
-						System.err.println("\t-->> + " + cctJpaC.getName());
+						//System.err.println("\t-->> + " + cctJpaC.getName());
 						tablesForGeneration.add((EmbeddeableColumn) cctJpaC);
 						addedAsFKEmbedded = true;
 					}
@@ -76,7 +76,7 @@ public class CodeBuilder {
 		//System.err.println("==============================>>> ");
 		for (Table table : tablesForGeneration) {
 
-			System.err.println("-->> generating: " + table.getJavaDeclaredName() + ".java :" + table);
+			//System.err.println("-->> generating: " + table.getJavaDeclaredName() + ".java :" + table);
 
 			Iterator<Column> columnsSortedColumns = table.getSortedColumns();
 			List<Column> definitiveColumns = new ArrayList();
@@ -241,7 +241,7 @@ public class CodeBuilder {
 		//System.err.println("==============================>>> ");
 		for (Table table : tablesForGeneration) {
 
-			System.err.println("-->> generating: " + table.getJavaDeclaredName() + "DAO.java :" + table);
+			//System.err.println("-->> generating: " + table.getJavaDeclaredName() + "DAO.java :" + table);
 
 			Iterator<Column> columnsSortedColumns = table.getSortedColumns();
 			List<Column> definitiveColumns = new ArrayList();

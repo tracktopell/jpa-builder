@@ -91,12 +91,12 @@ public class DomainClassBuilder {
 
 		for (Table table : tablesForGeneration) {
 			if (table instanceof EmbeddeableColumn) {
-				System.err.println("-->> TEMPORAL skiping generation for " + table.getJavaDeclaredName() + ".groovy, because instanceof EmbeddeableColumn?" + (table instanceof EmbeddeableColumn));
+				//System.err.println("-->> TEMPORAL skiping generation for " + table.getJavaDeclaredName() + ".groovy, because instanceof EmbeddeableColumn?" + (table instanceof EmbeddeableColumn));
 				continue;
 			}
-			System.err.println("-->> generating: " + table.getJavaDeclaredName() + ".groovy");
+			//System.err.println("-->> generating: " + table.getJavaDeclaredName() + ".groovy");
 			if (table.hasEmbeddedPK()) {
-				System.err.println("\t-->> with Embedded: " + table);
+				//System.err.println("\t-->> with Embedded: " + table);
 			}
 
 //			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
@@ -110,7 +110,7 @@ public class DomainClassBuilder {
 				Column c = columnsSortedColumnsForJPA.next();
 				definitiveColumns.add(c);
 				if (table.hasEmbeddedPK()) {
-					System.err.println("\t\t-->> DefinitiveColumn: " + c);
+					//System.err.println("\t\t-->> DefinitiveColumn: " + c);
 				}
 			}
 

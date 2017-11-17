@@ -54,7 +54,7 @@ public class VPModel2SQL {
                 dbSet = dbSet.copyJustSelectedNames(tableNames2Gen);
             }
 
-            System.err.println("====================== END PARSE XML ========================");
+            //System.err.println("====================== END PARSE XML ========================");
             //System.err.println("->" + dbSet);
 
             DBBuilder dbBuilder = null;

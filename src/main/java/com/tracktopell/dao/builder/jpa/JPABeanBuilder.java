@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- *
+ * com.tracktopell.dao.builder.jpa.JPABeanBuilder
  * @author tracktopell
  */
 public class JPABeanBuilder {
@@ -47,10 +47,12 @@ public class JPABeanBuilder {
 		
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		Properties vp=VersionUtil.loadVersionProperties();
-		System.err.println("==============================>>buildMappingBeans");
-		System.err.println("Preparing Tables: ");			
+		
+        System.err.println("====================== [ com.tracktopell.dao.builder.jpa.JPABeanBuilder.buildMappingBeans ]========================");
+        
+		//System.err.println("Preparing Tables: ");			
 		for (Table iterTable: dbSet.getTablesList()) {
-			System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
+			//System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
 			if (!iterTable.isManyToManyTableWinthMoreColumns()) {				
 				tablesForGeneration.add(iterTable);								
 				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();
@@ -62,12 +64,12 @@ public class JPABeanBuilder {
 				}
 			}
 		}
-		System.err.println("----------------->>Analizing"); 
+		//System.err.println("----------------->>Analizing"); 
 		
 		for (Table iterTable: tablesForGeneration) {
-			System.err.println("\tAnaliznig Table: " + iterTable.getName());
+			//System.err.println("\tAnaliznig Table: " + iterTable.getName());
 			if(iterTable.getSingularName()!=null){				
-				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
+				//System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
 			}
 			List<Column>            plainColumns   = new ArrayList();
 			List<EmbeddeableColumn> embededColumns = new ArrayList();
@@ -149,26 +151,26 @@ public class JPABeanBuilder {
 			
 			for(Column dc:plainColumns){
 				if(dc.isForeignKey()){
-					System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
+					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
 				} else{
-					System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
+					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
 				}				
 			}
 			for(EmbeddeableColumn ec:embededColumns){
-				System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
+				//System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
 			}
 			
 			for(Table m2mTable:iterTable.getM2mTableList()){
 				Table m2mOT = dbSet.getTableOwnerManyToManyRelation(iterTable, m2mTable);
-				System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
+				//System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
 			}
 			for(Table o2mTable:iterTable.getO2mTableList()){
-				System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
+				//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
 			}
 		}
-		System.err.println("================== @JPA BEAN CODE GENERATION ========================>>> ");
+		//System.err.println("================== @JPA BEAN CODE GENERATION ========================>>> ");
 		for (Table table : tablesForGeneration) {
-			System.err.println("------------->> Generating: "+table.getJavaDeclaredName()+".java for Table:"+table.getName());
+			//System.err.println("------------->> Generating: "+table.getJavaDeclaredName()+".java for Table:"+table.getName());
 			//-------------------------------------------------------
 			baseDir = new File(basePath);
 
@@ -860,7 +862,7 @@ public class JPABeanBuilder {
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
 			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
-				System.err.println("-->> + " + simpleTable.getName());
+				//System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
 				Iterator<Column> itFKC = simpleTable.getSortedColumnsForJPA();
@@ -868,7 +870,7 @@ public class JPABeanBuilder {
 				while (itFKC.hasNext()) {
 					Column cctJpaC = itFKC.next();
 					if (cctJpaC instanceof EmbeddeableColumn) {
-						System.err.println("\t-->>SKIPING DTO + " + cctJpaC.getName());	
+						//System.err.println("\t-->>SKIPING DTO + " + cctJpaC.getName());	
 					}
 				}
 
@@ -879,8 +881,8 @@ public class JPABeanBuilder {
 		try{
 			for (Table table : tablesForGeneration) {
 
-				ps.println("# -------- Labels Entity: " + table.getName());
-				ps.println("L_" + table.getJavaDeclaredName() + " = " + table.getLabel().toUpperCase());
+				//ps.println("# -------- Labels Entity: " + table.getName());
+				//ps.println("L_" + table.getJavaDeclaredName() + " = " + table.getLabel().toUpperCase());
 				String tableLabel = table.getLabel().toUpperCase();
 				char lastLetter = tableLabel.toCharArray()[tableLabel.length() - 1];
 				if (lastLetter == 'A' || lastLetter == 'E' || lastLetter == 'I' || lastLetter == 'O' || lastLetter == 'U') {
@@ -929,10 +931,10 @@ public class JPABeanBuilder {
 		
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		Properties vp=VersionUtil.loadVersionProperties();
-		System.err.println("==============================>>build Remote Stateless Session Beans for JPA");
-		System.err.println("Preparing Tables: ");			
+        System.err.println("====================== [ com.tracktopell.dao.builder.jpa.JPABeanBuilder.buildRSSB ]========================");
+		//System.err.println("Preparing Tables: ");			
 		for (Table iterTable: dbSet.getTablesList()) {
-			System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
+			//System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
 			if (!iterTable.isManyToManyTableWinthMoreColumns()) {				
 				tablesForGeneration.add(iterTable);								
 				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();
@@ -944,12 +946,12 @@ public class JPABeanBuilder {
 				}
 			}
 		}
-		System.err.println("----------------->>Analizing"); 
+		//System.err.println("----------------->>Analizing"); 
 		List<Column>            plainColumns   = new ArrayList();
 		List<EmbeddeableColumn> embededColumns = new ArrayList();
 		
 		for (Table iterTable: tablesForGeneration) {
-			System.err.println("\tAnaliznig Table: " + iterTable.getName());
+			//System.err.println("\tAnaliznig Table: " + iterTable.getName());
 			if(iterTable.getSingularName()!=null){				
 				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
 			}
@@ -1025,21 +1027,21 @@ public class JPABeanBuilder {
 			
 			for(Column dc:plainColumns){
 				if(dc.isForeignKey()){
-					System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
+					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
 				} else{
-					System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
+					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
 				}				
 			}
 			for(EmbeddeableColumn ec:embededColumns){
-				System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
+				//System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
 			}
 			
 			for(Table m2mTable:iterTable.getM2mTableList()){
 				Table m2mOT = dbSet.getTableOwnerManyToManyRelation(iterTable, m2mTable);
-				System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
+				//System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
 			}
 			for(Table o2mTable:iterTable.getO2mTableList()){
-				System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
+				//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
 			}
 		}
 		System.err.println("============ @EJB Stateless Session Abstract BEAN CODE GENERATION =====================>>> ");
@@ -1117,7 +1119,7 @@ public class JPABeanBuilder {
 					fTable = null;
 				}				
 				definitiveColumns.add(column);
-				System.err.println("\t-->> DefinitiveColumn: " + column);
+				//System.err.println("\t-->> DefinitiveColumn: " + column);
 			}
 
 			baseDir = new File(basePathRSB);
@@ -1283,11 +1285,11 @@ public class JPABeanBuilder {
 		final String explainedM2OList = "_THAT_HAS_THIS_";
 		
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
-		Properties vp=VersionUtil.loadVersionProperties();
-		System.err.println("==============================>>build Local Stateless Session Beans for JPA");
-		System.err.println("Preparing Tables: ");			
+		Properties vp=VersionUtil.loadVersionProperties();		
+        System.err.println("====================== [ com.tracktopell.dao.builder.jpa.JPABeanBuilder.buildLSSB ]========================");
+		//System.err.println("Preparing Tables: ");	
 		for (Table iterTable: dbSet.getTablesList()) {
-			System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
+			//System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
 			if (!iterTable.isManyToManyTableWinthMoreColumns()) {				
 				tablesForGeneration.add(iterTable);								
 				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();
@@ -1299,14 +1301,14 @@ public class JPABeanBuilder {
 				}
 			}
 		}
-		System.err.println("----------------->>Analizing"); 
+		//System.err.println("----------------->>Analizing"); 
 		List<Column>            plainColumns   = new ArrayList();
 		List<EmbeddeableColumn> embededColumns = new ArrayList();
 		
 		for (Table iterTable: tablesForGeneration) {
-			System.err.println("\tAnaliznig Table: " + iterTable.getName());
+			//System.err.println("\tAnaliznig Table: " + iterTable.getName());
 			if(iterTable.getSingularName()!=null){				
-				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
+				//System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
 			}
 			plainColumns   = new ArrayList();
 			embededColumns = new ArrayList();
@@ -1380,24 +1382,24 @@ public class JPABeanBuilder {
 			
 			for(Column dc:plainColumns){
 				if(dc.isForeignKey()){
-					System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
+					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
 				} else{
-					System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
+					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
 				}				
 			}
 			for(EmbeddeableColumn ec:embededColumns){
-				System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
+				//System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
 			}
 			
 			for(Table m2mTable:iterTable.getM2mTableList()){
 				Table m2mOT = dbSet.getTableOwnerManyToManyRelation(iterTable, m2mTable);
-				System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
+				//System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
 			}
 			for(Table o2mTable:iterTable.getO2mTableList()){
-				System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
+				//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
 			}
 		}
-		System.err.println("============ @EJB Local Stateless Session Abstract BEAN CODE GENERATION =====================>>> ");
+		//System.err.println("============ @EJB Local Stateless Session Abstract BEAN CODE GENERATION =====================>>> ");
 		String line = null;
 		baseDir = new File(basePathESB);
 
@@ -1430,7 +1432,7 @@ public class JPABeanBuilder {
 		ps.close();
 		fos.close();
 		
-		System.err.println("================== @EJB Local Stateless Session BEAN CODE GENERATION ========================>>> ");
+		//System.err.println("================== @EJB Local Stateless Session BEAN CODE GENERATION ========================>>> ");
 		for (Table table : tablesForGeneration) {
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
 			List<Column> definitiveColumns = new ArrayList();
@@ -1472,7 +1474,7 @@ public class JPABeanBuilder {
 					fTable = null;
 				}				
 				definitiveColumns.add(column);
-				System.err.println("\t-->> DefinitiveColumn: " + column);
+				//System.err.println("\t-->> DefinitiveColumn: " + column);
 			}
 
 			baseDir = new File(basePathLSB);

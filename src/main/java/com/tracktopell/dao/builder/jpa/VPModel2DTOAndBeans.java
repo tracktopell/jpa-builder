@@ -63,11 +63,10 @@ public class VPModel2DTOAndBeans {
 			interfaceToImpl		= args[16];
             tableNames2Gen		= args[17].split(",");
 
+            System.err.println("====================== [ com.tracktopell.dao.builder.jpa.VPModel2DTOAndBeans ]========================");
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
 
-            //System.err.println("DBBuilderFactory ->vpModels=" + vpModels);
-			
             DBTableSet dbSet;
             dbSet = VP6Parser.loadFromXMLWithVPModels(new FileInputStream(pathToVPProject), vpModels);
 
@@ -76,8 +75,8 @@ public class VPModel2DTOAndBeans {
             }
 
             System.err.println("====================== END PARSE XML ========================");
-            //System.out.println("->" + dbSet);
-			
+            System.out.println("->" + dbSet);
+			            
 			DTOBeanBuilder.buildMappingDTOsForJPABeans(dbSet, dtoPackageBeanMember, jpaPackageBeanMember, basePathDTO, flatDTOs );
 			
 			DTOBeanBuilder.buildDTOsAssembler(dbSet, asmPackageBeanMember,dtoPackageBeanMember, jpaPackageBeanMember, basePathASM);

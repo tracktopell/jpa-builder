@@ -45,7 +45,7 @@ public class VPModel2XpressoSystemsMetadataMapping {
 				dbSet = dbSet.copyJustSelectedNames(tableNames2Gen);
 			}
 
-			System.err.println("====================== END PARSE XML ========================");
+			//System.err.println("====================== END PARSE XML ========================");
 			//System.err.println("->" + dbSet);
 
 			//System.out.println("->createDBSchema:");
