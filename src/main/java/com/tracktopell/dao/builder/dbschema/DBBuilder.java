@@ -103,4 +103,55 @@ public abstract class DBBuilder {
 	protected abstract void printAddUniqueContraints(Table currentTable, PrintStream out) ;
 
     protected abstract void printAddIndexes(Table currentTable, PrintStream out);
+
+    public void printDataDictionaryTemplate(String schemmaName, DBTableSet dbSet, PrintStream printStream) {
+        List<Table> lt=dbSet.getTablesSortedForCreation();
+		StringBuilder sbFaults=new StringBuilder();
+		int numFaults=0;
+        printStream.println(",TABLE_NAME,COLUMN_NAME,OBJECT_NAME,LABEL,SQL_TYPE,PRESCISION,IS_PK,IS_FK,AUTO++,NULLABLE,DESCRIPTION");
+		for(Table t: lt) {
+            printStream.print(",");
+            printStream.print(t.getName().toUpperCase());
+            printStream.print(",,");
+            printStream.print(t.getJavaDeclaredName());
+            printStream.print(",");
+            if(t.getLabel()!=null){
+                    printStream.print(",\"");
+                    printStream.print(t.getLabel());
+                    printStream.print("\",");
+                } else{
+                    printStream.print(",,");
+                }
+            printStream.println(",,,");
+            
+			Collection<Column> pks = t.getColums();
+			for(Column c: pks){
+                printStream.print(",,");
+                printStream.print(c.getName());
+                printStream.print(",");
+                printStream.print(c.getJavaDeclaredName());
+                if(c.getLabel()!=null){
+                    printStream.print(",\"");
+                    printStream.print(c.getLabel());
+                    printStream.print("\",");
+                } else{
+                    printStream.print(",,");
+                }                
+                printStream.print(c.getSqlType().toUpperCase());
+                printStream.print(",");
+                printStream.print(c.getScale());
+                printStream.print(",");
+                printStream.print(c.isPrimaryKey()?"true":"false");
+                printStream.print(",");
+                printStream.print(c.isForeignKey()?"true":"false");
+                printStream.print(",");
+                printStream.print(c.isAutoIncremment()?"true":"false");
+                printStream.print(",");
+                printStream.print(c.isNullable()?"true":"false");
+                printStream.println("");                
+			}
+        }
+        printStream.println("");
+        printStream.close();
+    }
 }

@@ -10,11 +10,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 /**
- * SSB JPA Entity of Table ${tablebean.name}.
+ * SSB JPA Entity Facade of Table ${tablebean.name} by ${tablebean.declaredInterface}.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
-@Stateless
+@Stateless(
+    name         = "${tablebean.declaredObjectName}_SSB",
+    mappedName   = "${tablebean.declaredName}_SSB",
+    description  = "${tablebean.declaredName} Stateless-Session EJB-3.1 by ${tablebean.declaredInterface}"
+)
 public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.declaredName}> implements ${tablebean.declaredInterface} {
 
 	@PersistenceContext(unitName = "${JPA.PU}")
@@ -30,9 +34,7 @@ public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.
 	}
 
 	@Override
-	public List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} x){
-		//return null;
-		
+	public List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} x){				
 		StringBuilder sbq=new StringBuilder("SELECT x FROM ${tablebean.declaredName} x WHERE ");
 		int paramAsigned=0;
 		if(x != null){

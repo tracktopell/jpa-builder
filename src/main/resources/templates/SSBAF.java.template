@@ -1,8 +1,14 @@
 package ${ssbean.package};
 
+import ${tablebean.package}.AuditableEntity;
+import java.security.Principal;
+import java.sql.Timestamp;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ejb.TransactionAttribute;
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+
 import static javax.ejb.TransactionAttributeType.REQUIRED;
 import static javax.ejb.TransactionAttributeType.SUPPORTS;
 
@@ -13,6 +19,7 @@ import static javax.ejb.TransactionAttributeType.SUPPORTS;
  */
 
 public abstract class AbstractFacade<T> {
+    @Resource SessionContext ctx;
 
 	private Class<T> entityClass;
 
@@ -24,6 +31,19 @@ public abstract class AbstractFacade<T> {
 
 	@TransactionAttribute(REQUIRED)
 	public T create(T entity) {
+        if(ctx != null){
+            final Principal callerPrincipal = ctx.getCallerPrincipal();
+            // obtain the caller principal.
+            if(callerPrincipal != null){                
+                if(entity instanceof AuditableEntity){
+                    final Timestamp nowTimeStamp = new Timestamp(System.currentTimeMillis());
+                    ((AuditableEntity) entity).setFechaCreo(nowTimeStamp);
+                    ((AuditableEntity) entity).setUsuarioCreo(callerPrincipal.getName());
+                    ((AuditableEntity) entity).setFechaModifico(nowTimeStamp);
+                    ((AuditableEntity) entity).setUsuarioModifico(callerPrincipal.getName());
+                }
+            }
+        }
 		getEntityManager().persist(entity);
 		getEntityManager().flush();
 		return entity;
@@ -31,6 +51,16 @@ public abstract class AbstractFacade<T> {
 
 	@TransactionAttribute(REQUIRED)
 	public T edit(T entity) {
+        if(ctx != null){
+            final Principal callerPrincipal = ctx.getCallerPrincipal();
+            // obtain the caller principal.
+            if(callerPrincipal != null){                
+                if(entity instanceof AuditableEntity){
+                    ((AuditableEntity) entity).setFechaModifico(new Timestamp(System.currentTimeMillis()));
+                    ((AuditableEntity) entity).setUsuarioModifico(callerPrincipal.getName());
+                }
+            }
+        }
 		getEntityManager().merge(entity);
 		getEntityManager().flush();
 		return entity;

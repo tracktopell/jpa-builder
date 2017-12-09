@@ -169,8 +169,15 @@ public class JPABeanBuilder {
 			}
 		}
 		//System.err.println("================== @JPA BEAN CODE GENERATION ========================>>> ");
+        boolean auditableInterfaceGenerated=false;
 		for (Table table : tablesForGeneration) {
-			//System.err.println("------------->> Generating: "+table.getJavaDeclaredName()+".java for Table:"+table.getName());
+			System.err.println("------------->> Generating: "+table.getJavaDeclaredName()+".java for Table:"+table.getName()+", is Auditable?"+(table.isAuditable()));
+            
+            if(table.isAuditable() && !auditableInterfaceGenerated){
+                generateAuditableEntityInterface( packageBeanMember, basePath);
+                auditableInterfaceGenerated=true;
+            }
+            
 			//-------------------------------------------------------
 			baseDir = new File(basePath);
 
@@ -652,6 +659,11 @@ public class JPABeanBuilder {
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
 					line = line.replace("${tablebean.name}", table.getName());
 					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+                    if(table.isAuditable()){
+                        line = line.replace("${tablebean.implementsAuditable}", ", AuditableEntity");
+                    } else{
+                        line = line.replace("${tablebean.implementsAuditable}", "");
+                    }
 					line = line.replace("${tablebean.namedQuery}", "@NamedQuery(name = \""+table.getJavaDeclaredName()+".findAll\", query = \"SELECT "+table.getName().toLowerCase().charAt(0)+" FROM "+table.getJavaDeclaredName()+" "+table.getName().toLowerCase().charAt(0)+"\")");
 					line = line.replace("${tablebean.countAll.namedQuery}", "@NamedQuery(name = \""+table.getJavaDeclaredName()+".countAll\", query = \"SELECT COUNT("+table.getName().toLowerCase().charAt(0)+") FROM "+table.getJavaDeclaredName()+" "+table.getName().toLowerCase().charAt(0)+"\")");					
 					line = line.replace("${tablebean.PKMembersParameters}", membersParameters(table, dbSet));
@@ -1070,6 +1082,7 @@ public class JPABeanBuilder {
 			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 			line = line.replace("${date}", sdf.format(new Date()));
 			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
+            line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 			line = line.replace("${ssbinterface.package}", rsbPackageBeanMember);
 			ps.println(line);
 		}
@@ -1151,6 +1164,7 @@ public class JPABeanBuilder {
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
 				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+                line = line.replace("${tablebean.declaredObjectName}", table.getJavaDeclaredObjectName());
 				line = line.replace("${JPA.PU}", jpaPU);
 				ps.println(line);
 			}
@@ -1191,14 +1205,14 @@ public class JPABeanBuilder {
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
-				
+				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+                line = line.replace("${tablebean.declaredObjectName}", table.getJavaDeclaredObjectName());
 				if(line.contains("${tablebean.prepareQuery}")){
 					line = line.replace("${tablebean.prepareQuery}", "");
 					for(Column ci:definitiveColumns){
 						String vn="";
 						String vo="";
-						String cmp = "!= null";
-						
+						String cmp = "!= null";						
 						if(ci.getHyperColumnName() != null){
 							vn = FormatString.getCadenaHungara(ci.getHyperColumnName());
 							vo = ci.getHyperColumnObjectName();
@@ -1218,7 +1232,7 @@ public class JPABeanBuilder {
 							}
 							vn = ci.getJavaDeclaredName();
 							vo = ci.getJavaDeclaredObjectName();
-						}						
+						}                        
 						ps.println("			if(x.get"+vn+"() "+cmp+"){");
 						ps.println("			    paramAsigned++;");
 						ps.println("			    sbq.append(\" and x."+vo+" = :"+vo+"\");");
@@ -1249,7 +1263,7 @@ public class JPABeanBuilder {
 							}
 							vn = ci.getJavaDeclaredName();
 							vo = ci.getJavaDeclaredObjectName();
-						}						
+						}                        
 						ps.println("			if(x.get"+vn+"() "+cmp+"){");
 						ps.println("			    nq.setParameter(\""+vo+"\",x.get"+vn+"());");						
 						ps.println("			}");						
@@ -1425,6 +1439,7 @@ public class JPABeanBuilder {
 			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 			line = line.replace("${date}", sdf.format(new Date()));			
 			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
+            line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 			line = line.replace("${ssbinterface.package}", lsbPackageBeanMember);
 			ps.println(line);
 		}
@@ -1506,6 +1521,7 @@ public class JPABeanBuilder {
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
 				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+                line = line.replace("${tablebean.declaredObjectName}", table.getJavaDeclaredObjectName());
 				line = line.replace("${JPA.PU}", jpaPU);
 				ps.println(line);
 			}
@@ -1546,6 +1562,8 @@ public class JPABeanBuilder {
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
+                line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+                line = line.replace("${tablebean.declaredObjectName}", table.getJavaDeclaredObjectName());
 				
 				if(line.contains("${tablebean.prepareQuery}")){
 					line = line.replace("${tablebean.prepareQuery}", "");
@@ -1573,7 +1591,7 @@ public class JPABeanBuilder {
 							}
 							vn = ci.getJavaDeclaredName();
 							vo = ci.getJavaDeclaredObjectName();
-						}						
+						}                        
 						ps.println("			if(x.get"+vn+"() "+cmp+"){");
 						ps.println("			    paramAsigned++;");
 						ps.println("			    sbq.append(\" and x."+vo+" = :"+vo+"\");");
@@ -1604,7 +1622,7 @@ public class JPABeanBuilder {
 							}
 							vn = ci.getJavaDeclaredName();
 							vo = ci.getJavaDeclaredObjectName();
-						}						
+						}                        
 						ps.println("			if(x.get"+vn+"() "+cmp+"){");
 						ps.println("			    nq.setParameter(\""+vo+"\",x.get"+vn+"());");						
 						ps.println("			}");						
@@ -1624,5 +1642,27 @@ public class JPABeanBuilder {
 		}
 
 	}
+
+    private static void generateAuditableEntityInterface(String packageBeanMember, String basePath) throws IOException {
+        String fileName = packageBeanMember.replace(".", File.separator) + File.separator;
+        File baseDir = new File(basePath);
+        File dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+        if (!dirSourceFile.exists()) {
+            dirSourceFile.mkdirs();
+        }
+
+        fileName = dirSourceFile.getPath() + File.separator + "AuditableEntity.java";		
+
+        File sourceFile = new File(fileName);
+        FileOutputStream fos = new FileOutputStream(sourceFile);
+        PrintStream ps = new PrintStream(fos);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/TableBeanAuditable.java.template")));
+
+        String line=null;
+        while ((line = br.readLine()) != null) {            
+            line = line.replace("${tablebean.package}", packageBeanMember);
+            ps.println(line);
+        }
+    }
 	
 }

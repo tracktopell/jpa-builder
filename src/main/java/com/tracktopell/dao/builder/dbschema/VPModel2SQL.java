@@ -23,15 +23,16 @@ public class VPModel2SQL {
         String  schemmaName      = null;
         String  outputPath       = null;
 		String  outputDropPath   = null;
+        String  outputDDPath     = null;
         String[]tableNames2Gen   = null;
         try {
 			Properties vp=VersionUtil.loadVersionProperties();
-			if( args.length != 6) {
+			if( args.length != 7) {
 				System.err.println("==================== Tracktopell VPModel2SQL ======================");
 				System.err.println("\t  BUILD: \t"+vp.getProperty(VersionUtil.BUILT_TIMESTAMP));
 				System.err.println("\tVERSION: \t"+vp.getProperty(VersionUtil.PROJECT_VERSION));
 
-                System.err.println("use: <java ...> com.tracktopell.dao.builder.dbschema.VPModel2SQL  pathToVPProject  rdbms  catalog  baseCreatePath baseDropPath [ tableNames2GenList,Separated,By,Comma | {all} ]" );
+                System.err.println("use: <java ...> com.tracktopell.dao.builder.dbschema.VPModel2SQL  pathToVPProject  rdbms  catalog  baseCreatePath baseDropPath outputDataDictPath [ tableNames2GenList,Separated,By,Comma | {all} ]" );
                 System.exit(1);
             }
 
@@ -41,7 +42,8 @@ public class VPModel2SQL {
             schemmaName      = args[2];
             outputPath       = args[3];
 			outputDropPath   = args[4];
-            tableNames2Gen   = args[5].split(",");
+            outputDDPath     = args[5];
+            tableNames2Gen   = args[6].split(",");
 
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
@@ -72,6 +74,9 @@ public class VPModel2SQL {
 			
 			System.out.println("->createDropDBSchema:");            
 			dbBuilder.printDropSchema(schemmaName, dbSet, new PrintStream(new FileOutputStream(outputDropPath)));
+            
+            System.out.println("->createDataDictionaryTemplate CSV:");            
+			dbBuilder.printDataDictionaryTemplate(schemmaName, dbSet, new PrintStream(new FileOutputStream(outputDDPath)));
 			
         } catch (Exception ex) {
             ex.printStackTrace(System.err);

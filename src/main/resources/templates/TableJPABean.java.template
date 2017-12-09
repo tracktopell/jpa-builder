@@ -46,7 +46,10 @@ ${tablebean.jpa_talbe}
     , ${tablebean.member.namedQuery}
     %endfor
 })
-public class ${tablebean.declaredName} implements java.io.Serializable {
+public class      ${tablebean.declaredName} 
+       implements java.io.Serializable 
+                  ${tablebean.implementsAuditable} 
+    {
     private static final long serialVersionUID = ${tablebean.serialId};
     %foreach tablebean.member in ${tablebean.members}
     ${tablebean.member.javadocCommnet}    
@@ -116,7 +119,8 @@ public class ${tablebean.declaredName} implements java.io.Serializable {
 		%foreach tablebean.member in ${tablebean.members}		
 		sb.append("${tablebean.member.javaIdentifier}" ).append("=").append(${tablebean.member.javaIdentifier}).append("|");
 		%endfor
-		sb.append("serialVersionUID=").append(serialVersionUID).append("}");
+		//sb.append("serialVersionUID=").append(serialVersionUID).append("}");
+        sb.append("}");
 		return sb.toString();
 	}
 

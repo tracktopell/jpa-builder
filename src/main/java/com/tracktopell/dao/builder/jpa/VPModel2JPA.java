@@ -4,10 +4,11 @@ import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.parser.VP6Parser;
 import com.tracktopell.dao.builder.parser.VPModel;
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.Hashtable;
 
 /**
- * VPModel2SQL
+ * com.tracktopell.dao.builder.jpa.VPModel2JPA
  */
 public class VPModel2JPA {
 
@@ -20,7 +21,8 @@ public class VPModel2JPA {
         try {
 
             if( args.length != 5) {
-                System.err.println("use: <java ...> VPModel2JPA  pathToVPProject  catalog packageBeanMember  basePath   tableNames2GenList,Separated,By,Comma" );
+                System.err.println("bad args:"+Arrays.asList(args));
+                System.err.println("use: <java ...> VPModel2JPA  pathToVPProject  schemmaName packageBeanMember  basePath  tableNames2GenList,Separated,By,Comma" );
                 System.exit(1);
             }
 
