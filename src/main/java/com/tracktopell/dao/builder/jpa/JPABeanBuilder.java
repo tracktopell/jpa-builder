@@ -76,11 +76,11 @@ public class JPABeanBuilder {
 			
 			iterTable.setPlainColumns(plainColumns);
 			iterTable.setEmbededColumns(embededColumns);
-			
+			int countStringPrintable=0;
 			if (! ( iterTable instanceof EmbeddeableColumn)) {
 			
 				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();
-				
+				countStringPrintable = 0;
 				while (itFKC.hasNext()) {
 					Column c = itFKC.next();					
 					if (c instanceof EmbeddeableColumn) {						
@@ -94,6 +94,11 @@ public class JPABeanBuilder {
 						String suggestedGettetObjectName=null;
 						String suggestedSettetObjectName=null;
 						Table fTable = null;
+                        
+                        if(c.isForeignDescription()){
+                            countStringPrintable++;
+                        }                        
+                        
 						if (c.isForeignKey() && !(iterTable instanceof EmbeddeableColumn)) {
 							fTable = dbSet.getTable(iterTable.getFKReferenceTable(c.getName()).getTableName());
 							c.setFTable(fTable);
@@ -127,6 +132,21 @@ public class JPABeanBuilder {
 					}
 				}
 				
+                if(countStringPrintable==0){
+                    Iterator<Column> itFKC2 = iterTable.getSortedColumnsForJPA();
+                    int countTSx=0;
+                    while(itFKC2.hasNext()){
+                        Column cx2=itFKC2.next();
+                        if(cx2.isPrimaryKey()){
+                            cx2.setForeignDescription(true);
+                            countTSx++;
+                        }
+                    }
+                    if(countTSx==0){
+                        throw new IllegalStateException("Table Needs PK for has ForeignDescripcion");
+                    }
+                }
+                
 				Collection<Table> m2mTables = dbSet.getManyToManyRelationTables(iterTable);
 
 				for (Table m2mTable : m2mTables) {
@@ -408,8 +428,14 @@ public class JPABeanBuilder {
 										}
 									}
 								}
-
-							} else if (lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0) {																
+                            } else if (lineInLoop.indexOf("${tablebean.member.toStringMinimal}") >= 0) {
+                                if( column.isForeignDescription()){
+                                    lineInLoop = lineInLoop.replace("${tablebean.member.toStringMinimal}", column.getJavaDeclaredObjectName());
+                                    
+                                    ps.println(lineInLoop);
+                                    //ps.println(" // U?"+column.isUnique()+",FKDes="+column.isForeignDescription()+", HCN:"+column.getHyperColumnObjectName());                                    
+                                }                                
+							} else if (lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0) {
 								if (!column.isPrimaryKey()) {
 									if(column.getFTable()!=null){										
 										if(column.getHyperColumnName()!=null){

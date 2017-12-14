@@ -270,7 +270,7 @@ public class VP6Parser {
                 } else if (qName.equals("BooleanProperty") && currentColumn!=null && attributes.getValue("name").equals("primaryKey")){
                     currentColumn.setPrimaryKey(attributes.getValue("value").equals("true"));
                 } else if (qName.equals("BooleanProperty") && currentColumn!=null && attributes.getValue("name").equals("unique")){
-                    currentColumn.setUnique(attributes.getValue("value").equals("true"));
+                    currentColumn.setUnique(attributes.getValue("value").equals("true"));                    
                 } else if (qName.equals("IntegerProperty") && currentColumn!=null && attributes.getValue("name").equals("length")){
                     currentColumn.setScale(Integer.parseInt(attributes.getValue("value")));
                 } else if (qName.equals("IntegerProperty") && currentColumn!=null && attributes.getValue("name").equals("scale")){

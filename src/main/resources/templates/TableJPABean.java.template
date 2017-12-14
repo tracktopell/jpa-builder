@@ -112,8 +112,7 @@ public class      ${tablebean.declaredName}
 	/**
 	* to-do override using commons
 	*/
-    @Override
-    public String toString() {
+    public String toLargeString() {
 		StringBuilder sb=new StringBuilder();
 		sb.append("${tablebean.declaredName}{");
 		%foreach tablebean.member in ${tablebean.members}		
@@ -122,6 +121,16 @@ public class      ${tablebean.declaredName}
 		//sb.append("serialVersionUID=").append(serialVersionUID).append("}");
         sb.append("}");
 		return sb.toString();
+	}
+
+    @Override
+    public String toString() {
+		StringBuilder sb=new StringBuilder();
+        %foreach tablebean.member in ${tablebean.members}		
+		sb.append(" ").append(${tablebean.member.toStringMinimal}).append(" ");
+		%endfor
+
+		return sb.toString().trim();
 	}
 
 }

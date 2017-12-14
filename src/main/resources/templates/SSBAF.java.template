@@ -4,10 +4,13 @@ import ${tablebean.package}.AuditableEntity;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.ejb.TransactionAttribute;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
+import javax.persistence.TypedQuery;
 
 import static javax.ejb.TransactionAttributeType.REQUIRED;
 import static javax.ejb.TransactionAttributeType.SUPPORTS;
@@ -105,4 +108,130 @@ public abstract class AbstractFacade<T> {
 	@TransactionAttribute(SUPPORTS)
 	public abstract Long countAll();
 
+    @TransactionAttribute(SUPPORTS)
+public PaginatedResult<T> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters) {
+        PaginatedResult<T> r=null;
+        List<T> resultList=null;
+        
+        StringBuilder sbBaseQuery=new StringBuilder("from ");
+        sbBaseQuery.append(entityClass.getName());
+        sbBaseQuery.append(" _x ");
+        
+        boolean filterAdded=false;
+        if(filters !=null && !filters.isEmpty()){
+            filterAdded = true;
+            sbBaseQuery.append(" where ( 1=1 ");
+            final Set<String> keySet = filters.keySet();
+            for(String k: keySet){
+                sbBaseQuery.append(" and _x.").append(k);
+                Object v=filters.get(k);
+                if( v.getClass().equals(String.class)){
+                    sbBaseQuery.append(" like ").append(" :").append(k);                
+                } else {
+                    sbBaseQuery.append(" = ").append(" :").append(k);
+                }
+            }
+            sbBaseQuery.append(" ) ");
+        }
+
+        StringBuilder sbAQSort = new StringBuilder();
+
+        if(sortField != null ){        
+            StringBuilder sbSortExp=new StringBuilder(" order by ");
+            sbSortExp.append(sortField);
+            if(sortOrder != null ){
+                if(sortOrder.toString().equalsIgnoreCase("ASCENDING")){
+                    sbSortExp.append(" ASC ");
+                    sbAQSort.append(sbSortExp);
+                }else if(sortOrder.toString().equalsIgnoreCase("DESCENDING")){
+                    sbSortExp.append(" DESC ");
+                    sbAQSort.append(sbSortExp);
+                }else if(sortOrder.toString().equalsIgnoreCase("UNSORTED")){
+                    // ABORT SORTING !
+                }
+            }else {
+                // ABORT SORTING !
+            }
+        }
+        
+        StringBuilder sbQc=new StringBuilder("select count(*) ").append(sbBaseQuery);
+        StringBuilder sbQr=new StringBuilder("select _x       ").append(sbBaseQuery).append(sbAQSort);
+        
+        final TypedQuery<Long>        qc = getEntityManager().createQuery(sbQc.toString(),Long.class);        
+        final TypedQuery              qr = getEntityManager().createQuery(sbQr.toString(),entityClass);
+        
+        if(filterAdded){
+            final Set<String> keySet = filters.keySet();
+            for(String k: keySet){
+                
+                Object v=filters.get(k);
+                if( v.getClass().equals(String.class)){
+                    if(v != null){
+                        StringBuilder sbqs=new StringBuilder();
+                        final String ve = sbqs.append("%").append(v).append("%").toString();
+                        qc.setParameter(k, ve);
+                        qr.setParameter(k, ve);
+                    } else{
+                        qc.setParameter(k, null);
+                        qr.setParameter(k, null);
+                    }
+                } else {
+                    if(v != null){
+                        qc.setParameter(k, v);
+                        qr.setParameter(k, v);
+                    } else{
+                        qc.setParameter(k, null);
+                        qr.setParameter(k, null);
+                    }
+                }
+            }
+        }
+        
+        Long totalCount = qc.getSingleResult();
+        
+        qr.setFirstResult(first);
+        qr.setMaxResults (pageSize);
+        
+        resultList = qr.getResultList();
+        
+        r = new PaginatedResult<T>(resultList, totalCount.intValue(), pageSize);
+                
+		return r;
+	}
+
+    public class PaginatedResult<T> {
+        private List<T> paginatedResultList;
+        private int     totalCount;        
+        private int     pageSize;
+
+        private PaginatedResult(){
+        }
+        
+        public PaginatedResult(List<T> paginatedResultList, int totalCount, int pageSize) {
+            this.paginatedResultList = paginatedResultList;
+            this.totalCount = totalCount;
+            this.pageSize = pageSize;
+        }
+        
+        /**
+         * @return the paginatedResultList
+         */
+        public List<T> getPaginatedResultList() {
+            return paginatedResultList;
+        }
+
+        /**
+         * @return the totalCount
+         */
+        public int getTotalCount() {
+            return totalCount;
+        }
+
+        /**
+         * @return the pageSize
+         */
+        public int getPageSize() {
+            return pageSize;
+        }    
+    }
 }

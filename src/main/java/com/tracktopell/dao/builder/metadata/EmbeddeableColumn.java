@@ -252,7 +252,7 @@ public class EmbeddeableColumn extends Table implements Column{
 
 	@Override
 	public boolean isUnique() {
-		throw new UnsupportedOperationException("Not supported for EmbeddeableColumn");
+		return false;
 	}
 
 	@Override
