@@ -18,7 +18,9 @@ public interface ${tablebean.declaredName}FacadeRemote {
 
 	void remove(${tablebean.declaredName} entity);
 
-	${tablebean.declaredName} findByPK(Object id);
+	${tablebean.declaredName} findByPK(Object pk);
+
+    ${tablebean.declaredName} findByPK_EAGER(Object pk);
 
 	List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} entity);
 
@@ -29,5 +31,7 @@ public interface ${tablebean.declaredName}FacadeRemote {
 	Long count();
 
 	Long countAll();
+
+    public PaginatedResult<${tablebean.declaredName}> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters);
 
 }

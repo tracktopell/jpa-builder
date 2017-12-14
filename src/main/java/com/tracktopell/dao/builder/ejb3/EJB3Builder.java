@@ -1,4 +1,4 @@
-package com.tracktopell.dao.builder.jpa;
+package com.tracktopell.dao.builder.ejb3;
 
 import com.tracktopell.dao.builder.FormatString;
 import com.tracktopell.dao.builder.metadata.Column;
@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * com.tracktopell.dao.builder.jpa.JPABeanBuilder
+ * com.tracktopell.dao.builder.jpa.EJB3Builder
  * @author tracktopell
  */
-public class JPABeanBuilder {
+public class EJB3Builder {
 	
 	public static void buildMappingBeans(DBTableSet dbSet, String schemmaName,String packageBeanMember, String basePath)
 			throws Exception {
@@ -953,9 +953,13 @@ public class JPABeanBuilder {
 		fos.close();
 	}
 
-	static void buildRSSB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String rsbPackageBeanMember, String ssbPackageBeanMember, String basePathJPA, String basePathRSB, String basePathESB) 
+	static void buildSSB(
+            String interfaceRL,DBTableSet dbSet, String jpaPU, 
+            String jpaPackageBeanMember, String rlsbPackageBeanMember, String ssbPackageBeanMember, 
+            String basePathJPA         , String basePathRLSB         , String basePathESB) 
 		throws IOException{
-				String fileName;
+        
+        String fileName;
 		File baseDir = null;
 		File dirSourceFile = null;
 		File sourceFile = null;
@@ -969,8 +973,8 @@ public class JPABeanBuilder {
 		
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		Properties vp=VersionUtil.loadVersionProperties();
-        System.err.println("====================== [ com.tracktopell.dao.builder.jpa.JPABeanBuilder.buildRSSB ]========================");
-		//System.err.println("Preparing Tables: ");			
+        System.err.println("====================== [ com.tracktopell.dao.builder.jpa.JPABeanBuilder.buildSSB @"+interfaceRL+"]========================");
+		
 		for (Table iterTable: dbSet.getTablesList()) {
 			//System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
 			if (!iterTable.isManyToManyTableWinthMoreColumns()) {				
@@ -1109,7 +1113,38 @@ public class JPABeanBuilder {
 			line = line.replace("${date}", sdf.format(new Date()));
 			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
             line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
-			line = line.replace("${ssbinterface.package}", rsbPackageBeanMember);
+			line = line.replace("${ssbinterface.package}", rlsbPackageBeanMember);
+			ps.println(line);
+		}
+		br.close();
+		ps.close();
+		fos.close();
+		
+        //--------
+        System.err.println("================== PaginatedResult.java CODE GENERATION ========================>>> ");
+        
+        fileName = (rlsbPackageBeanMember+".util").replace(".", File.separator) + File.separator;
+        baseDir = new File(basePathRLSB);
+        
+        dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+        if (!dirSourceFile.exists()) {
+            dirSourceFile.mkdirs();
+        }
+        
+        fileName = dirSourceFile.getPath() + File.separator  + "util" + File.separator  + "PaginatedResult.java";
+        
+		sourceFile = new File(fileName);
+        
+		fos = new FileOutputStream(sourceFile);
+		ps = new PrintStream(fos);
+		br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/PR.java.template")));
+		
+		while ((line = br.readLine()) != null) {
+			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+			line = line.replace("${date}", sdf.format(new Date()));
+			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
+            line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
+			line = line.replace("${ssbinterface.package}", rlsbPackageBeanMember);
 			ps.println(line);
 		}
 		br.close();
@@ -1157,39 +1192,39 @@ public class JPABeanBuilder {
 				} else {
 					fTable = null;
 				}				
-				definitiveColumns.add(column);
-				//System.err.println("\t-->> DefinitiveColumn: " + column);
+				definitiveColumns.add(column);				
 			}
 
-			baseDir = new File(basePathRSB);
+			baseDir = new File(basePathRLSB);
 
 			if (!baseDir.exists()) {
 				baseDir.mkdirs();
 			}
 
-			fileName = rsbPackageBeanMember.replace(".", File.separator) + File.separator;
+			fileName = rlsbPackageBeanMember.replace(".", File.separator) + File.separator;
 
 			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
 			if (!dirSourceFile.exists()) {
 				dirSourceFile.mkdirs();
 			}
 
-			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName()+"FacadeRemote.java";		
+			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName()+"Facade"+interfaceRL+".java";		
 
 			sourceFile = new File(fileName);
 			fos = new FileOutputStream(sourceFile);
 			ps = new PrintStream(fos);
-			br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/SSBRemote.java.template")));
+			br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/SSBF_LR.java.template")));
 
 			while ((line = br.readLine()) != null) {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
-				line = line.replace("${rssbean.package}"  , rsbPackageBeanMember);
-				line = line.replace("${ssbinterface.package}", rsbPackageBeanMember);
+				line = line.replace("${rssbean.package}"  , rlsbPackageBeanMember);
+				line = line.replace("${ssf_lr_bean.package}", rlsbPackageBeanMember);
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);				
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
 				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+                line = line.replace("${tablebean.declaredInterface}", interfaceRL);                
                 line = line.replace("${tablebean.declaredObjectName}", table.getJavaDeclaredObjectName());
 				line = line.replace("${JPA.PU}", jpaPU);
 				ps.println(line);
@@ -1225,13 +1260,14 @@ public class JPABeanBuilder {
 			while ((line = br.readLine()) != null) {
 				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 				line = line.replace("${date}", sdf.format(new Date()));
-				line = line.replace("${rssbean.package}"  , rsbPackageBeanMember);
-				line = line.replace("${ssbinterface.package}", rsbPackageBeanMember);
+				line = line.replace("${rssbean.package}"  , rlsbPackageBeanMember);
+				line = line.replace("${ssbinterface.package}", rlsbPackageBeanMember);
 				line = line.replace("${tablebean.declaredInterface}", table.getJavaDeclaredName()+"FacadeRemote");
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
 				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
+                line = line.replace("${tablebean.declaredInterface}", interfaceRL);                
                 line = line.replace("${tablebean.declaredObjectName}", table.getJavaDeclaredObjectName());
 				if(line.contains("${tablebean.prepareQuery}")){
 					line = line.replace("${tablebean.prepareQuery}", "");
@@ -1309,8 +1345,8 @@ public class JPABeanBuilder {
 		}
 
 	}
-
-	static void buildLSSB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String lsbPackageBeanMember, String ssbPackageBeanMember, String basePathJPA, String basePathLSB, String basePathESB) 
+/*
+	static void __buildLSSB(DBTableSet dbSet, String jpaPU, String jpaPackageBeanMember, String lsbPackageBeanMember, String ssbPackageBeanMember, String basePathJPA, String basePathLSB, String basePathESB) 
 		throws IOException{
 				String fileName;
 		File baseDir = null;
@@ -1668,7 +1704,7 @@ public class JPABeanBuilder {
 		}
 
 	}
-
+*/
     private static void generateAuditableEntityInterface(String packageBeanMember, String basePath) throws IOException {
         String fileName = packageBeanMember.replace(".", File.separator) + File.separator;
         File baseDir = new File(basePath);

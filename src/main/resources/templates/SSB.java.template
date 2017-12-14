@@ -2,6 +2,7 @@ package ${ssbean.package};
 
 import ${tablebean.package}.${tablebean.declaredName};
 import ${ssbinterface.package}.${tablebean.declaredInterface};
+import ${ssbinterface.package}.${tablebean.declaredInterface}.util.PaginatedResult;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -9,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
 /**
  * SSB JPA Entity Facade of Table ${tablebean.name} by ${tablebean.declaredInterface}.
  * 
@@ -17,7 +19,7 @@ import javax.persistence.TypedQuery;
 @Stateless(
     name         = "${tablebean.declaredObjectName}_SSB",
     mappedName   = "${tablebean.declaredName}_SSB",
-    description  = "${tablebean.declaredName} Stateless-Session EJB-3.1 by ${tablebean.declaredInterface}"
+    description  = "${tablebean.declaredName} ${tablebean.declaredInterface}-Stateless-Session EJB-3.1"
 )
 public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.declaredName}> implements ${tablebean.declaredInterface} {
 

@@ -1,4 +1,4 @@
-package com.tracktopell.dao.builder.jpa;
+package com.tracktopell.dao.builder.ejb3;
 
 import com.tracktopell.dao.builder.FormatString;
 import com.tracktopell.dao.builder.metadata.Column;

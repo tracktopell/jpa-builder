@@ -1,4 +1,4 @@
-package com.tracktopell.dao.builder.jpa;
+package com.tracktopell.dao.builder.ejb3;
 
 import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.parser.VP6Parser;
@@ -9,24 +9,24 @@ import java.util.Hashtable;
 /**
  * UpdatePersistenceXML
  */
-public class UpdatePersistenceXML {
+public class UpdateResourceBoundleForBeans {
 
     public static void main(String[] args) {
         String  pathToVPProject         = null;
-        String  path_2_Parsistence_xml  = null;
-        String  packageBeanMember       = null;
+		String  basePath                = null;
+		String  prefixTableLabel        = null;
         String[]tableNames2Gen          = null;
         try {
-
+		
             if( args.length != 4) {
-                System.err.print("use: <java ...> UpdatePersistenceXML pathToVPProject path_2_Parsistence_xml  packageBeanMember tableNames2GenList,Separated,By,Comma" );
+                System.err.print("use: <java ...> UpdateResourceBoundleForBeans pathToVPProject  basePath  prefixTableLabel [ tableNames2GenList,Separated,By,Comma | {all} ] " );
                 System.exit(1);
             }
 
             pathToVPProject         = args[0];
-            path_2_Parsistence_xml  = args[1];
-            packageBeanMember       = args[2];
-            tableNames2Gen   = args[3].split(",");
+			basePath                = args[1];
+			prefixTableLabel        = args[2];
+            tableNames2Gen			= args[3].split(",");
 
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
@@ -38,7 +38,7 @@ public class UpdatePersistenceXML {
                 dbSet = dbSet.copyJustSelectedNames(tableNames2Gen);
             }
 
-            JPABeanBuilder.updatePersistenceXML(dbSet, packageBeanMember, path_2_Parsistence_xml);
+            EJB3Builder.buildReourceBoundleBeans(dbSet, basePath, prefixTableLabel);
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);

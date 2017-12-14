@@ -1,5 +1,6 @@
 package ${ssbean.package};
 
+import ${ssbinterface.package}.PaginatedResult;
 import ${tablebean.package}.AuditableEntity;
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -76,9 +77,20 @@ public abstract class AbstractFacade<T> {
 	}
 
 	@TransactionAttribute(SUPPORTS)
-	public T findByPK(Object id) {
-		return getEntityManager().find(entityClass, id);
+	public T findByPK(Object pk) {
+		return getEntityManager().find(entityClass, pk);
 	}
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+	public T findByPK_EAGER(Object pk){
+        T x = getEntityManager().find(entityClass, pk);
+        if( x != null)
+            %foreach tablebean.member in ${tablebean.members}		
+            ${tablebean.collectionMember.eagerInitializerCode}
+            %endfor
+        }
+        return x;
+    }
 
 	@TransactionAttribute(SUPPORTS)
 	public abstract List<T> findAllLike(T entity);
@@ -109,7 +121,7 @@ public abstract class AbstractFacade<T> {
 	public abstract Long countAll();
 
     @TransactionAttribute(SUPPORTS)
-public PaginatedResult<T> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters) {
+    public PaginatedResult<T> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters) {
         PaginatedResult<T> r=null;
         List<T> resultList=null;
         
@@ -198,40 +210,4 @@ public PaginatedResult<T> loadPaginated(int first,int pageSize,String sortField,
                 
 		return r;
 	}
-
-    public class PaginatedResult<T> {
-        private List<T> paginatedResultList;
-        private int     totalCount;        
-        private int     pageSize;
-
-        private PaginatedResult(){
-        }
-        
-        public PaginatedResult(List<T> paginatedResultList, int totalCount, int pageSize) {
-            this.paginatedResultList = paginatedResultList;
-            this.totalCount = totalCount;
-            this.pageSize = pageSize;
-        }
-        
-        /**
-         * @return the paginatedResultList
-         */
-        public List<T> getPaginatedResultList() {
-            return paginatedResultList;
-        }
-
-        /**
-         * @return the totalCount
-         */
-        public int getTotalCount() {
-            return totalCount;
-        }
-
-        /**
-         * @return the pageSize
-         */
-        public int getPageSize() {
-            return pageSize;
-        }    
-    }
 }

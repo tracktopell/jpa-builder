@@ -1,16 +1,18 @@
-package ${lssbean.package};
+package ${ssf_lr_bean.package};
 
 import ${tablebean.package}.${tablebean.declaredName};
+import ${ssf_lr_bean.package}.util.PaginatedResult;
 import java.util.List;
-import javax.ejb.Local;
+import java.util.Map;
+import javax.ejb.${tablebean.declaredInterface};
 
 /**
- * JPA Entity @Local Facade Interface.
+ * JPA Entity @${tablebean.declaredInterface} Facade Interface.
  * 
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
-@Local
-public interface ${tablebean.declaredName}FacadeLocal {
+@${tablebean.declaredInterface}
+public interface ${tablebean.declaredName}Facade${tablebean.declaredInterface} {
 
 	${tablebean.declaredName} create(${tablebean.declaredName} entity);
 

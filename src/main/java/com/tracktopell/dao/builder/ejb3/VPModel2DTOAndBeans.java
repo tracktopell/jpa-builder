@@ -1,4 +1,4 @@
-package com.tracktopell.dao.builder.jpa;
+package com.tracktopell.dao.builder.ejb3;
 
 import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.parser.VP6Parser;
@@ -81,13 +81,10 @@ public class VPModel2DTOAndBeans {
 			
 			DTOBeanBuilder.buildDTOsAssembler(dbSet, asmPackageBeanMember,dtoPackageBeanMember, jpaPackageBeanMember, basePathASM);
 			
-			JPABeanBuilder.buildMappingBeans(dbSet, schemmaName, jpaPackageBeanMember, basePathJPA);
+			EJB3Builder.buildMappingBeans(dbSet, schemmaName, jpaPackageBeanMember, basePathJPA);
+						
+            EJB3Builder.buildSSB(interfaceToImpl,dbSet, jpaPU, jpaPackageBeanMember, rsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathRSB, basePathESB);
 			
-			if(interfaceToImpl.equals("@Remote")){
-				JPABeanBuilder.buildRSSB(dbSet, jpaPU, jpaPackageBeanMember, rsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathRSB, basePathESB);
-			} else if(interfaceToImpl.equals("@Local")){
-				JPABeanBuilder.buildLSSB(dbSet, jpaPU, jpaPackageBeanMember, lsbPackageBeanMember, esbPackageBeanMember,basePathJPA, basePathLSB, basePathESB);
-			}
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
             System.exit(2);

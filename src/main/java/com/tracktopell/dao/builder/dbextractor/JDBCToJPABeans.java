@@ -8,7 +8,7 @@
 package com.tracktopell.dao.builder.dbextractor;
 
 import com.tracktopell.dao.builder.FormatString;
-import com.tracktopell.dao.builder.jpa.JPABeanBuilder;
+import com.tracktopell.dao.builder.ejb3.EJB3Builder;
 import com.tracktopell.dao.builder.metadata.*;
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -78,7 +78,7 @@ public class JDBCToJPABeans {
                 }
             }
 
-            JPABeanBuilder.buildMappingBeans(dbSet, schemma, packageBeanMember, basePath);
+            EJB3Builder.buildMappingBeans(dbSet, schemma, packageBeanMember, basePath);
 
         } catch (Exception e) {
             e.printStackTrace(System.err);
