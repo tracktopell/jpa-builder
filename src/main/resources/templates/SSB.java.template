@@ -1,11 +1,10 @@
 package ${ssbean.package};
 
 import ${tablebean.package}.${tablebean.declaredName};
+import ${tablebean.package}.*;
 import ${ssbinterface.package}.${tablebean.declaredInterface};
-import ${ssbinterface.package}.${tablebean.declaredInterface}.util.PaginatedResult;
 
 import java.util.List;
-import javax.persistence.EntityManager;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,9 +16,9 @@ import javax.persistence.TypedQuery;
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
 @Stateless(
-    name         = "${tablebean.declaredObjectName}_SSB",
-    mappedName   = "${tablebean.declaredName}_SSB",
-    description  = "${tablebean.declaredName} ${tablebean.declaredInterface}-Stateless-Session EJB-3.1"
+    name         = "${tablebean.declaredObjectName}_${tablebean.declaredI}SB",
+    mappedName   = "${tablebean.declaredName}_${tablebean.declaredI}SB",
+    description  = "${tablebean.declaredInterface}-Stateless-Session EJB-3.1"
 )
 public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.declaredName}> implements ${tablebean.declaredInterface} {
 
@@ -54,6 +53,15 @@ public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.
 		return nq.getResultList();
 		
 	}
+    
+    @Override
+	public ${tablebean.declaredName} findByPK_EAGER(Object pk){
+        ${tablebean.declaredName} x = getEntityManager().find(${tablebean.declaredName}.class, pk);
+        if( x != null){
+            ${tablebean.collectionMember.eagerInitializerCode}
+        }
+        return x;
+    }
 
 	@Override
 	public List<${tablebean.declaredName}> findAll() {

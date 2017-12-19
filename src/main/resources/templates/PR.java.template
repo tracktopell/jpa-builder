@@ -1,4 +1,4 @@
-package ${ssbinterface.package};
+package ${ssbinterface.package}.util;
 
 import java.util.List;
 import javax.persistence.EntityManager;

@@ -1,6 +1,6 @@
 package ${ssbean.package};
 
-import ${ssbinterface.package}.PaginatedResult;
+import ${ssbinterface.package}.util.PaginatedResult;
 import ${tablebean.package}.AuditableEntity;
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -81,16 +81,8 @@ public abstract class AbstractFacade<T> {
 		return getEntityManager().find(entityClass, pk);
 	}
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public T findByPK_EAGER(Object pk){
-        T x = getEntityManager().find(entityClass, pk);
-        if( x != null)
-            %foreach tablebean.member in ${tablebean.members}		
-            ${tablebean.collectionMember.eagerInitializerCode}
-            %endfor
-        }
-        return x;
-    }
+    @TransactionAttribute(REQUIRED)
+	public abstract T findByPK_EAGER(Object pk);
 
 	@TransactionAttribute(SUPPORTS)
 	public abstract List<T> findAllLike(T entity);
