@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 import java.util.Hashtable;
 
 /**
- * UpdatePersistenceXML
+ * com.tracktopell.dao.builder.ejb3.UpdateResourceBoundleForBeans
  */
 public class UpdateResourceBoundleForBeans {
 
@@ -19,7 +19,7 @@ public class UpdateResourceBoundleForBeans {
         try {
 		
             if( args.length != 4) {
-                System.err.print("use: <java ...> UpdateResourceBoundleForBeans pathToVPProject  basePath  prefixTableLabel [ tableNames2GenList,Separated,By,Comma | {all} ] " );
+                System.err.print("use: <java ...> com.tracktopell.dao.builder.ejb3.UpdateResourceBoundleForBeans pathToVPProject  basePath  prefixTableLabel [ tableNames2GenList,Separated,By,Comma | {all} ] " );
                 System.exit(1);
             }
 

@@ -35,7 +35,7 @@ public class VPModel2JPAEJB {
 
         try {
             if (args.length != 11) {
-                System.err.println("use: <java ...> com.tracktopell.dao.builder.jpa.VPModel2JPAEJB  "
+                System.err.println("use: <java ...> com.tracktopell.dao.builder.ejb3.VPModel2JPAEJB "
                         + "pathToVPProject SCHEMA "
                         + "jpaPackageBeanMember rlsbPackageBeanMember esbPackageBeanMember "
                         + "basePathJPA          basePathRLSB          basePathESB "

@@ -27,10 +27,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-// Hibernate Validator 5x is not compatible with validation-api 1.0.x
-//import javax.validation.constraints.NotNull;
-//import javax.validation.constraints.Size;
-
 /**
  * Class for mapping JPA Entity of Table ${tablebean.name}.
  * 

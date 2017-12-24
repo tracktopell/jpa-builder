@@ -34,41 +34,10 @@ public abstract class AbstractFacade<T> {
 	protected abstract EntityManager getEntityManager();
 
 	@TransactionAttribute(REQUIRED)
-	public T create(T entity) {
-        if(ctx != null){
-            final Principal callerPrincipal = ctx.getCallerPrincipal();
-            // obtain the caller principal.
-            if(callerPrincipal != null){                
-                if(entity instanceof AuditableEntity){
-                    final Timestamp nowTimeStamp = new Timestamp(System.currentTimeMillis());
-                    ((AuditableEntity) entity).setFechaCreo(nowTimeStamp);
-                    ((AuditableEntity) entity).setUsuarioCreo(callerPrincipal.getName());
-                    ((AuditableEntity) entity).setFechaModifico(nowTimeStamp);
-                    ((AuditableEntity) entity).setUsuarioModifico(callerPrincipal.getName());
-                }
-            }
-        }
-		getEntityManager().persist(entity);
-		getEntityManager().flush();
-		return entity;
-	}
+	public abstract T create(T entity);
 
 	@TransactionAttribute(REQUIRED)
-	public T edit(T entity) {
-        if(ctx != null){
-            final Principal callerPrincipal = ctx.getCallerPrincipal();
-            // obtain the caller principal.
-            if(callerPrincipal != null){                
-                if(entity instanceof AuditableEntity){
-                    ((AuditableEntity) entity).setFechaModifico(new Timestamp(System.currentTimeMillis()));
-                    ((AuditableEntity) entity).setUsuarioModifico(callerPrincipal.getName());
-                }
-            }
-        }
-		getEntityManager().merge(entity);
-		getEntityManager().flush();
-		return entity;
-	}
+	public abstract T update(T entity);
 
 	@TransactionAttribute(REQUIRED)
 	public void remove(T entity) {

@@ -16,7 +16,7 @@ public interface ${tablebean.declaredName}Facade${tablebean.declaredInterface} {
 
 	${tablebean.declaredName} create(${tablebean.declaredName} entity);
 
-	${tablebean.declaredName} edit(${tablebean.declaredName} entity);
+	${tablebean.declaredName} update(${tablebean.declaredName} entity);
 
 	void remove(${tablebean.declaredName} entity);
 
@@ -34,6 +34,6 @@ public interface ${tablebean.declaredName}Facade${tablebean.declaredInterface} {
 
 	Long countAll();
 
-    public PaginatedResult<${tablebean.declaredName}> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters);
+    PaginatedResult<${tablebean.declaredName}> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters);
 
 }

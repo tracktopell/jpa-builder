@@ -1,8 +1,3 @@
-/*
- * VP6Parser.java
- *
- */
-
 package com.tracktopell.dao.builder.parser;
 
 import java.io.FileInputStream;
@@ -23,6 +18,10 @@ import com.tracktopell.dao.builder.metadata.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
+/*
+ * VP6Parser.java
+ *
+ */
 
 public class VP6Parser {
     private VP6Parser() {

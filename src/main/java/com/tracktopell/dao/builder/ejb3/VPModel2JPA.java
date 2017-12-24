@@ -22,7 +22,7 @@ public class VPModel2JPA {
 
             if( args.length != 5) {
                 System.err.println("bad args:"+Arrays.asList(args));
-                System.err.println("use: <java ...> VPModel2JPA  pathToVPProject  schemmaName packageBeanMember  basePath  tableNames2GenList,Separated,By,Comma" );
+                System.err.println("use: <java ...> com.tracktopell.dao.builder.ejb3.VPModel2JPA  pathToVPProject  schemmaName packageBeanMember  basePath  tableNames2GenList,Separated,By,Comma" );
                 System.exit(1);
             }
 
