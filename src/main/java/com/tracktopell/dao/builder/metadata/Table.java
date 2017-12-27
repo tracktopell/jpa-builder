@@ -379,9 +379,9 @@ public class Table {
 		return autoC;
 	}
 
-	public Collection<Column> getFKs() {
+	public ArrayList<Column> getFKs() {
 		Collection<Column> cc = columns.values();
-		Collection<Column> autoC = new ArrayList<Column>();
+		ArrayList<Column> autoC = new ArrayList<Column>();
 		for (Column c : cc) {
 			if (c.isForeignKey()) {
 				autoC.add(c);
@@ -390,6 +390,17 @@ public class Table {
 		return autoC;
 	}
 
+	public HashMap<Integer,Column> getFKsForCreation() {
+		Collection<Column> cc = columns.values();
+		HashMap<Integer,Column> fksMap = new HashMap<Integer,Column>();
+		for (Column c : cc) {
+			if (c.isForeignKey()) {
+				fksMap.put(c.getPosition(),c);
+			}
+		}
+		return fksMap;
+	}
+    
 	public Collection<Column> getForeignDescriptionColumns() {
 		Collection<Column> cc = columns.values();
 		Collection<Column> autoC = new ArrayList<Column>();

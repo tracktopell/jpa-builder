@@ -4,7 +4,6 @@ import com.tracktopell.dao.builder.FormatString;
 import com.tracktopell.dao.builder.metadata.Column;
 import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.metadata.EmbeddeableColumn;
-import com.tracktopell.dao.builder.metadata.ReferenceTable;
 import com.tracktopell.dao.builder.metadata.Table;
 import com.tracktopell.util.VersionUtil;
 import java.io.BufferedReader;
@@ -20,13 +19,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 /**
- * com.tracktopell.dao.builder.jpa.EJB3Builder
+ * com.tracktopell.dao.builder.ejb3.EJB3Builder
  * @author tracktopell
  */
 public class EJB3Builder {
@@ -48,7 +47,7 @@ public class EJB3Builder {
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		Properties vp=VersionUtil.loadVersionProperties();
 		
-        System.err.println("====================== [ com.tracktopell.dao.builder.jpa.JPABeanBuilder.buildMappingBeans ]========================");
+        System.err.println("====================== [ com.tracktopell.dao.builder.ejb3.EJB3Builder.buildMappingBeans ]========================");
         
 		//System.err.println("Preparing Tables: ");			
 		for (Table iterTable: dbSet.getTablesList()) {
@@ -635,16 +634,18 @@ public class EJB3Builder {
 					
 					Collection<Table> m2mTables = dbSet.getManyToManyRelationTables(table);
 
-					for (Table fm2mTable : m2mTables) {
-						//ps.println("    // "+fm2mTable.getName());
+					for (Table fm2mTable : m2mTables) {						
 						Table tableOwnerManyToManyRelation = dbSet.getTableOwnerManyToManyRelation(table, fm2mTable);
-						Iterator<Column> fKsM2M = tableOwnerManyToManyRelation.getFKs().iterator();
-
-						Column rtCol1 = fKsM2M.next();
-						Column rtCol2 = fKsM2M.next();
-
-						ps.println("    ");
-						if (tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equals(table.getName())) {							
+                        final HashMap<Integer,Column> rtColM2M = tableOwnerManyToManyRelation.getFKsForCreation();
+                        
+                        final Column rtCol1 = rtColM2M.get(1);
+						final Column rtCol2 = rtColM2M.get(2);
+                        
+						//ps.println("    ");
+                        //ps.println("    //# BUG: "+fm2mTable.getName());
+                        //ps.println("    //# BUG: M2M:"+tableOwnerManyToManyRelation.getName()+", rtCol1["+rtCol1.getPosition()+"]="+rtCol1.getName()+", rtCol2["+rtCol2.getPosition()+"]="+rtCol2.getName());
+                        //ps.println("    //# BUG: "+tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName()+" == "+table.getName()+"?"+(tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equalsIgnoreCase(table.getName())));
+						if (!tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equalsIgnoreCase(table.getName())) {
 							if(table.getSingularName()!=null){
 								ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\")");
 							}else{
@@ -653,8 +654,8 @@ public class EJB3Builder {
 						} else {
                             ps.println("    @ManyToMany(cascade = CascadeType.ALL)");
 							ps.println("    @JoinTable(name               = \"" + tableOwnerManyToManyRelation.getName().toUpperCase() + "\",");
-							ps.println("               joinColumns        = {@JoinColumn(name = \"" + rtCol2.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol2.getName()).getColumnName().toUpperCase() + "\")},");
-							ps.println("               inverseJoinColumns = {@JoinColumn(name = \"" + rtCol1.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getColumnName().toUpperCase() + "\")}");
+							ps.println("               joinColumns        = {@JoinColumn(name = \"" + rtCol1.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getColumnName().toUpperCase() + "\")},");
+							ps.println("               inverseJoinColumns = {@JoinColumn(name = \"" + rtCol2.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol2.getName()).getColumnName().toUpperCase() + "\")}");
 							ps.println("               )");							
 						}		
 						

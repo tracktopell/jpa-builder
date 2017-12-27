@@ -44,8 +44,8 @@ public class VPModel2JPA {
                 dbSet = dbSet.copyJustSelectedNames(tableNames2Gen);
             }
 
-            //System.out.println("====================== END PARSE XML ========================");
-            //System.out.println("->" + dbSet);
+            System.out.println("====================== END PARSE XML ========================");
+            System.out.println("->" + dbSet);
 
             EJB3Builder.buildMappingBeans(dbSet, schemmaName, packageBeanMember, basePath);
 
