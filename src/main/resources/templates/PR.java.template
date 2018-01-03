@@ -13,7 +13,7 @@ import javax.persistence.TypedQuery;
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
 
-public class PaginatedResult<T> {
+public class PaginatedResult<T> implements java.io.Serializable {
     private List<T> paginatedResultList;
     private int     totalCount;        
     private int     pageSize;

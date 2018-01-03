@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -112,27 +111,41 @@ public class DBTableSet {
         return result;        
     }
 
-	private int getProdCascadeReferences(Table t){
-		
+    private int getProdCascadeReferences(List<Table> stackTrace){
+        final Table t = stackTrace.get(stackTrace.size()-1);		
 		List<Table> tablesHasReferece = getTablesHasReferece(t.getName());
 		
 		int s = tablesHasReferece.size();		
 		int p=0;
-		//System.err.println("\t=>getProdCascadeReferences("+t.getName()+"):");
+		//System.err.print("\t=>getProdCascadeReferences("+t.getName()+"):");
+        //for(Table ts: stackTrace){
+        //    System.err.print("\t->"+ts.getName());
+        //}
+        //System.err.println();
 		for(Table tr: tablesHasReferece){
 			if(tr.getName().equalsIgnoreCase(t.getName())){
 				continue;
 			}
-			p = getProdCascadeReferences(tr);
-			//System.err.println("\t\t=>getProdCascadeReferences("+t.getName()+")<-("+tr.getName()+") + "+p);
-			s += p;
-			
+            boolean ciclicReference=false;
+            for(Table ts: stackTrace){
+                if(tr.getName().equalsIgnoreCase(ts.getName())){
+                    ciclicReference=true;
+                    break;
+                }
+            }            
+            if(! ciclicReference) {
+                //System.err.println("\t\t=>getProdCascadeReferences("+t.getName()+")<-("+tr.getName()+") + ");
+                stackTrace.add(tr);
+                p = getProdCascadeReferences(stackTrace);			
+                s += p;
+                stackTrace.remove(stackTrace.size()-1);
+            }
 		}
 		//System.err.println("\t=>getProdCascadeReferences("+t.getName()+") = "+s);
 		
 		return s;		
 	}
-	
+    	
 	public List<Table> getTablesSortedForDrop(){ 
 		ArrayList<Table> result =  new ArrayList<Table>();
         Enumeration<Table> te1 = null;
@@ -145,7 +158,9 @@ public class DBTableSet {
         while (te1.hasMoreElements()){
             iterTable = te1.nextElement();
 			List<Table> tablesHasReferece = getTablesHasReferece(iterTable.getName());			
-			int s = getProdCascadeReferences(iterTable);
+            List<Table> tableStackTrace=new ArrayList<>();
+            tableStackTrace.add(iterTable);
+			int s = getProdCascadeReferences(tableStackTrace);
 			dropOrder.put(iterTable.getName(),s);
 
 		}

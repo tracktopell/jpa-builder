@@ -83,12 +83,24 @@ public abstract class AbstractFacade<T> {
 
     @TransactionAttribute(SUPPORTS)
     public PaginatedResult<T> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters) {
+        return loadPaginated(first,pageSize,null,sortField,sortOrder,filters);
+    }
+    
+    @TransactionAttribute(SUPPORTS)
+    public PaginatedResult<T> loadPaginated(int first,int pageSize,String jqlBase,String sortField,Object sortOrder, Map<String,Object> filters) {
         PaginatedResult<T> r=null;
         List<T> resultList=null;
         
-        StringBuilder sbBaseQuery=new StringBuilder("from ");
-        sbBaseQuery.append(entityClass.getName());
-        sbBaseQuery.append(" _x ");
+        StringBuilder sbBaseQuery=new StringBuilder();
+        if(jqlBase == null){
+            sbBaseQuery.append("from ");
+            sbBaseQuery.append(entityClass.getName());
+            sbBaseQuery.append(" _x ");
+        } else {
+            sbBaseQuery.append("from ");
+            sbBaseQuery.append(jqlBase);
+            sbBaseQuery.append(" _x ");
+        }
         
         boolean filterAdded=false;
         if(filters !=null && !filters.isEmpty()){

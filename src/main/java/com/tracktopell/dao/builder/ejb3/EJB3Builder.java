@@ -312,7 +312,8 @@ public class EJB3Builder {
 										ps.println("    @JoinColumn(name = \"" + column.getName().toUpperCase()
 												+ "\" , referencedColumnName = \"" + table.getFKReferenceTable(column.getName()).getColumnName().toUpperCase() + "\", "
 												+ " insertable = false, updatable = false)");
-										ps.println("    @ManyToOne(optional = " + column.isNullable() + ")");										
+										//ps.println("    @ManyToOne(optional = " + column.isNullable() + ", fetch = FetchType.LAZY)");
+                                        ps.println("    @ManyToOne(optional = " + column.isNullable() + " )");
 										if(column.getFTable()!=null && column.getHyperColumnName()!=null){
 											ps.println("    private " + column.getFTable().getJavaDeclaredName()+" "+column.getHyperColumnObjectName()+";");
 										}else {
@@ -393,7 +394,8 @@ public class EJB3Builder {
 												ps.println(")");
 											}
 											
-											ps.println("    @ManyToOne(optional = " + column.isNullable() + ")");											
+											//ps.println("    @ManyToOne(optional = " + column.isNullable() + ", fetch = FetchType.LAZY)");
+                                            ps.println("    @ManyToOne(optional = " + column.isNullable() + " )");
 											if(column.getFTable()!=null && column.getHyperColumnName()!=null){
 												ps.println("    private " + column.getFTable().getJavaDeclaredName()+" "+column.getHyperColumnObjectName()+";");
 											}else {												
@@ -582,11 +584,11 @@ public class EJB3Builder {
 								ps.println("    */ " );
                                 
 								if(cfk.getHyperColumnName()!=null){
-									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\")");
+									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\", fetch = FetchType.LAZY)");
 								}else if(cfk.getFTable()!=null){
-									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\")");
+									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\", fetch = FetchType.LAZY)");
 								}else {
-									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\")");
+									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\", fetch = FetchType.LAZY)");
 								}
 								//ps.println("    // "+posibleTableOneToMany.getName()+" Well know as "+posibleTableOneToMany.getJavaDeclaredName());
 								ps.println("    private " + collectionClass + "<" + posibleTableOneToMany.getJavaDeclaredName() + "> " + realSugestedCollectionName + ";");
@@ -1331,6 +1333,19 @@ public class EJB3Builder {
 					}
 				} else if(line.contains("${tablebean.collectionMember.eagerInitializerCode}")){
                     line = "";
+                    
+                    for(Column ci:definitiveColumns){
+                        if(ci.isForeignKey() && ci.getFTable()!=null){
+                            String getterFK="";
+                            String getterPK_PK="";
+                            
+                            getterFK    = "get"+ci.getJavaDeclaredName();
+                            getterPK_PK = "get"+ci.getFTable().getPrimaryKeys().iterator().next().getJavaDeclaredName();
+                            
+                            ps.println("            // if(x."+getterFK+"() !=null && x."+getterFK+"()."+getterPK_PK+"()!=null){} ");
+                        }                        
+                    }
+                    
                     for (Table posibleTableOneToMany : tablesForGeneration) {
 						
 						if(posibleTableOneToMany instanceof EmbeddeableColumn){
@@ -1445,7 +1460,7 @@ public class EJB3Builder {
                         //ps.println("        //EAGER leave flat: M-2-M :"+fm2mTable.getName()+", "+fm2mTable.getJavaDeclaredName()+", "+fm2mTable.getJavaDeclaredObjectName()+", "+fm2mTable.getJavaDeclaredObjectName()+ collectionClass+", "+m2mCollectuionProperty);
                         ps.println("        final List<"+fm2mTable.getJavaDeclaredName()+"> entity_"+m2mCollectuionProperty+" =  entity.get"+FormatString.firstLetterUpperCase(m2mCollectuionProperty)+"();");
                         ps.println("        entity.set"+FormatString.firstLetterUpperCase(m2mCollectuionProperty)+"(null);");
-					}                    
+					}
 				} else if(line.contains("${tablebean.collectionMember.eagerCopyCode}")){
                     line = "";
                     for (Table posibleTableOneToMany : tablesForGeneration) {
