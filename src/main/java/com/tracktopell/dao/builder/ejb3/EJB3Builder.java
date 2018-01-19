@@ -31,7 +31,8 @@ import java.util.Properties;
 public class EJB3Builder {
     private static final String FETCHTYPE_LAZY  = "LAZY";
     private static final String FETCHTYPE_EAGER = "EAGER";
-	private static String defaultValueFetchType = FETCHTYPE_LAZY;
+    private static final String FETCHTYPE_DEFAULT = "DEFAULT";
+	private static String defaultValueFetchType = FETCHTYPE_DEFAULT;
     
 	public static void buildMappingBeans(DBTableSet dbSet, String schemmaName,String packageBeanMember, String basePath)
 			throws Exception {
@@ -315,8 +316,11 @@ public class EJB3Builder {
 										ps.println("    @JoinColumn(name = \"" + column.getName().toUpperCase()
 												+ "\" , referencedColumnName = \"" + table.getFKReferenceTable(column.getName()).getColumnName().toUpperCase() + "\", "
 												+ " insertable = false, updatable = false)");
-										ps.println("    @ManyToOne(optional = " + column.isNullable() + ", fetch = FetchType."+defaultValueFetchType+")");
-                                        //ps.println("    @ManyToOne(optional = " + column.isNullable() + " )");
+                                        if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
+                                            ps.println("    @ManyToOne(optional = " + column.isNullable() + ", fetch = FetchType."+defaultValueFetchType+")");
+                                        }else{
+                                            ps.println("    @ManyToOne(optional = " + column.isNullable() + " )");
+                                        }
 										if(column.getFTable()!=null && column.getHyperColumnName()!=null){
 											ps.println("    private " + column.getFTable().getJavaDeclaredName()+" "+column.getHyperColumnObjectName()+";");
 										}else {
@@ -396,9 +400,11 @@ public class EJB3Builder {
 											} else {
 												ps.println(")");
 											}
-											
-											ps.println("    @ManyToOne(optional = " + column.isNullable() + ", fetch = FetchType."+defaultValueFetchType+")");
-                                            //ps.println("    @ManyToOne(optional = " + column.isNullable() + " )");
+											if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
+                                                ps.println("    @ManyToOne(optional = " + column.isNullable() + ", fetch = FetchType."+defaultValueFetchType+")");
+                                            }else{
+                                                ps.println("    @ManyToOne(optional = " + column.isNullable() + " )");
+                                            }
 											if(column.getFTable()!=null && column.getHyperColumnName()!=null){
 												ps.println("    private " + column.getFTable().getJavaDeclaredName()+" "+column.getHyperColumnObjectName()+";");
 											}else {												
@@ -587,11 +593,23 @@ public class EJB3Builder {
 								ps.println("    */ " );
                                 
 								if(cfk.getHyperColumnName()!=null){
-									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                    if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
+                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                    }else{
+                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\")");
+                                    }
 								}else if(cfk.getFTable()!=null){
-									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                    if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
+                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                    }else{
+                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\")");
+                                    }
 								}else {
-									ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                    if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
+                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                    }else{
+                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\")");
+                                    }
 								}
 								//ps.println("    // "+posibleTableOneToMany.getName()+" Well know as "+posibleTableOneToMany.getJavaDeclaredName());
 								ps.println("    private " + collectionClass + "<" + posibleTableOneToMany.getJavaDeclaredName() + "> " + realSugestedCollectionName + ";");
@@ -652,12 +670,25 @@ public class EJB3Builder {
                         //ps.println("    //# BUG: "+tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName()+" == "+table.getName()+"?"+(tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equalsIgnoreCase(table.getName())));
 						if (!tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equalsIgnoreCase(table.getName())) {
 							if(table.getSingularName()!=null){
-								ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
+                                    ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                }else{
+                                    ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\")");
+                                }
+                                
 							}else{
-								ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
+                                    ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                }else{
+                                    ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\")");
+                                }
 							}
 						} else {
-                            ps.println("    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType."+defaultValueFetchType+")");
+                            if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
+                                ps.println("    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType."+defaultValueFetchType+")");
+                            }else{
+                                ps.println("    @ManyToMany(cascade = CascadeType.ALL)");
+                            }
 							ps.println("    @JoinTable(name               = \"" + tableOwnerManyToManyRelation.getName().toUpperCase() + "\",");
 							ps.println("               joinColumns        = {@JoinColumn(name = \"" + rtCol1.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getColumnName().toUpperCase() + "\")},");
 							ps.println("               inverseJoinColumns = {@JoinColumn(name = \"" + rtCol2.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol2.getName()).getColumnName().toUpperCase() + "\")}");
