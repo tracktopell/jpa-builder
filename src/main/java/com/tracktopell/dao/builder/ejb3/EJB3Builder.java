@@ -29,10 +29,24 @@ import java.util.Properties;
  * @author tracktopell
  */
 public class EJB3Builder {
-    private static final String FETCHTYPE_LAZY  = "LAZY";
-    private static final String FETCHTYPE_EAGER = "EAGER";
-    private static final String FETCHTYPE_DEFAULT = "DEFAULT";
+    public static final String FETCHTYPE_LAZY  = "LAZY";
+    public static final String FETCHTYPE_EAGER = "EAGER";
+    public static final String FETCHTYPE_DEFAULT = "DEFAULT";
 	private static String defaultValueFetchType = FETCHTYPE_DEFAULT;
+
+    public static void setDefaultValueFetchType_EAGER() {
+        EJB3Builder.defaultValueFetchType = FETCHTYPE_EAGER;
+    }
+    
+    public static void setDefaultValueFetchType_LAZY() {
+        EJB3Builder.defaultValueFetchType = FETCHTYPE_LAZY;
+    }
+    
+    public static void setDefaultValueFetchType_DEFAULT() {
+        EJB3Builder.defaultValueFetchType = FETCHTYPE_DEFAULT;
+    }
+    
+    
     
 	public static void buildMappingBeans(DBTableSet dbSet, String schemmaName,String packageBeanMember, String basePath)
 			throws Exception {

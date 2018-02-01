@@ -18,11 +18,12 @@ public class VPModel2JPA {
         String  packageBeanMember= null;
         String  basePath         = null;
         String[]tableNames2Gen   = null;
+        String  fetchType        = null;
         try {
 
-            if( args.length != 5) {
+            if( args.length < 5 || args.length > 6) {
                 System.err.println("bad args:"+Arrays.asList(args));
-                System.err.println("use: <java ...> com.tracktopell.dao.builder.ejb3.VPModel2JPA  pathToVPProject  schemmaName packageBeanMember  basePath  tableNames2GenList,Separated,By,Comma" );
+                System.err.println("use: <java ...> com.tracktopell.dao.builder.ejb3.VPModel2JPA  pathToVPProject  schemmaName packageBeanMember  basePath  tableNames2GenList,Separated,By,Comma [FETCHTYPE_LAZY|FETCHTYPE_EAGER]" );
                 System.exit(1);
             }
 
@@ -32,6 +33,16 @@ public class VPModel2JPA {
             packageBeanMember= args[2];
             basePath         = args[3];
             tableNames2Gen   = args[4].split(",");
+            if(args.length == 6){
+                fetchType    = args[5];
+                if(fetchType.equals(EJB3Builder.FETCHTYPE_LAZY)){
+                    EJB3Builder.setDefaultValueFetchType_LAZY();
+                    System.out.println("==>>NOW FETCHTYPE_LAZY !");
+                } else if(fetchType.equals(EJB3Builder.FETCHTYPE_EAGER)){
+                    EJB3Builder.setDefaultValueFetchType_EAGER();
+                    System.out.println("==>>NOW FETCHTYPE_EAGER !");
+                }
+            }
 
             Hashtable<String, VPModel> vpModels;
             vpModels = VP6Parser.loadVPModels(new FileInputStream(pathToVPProject));
