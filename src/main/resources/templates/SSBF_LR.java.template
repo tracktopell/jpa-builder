@@ -20,6 +20,8 @@ public interface ${tablebean.declaredName}Facade${tablebean.declaredInterface} {
 
 	void remove(${tablebean.declaredName} entity);
 
+    void removeByPK(Object pk);
+
 	${tablebean.declaredName} findByPK(Object pk);
 
     ${tablebean.declaredName} findByPK_EAGER(Object pk);
