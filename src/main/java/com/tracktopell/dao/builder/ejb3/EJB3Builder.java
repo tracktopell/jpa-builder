@@ -733,7 +733,7 @@ public class EJB3Builder {
 				} else {
 					line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 					line = line.replace("${date}", sdf.format(new Date()));
-					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
+					line = line.replace("${tablebean.serialId}", String.valueOf(table.getName().hashCode()));
 					line = line.replace("${tablebean.name}", table.getName());
 					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
                     if(table.isAuditable()){
