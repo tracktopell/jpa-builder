@@ -207,10 +207,11 @@ public class EJB3Builder {
 		}
 		//System.err.println("================== @JPA BEAN CODE GENERATION ========================>>> ");
         boolean auditableInterfaceGenerated=false;
+        boolean auditableInterfaceForceInclude=true;
 		for (Table table : tablesForGeneration) {
 			System.err.println("------------->> Generating: "+table.getJavaDeclaredName()+".java for Table:"+table.getName()+", is Auditable?"+(table.isAuditable()));
             
-            if(table.isAuditable() && !auditableInterfaceGenerated){
+            if( ( auditableInterfaceForceInclude || table.isAuditable()) && !auditableInterfaceGenerated){
                 generateAuditableEntityInterface( packageBeanMember, basePath);
                 auditableInterfaceGenerated=true;
             }
@@ -970,7 +971,13 @@ public class EJB3Builder {
 
 				//ps.println("# -------- Labels Entity: " + table.getName());
 				//ps.println("L_" + table.getJavaDeclaredName() + " = " + table.getLabel().toUpperCase());
-				String tableLabel = table.getLabel().toUpperCase();
+				
+                String tableLabel = null;
+                if(table.getLabel()!=null){
+                    tableLabel = table.getLabel().toUpperCase();
+                } else{
+                    tableLabel = table.getName();
+                }
 				char lastLetter = tableLabel.toCharArray()[tableLabel.length() - 1];
 				if (lastLetter == 'A' || lastLetter == 'E' || lastLetter == 'I' || lastLetter == 'O' || lastLetter == 'U') {
 					//ps.println("MENU_CRUD_" + table.getJavaDeclaredName().toUpperCase() + " = "+prefixTableLabel+" " + tableLabel + "S");

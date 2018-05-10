@@ -171,14 +171,7 @@ public class SimpleColumn implements Column {
 	}
 
 	public void buildPosibleLabel() {
-		String[] nameParts = name.split("_");
-		StringBuffer sb = new StringBuffer();
-		for (String sn : nameParts) {
-			sb.append(sn.substring(0, 1).toUpperCase());
-			sb.append(sn.substring(1).toLowerCase());
-			sb.append(" ");
-		}
-		label = sb.toString().trim();
+		label = name.replace("_"," ").toLowerCase().trim();		
 	}
 
 	public String getComments() {

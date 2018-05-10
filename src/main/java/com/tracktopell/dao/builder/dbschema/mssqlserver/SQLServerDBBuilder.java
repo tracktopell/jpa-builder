@@ -65,6 +65,8 @@ public class SQLServerDBBuilder extends DBBuilder{
                 out.print("INT");
             } else if(col.getSqlType().toLowerCase().startsWith("tinyint")) {
                 out.print("TINYINT");
+            } else if(col.getSqlType().toLowerCase().startsWith("timestamp")) {
+                out.print("DATETIME");
             } else {
                 out.print(col.getSqlType().toUpperCase());
             }
