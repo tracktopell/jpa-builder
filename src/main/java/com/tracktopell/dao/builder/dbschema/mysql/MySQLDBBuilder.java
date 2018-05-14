@@ -24,9 +24,9 @@ public class MySQLDBBuilder extends DBBuilder{
 
     protected void printDefinitionSchema(String schemaName,DBTableSet dbSet,PrintStream out) {
 		out.println("-- SCHEMMA COMPATIBLE WITH  MySQL SERVER 5.7.x+");
-        out.println("DROP DATABASE IF EXISTS ${schemaName};".replace("${schemaName}",schemaName.toLowerCase()));
-        out.println("CREATE DATABASE ${schemaName};".replace("${schemaName}",schemaName.toLowerCase()));
-        out.println("USE ${schemaName};".replace("${schemaName}",schemaName.toLowerCase()));        
+        out.println("DROP DATABASE IF EXISTS ${schemaName};".replace("${schemaName}",schemaName.toUpperCase()));
+        out.println("CREATE DATABASE ${schemaName};".replace("${schemaName}",schemaName.toUpperCase()));
+        out.println("USE ${schemaName};".replace("${schemaName}",schemaName.toUpperCase()));        
     }
 
     protected void printDefinitionTable(Table currentTable, PrintStream out) {
