@@ -1,0 +1,37 @@
+package ${lssbean.package};
+
+import ${tablebean.package}.${tablebean.declaredName};
+import java.util.List;
+import javax.ejb.Local;
+
+/**
+ * JPA Entity @Local Facade Interface.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+@Local
+public interface ${tablebean.declaredName}FacadeLocal {
+
+	${tablebean.declaredName} create(${tablebean.declaredName} entity);
+
+	${tablebean.declaredName} edit(${tablebean.declaredName} entity);
+
+	void remove(${tablebean.declaredName} entity);
+
+	${tablebean.declaredName} findByPK(Object pk);
+
+    ${tablebean.declaredName} findByPK_EAGER(Object pk);
+
+	List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} entity);
+
+	List<${tablebean.declaredName}> findAll();
+
+	List<${tablebean.declaredName}> findRange(int[] range);
+
+	Long count();
+
+	Long countAll();
+
+    public PaginatedResult<${tablebean.declaredName}> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters);
+
+}

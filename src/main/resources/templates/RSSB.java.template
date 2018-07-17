@@ -1,0 +1,67 @@
+package ${ssbean.package};
+
+import ${tablebean.package}.${tablebean.declaredName};
+
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
+/**
+ * Remote StatelessSession Bean for remote access JPA Entity of Table ${tablebean.name}.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+
+@Stateless
+public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.declaredName}> implements ${tablebean.declaredName}FacadeRemote {
+
+	@PersistenceContext(unitName = "${JPA.PU}")
+	private EntityManager em;
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+
+	public ${tablebean.declaredName}Facade() {
+		super(${tablebean.declaredName}.class);
+	}
+
+	@Override
+	public List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} x){
+		//return null;
+		
+		StringBuilder sbq=new StringBuilder("SELECT x FROM ${tablebean.declaredName} x WHERE ");
+		int paramAsigned=0;
+		if(x != null){
+			sbq.append(" 1=1 ");
+			${tablebean.prepareQuery}
+		} else {
+			sbq.append(" 1=2 ");
+		}
+		
+		TypedQuery<${tablebean.declaredName}> nq = em.createQuery(sbq.toString(), ${tablebean.declaredName}.class);
+		
+		if(paramAsigned>0){
+			${tablebean.fillQuery}
+		}		
+		return nq.getResultList();
+		
+	}
+
+	@Override
+	public List<${tablebean.declaredName}> findAll() {
+		TypedQuery<${tablebean.declaredName}> nq = em.createNamedQuery("${tablebean.declaredName}.findAll", ${tablebean.declaredName}.class);		
+		return nq.getResultList();
+	}
+	
+	@Override
+	public Long countAll() {
+		TypedQuery<Long> nq = em.createNamedQuery("${tablebean.declaredName}.countAll", Long.class);		
+		return (Long)nq.getSingleResult().longValue();
+	}
+	
+}

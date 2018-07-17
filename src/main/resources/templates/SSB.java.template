@@ -1,0 +1,129 @@
+package ${ssbean.package};
+
+import ${tablebean.package}.${tablebean.declaredName};
+import ${tablebean.package}.*;
+import ${ssbinterface.package}.${tablebean.declaredInterface};
+import java.sql.Timestamp;
+import java.util.List;
+import java.security.Principal;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
+/**
+ * SSB JPA Entity Facade of Table ${tablebean.name} by ${tablebean.declaredInterface}.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+@Stateless(
+    name         = "${tablebean.declaredObjectName}_${tablebean.declaredI}SB",
+    mappedName   = "${tablebean.declaredName}_${tablebean.declaredI}SB",
+    description  = "${tablebean.declaredInterface}-Stateless-Session EJB-3.1"
+)
+public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.declaredName}> implements ${tablebean.declaredInterface} {
+
+	@PersistenceContext(unitName = "${JPA.PU}")
+	private EntityManager em;
+
+	@Override
+	protected EntityManager getEntityManager() {
+		return em;
+	}
+
+	public ${tablebean.declaredName}Facade() {
+		super(${tablebean.declaredName}.class);
+	}
+
+	@Override
+	public ${tablebean.declaredName} create(${tablebean.declaredName} entity) {
+        if(ctx != null){
+            final Principal authenticatedRealmUser = ctx.getCallerPrincipal();
+            // obtain the caller principal.
+            if(authenticatedRealmUser != null){                
+                if(entity instanceof AuditableEntity){
+                    final Timestamp nowTimeStamp = new Timestamp(System.currentTimeMillis());
+                    ((AuditableEntity) entity).setFechaCreo(nowTimeStamp);
+                    ((AuditableEntity) entity).setUsuarioCreo(authenticatedRealmUser.getName());
+                    ((AuditableEntity) entity).setFechaModifico(nowTimeStamp);
+                    ((AuditableEntity) entity).setUsuarioModifico(authenticatedRealmUser.getName());
+                }
+            }
+        }
+        ${tablebean.collectionMember.eagerLeaveFlatCode}
+		getEntityManager().persist(entity);
+		getEntityManager().flush();
+        // EAGER M-2-M persist 
+        ${tablebean.collectionMember.eagerCopyCode}
+        getEntityManager().merge(entity);
+        getEntityManager().flush();
+
+		return entity;
+	}
+
+	@Override
+	public ${tablebean.declaredName} update(${tablebean.declaredName} entity) {
+        if(ctx != null){
+            final Principal authenticatedRealmUser = ctx.getCallerPrincipal();
+            // obtain the caller principal.
+            if(authenticatedRealmUser != null){                
+                if(entity instanceof AuditableEntity){
+                    ((AuditableEntity) entity).setFechaModifico(new Timestamp(System.currentTimeMillis()));
+                    ((AuditableEntity) entity).setUsuarioModifico(authenticatedRealmUser.getName());
+                }
+            }
+        }
+        ${tablebean.collectionMember.eagerLeaveFlatCode}
+		getEntityManager().merge(entity);
+		getEntityManager().flush();
+        // EAGER M-2-M persist
+        ${tablebean.collectionMember.eagerCopyCode}
+        getEntityManager().merge(entity);
+        getEntityManager().flush();
+		return entity;
+	}
+
+
+	@Override
+	public List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} x){				
+		StringBuilder sbq=new StringBuilder("SELECT x FROM ${tablebean.declaredName} x WHERE ");
+		int paramAsigned=0;
+		if(x != null){
+			sbq.append(" 1=1 ");
+			${tablebean.prepareQuery}
+		} else {
+			sbq.append(" 1=2 ");
+		}
+		
+		TypedQuery<${tablebean.declaredName}> nq = em.createQuery(sbq.toString(), ${tablebean.declaredName}.class);
+		
+		if(paramAsigned>0){
+			${tablebean.fillQuery}
+		}		
+		return nq.getResultList();
+		
+	}
+    
+    @Override
+	public ${tablebean.declaredName} findByPK_EAGER(Object pk){
+        ${tablebean.declaredName} x = getEntityManager().find(${tablebean.declaredName}.class, pk);
+        if( x != null){
+            ${tablebean.collectionMember.eagerInitializerCode}
+        }
+        return x;
+    }
+
+	@Override
+	public List<${tablebean.declaredName}> findAll() {
+		TypedQuery<${tablebean.declaredName}> nq = em.createNamedQuery("${tablebean.declaredName}.findAll", ${tablebean.declaredName}.class);		
+		return nq.getResultList();
+	}
+	
+	@Override
+	public Long countAll() {
+		TypedQuery<Long> nq = em.createNamedQuery("${tablebean.declaredName}.countAll", Long.class);		
+		return (Long)nq.getSingleResult().longValue();
+	}
+	
+}

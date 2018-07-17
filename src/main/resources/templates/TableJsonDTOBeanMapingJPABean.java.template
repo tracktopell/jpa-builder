@@ -1,0 +1,94 @@
+package ${tablebean.package};
+
+import java.util.Objects;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+/**
+ * Class for mapping Json DTO Entity of Table ${tablebean.name}.
+ * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+
+public class ${tablebean.declaredName}DTO implements java.io.Serializable {
+    private static final long serialVersionUID = ${tablebean.serialId};
+
+    %foreach tablebean.member in ${tablebean.members}
+    ${tablebean.member.javadocCommnet}    
+    ${tablebean.member.declaration}
+    %endfor
+
+    /** 
+     * Default Constructor
+     */
+    public ${tablebean.declaredName}DTO() {
+    }
+
+    /**
+     * Getters and Setters
+     */
+    %foreach tablebean.member in ${tablebean.members}
+    ${tablebean.member.getter}
+    ${tablebean.member.setter}
+    %endfor
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        %foreach tablebean.member in ${tablebean.members}		
+		hash += String.valueOf(${tablebean.member.javaIdentifier}).hashCode();
+		%endfor
+        return hash;
+    }
+
+	@Override
+    public boolean equals(Object o){
+		if (this == o) {
+			return true;
+		}
+		if (o == null) {
+			return false;
+		}
+		if (getClass() != o.getClass()) {
+			return false;
+		}        
+        if (!(o instanceof ${tablebean.declaredName}DTO)) {
+            return false;
+        }		
+		${tablebean.declaredName}DTO  other = (${tablebean.declaredName}DTO ) o;
+		%foreach tablebean.member in ${tablebean.members}	
+		if (!Objects.equals(this.${tablebean.member.javaIdentifier}, other.${tablebean.member.javaIdentifier})) { return false; }		
+		%endfor
+    	return true;
+    }
+
+	/**
+    * @Returns JSon String
+    */
+    @Override
+    public String toString() {
+		JSONObject jsonObj = new JSONObject();
+		%foreach tablebean.member in ${tablebean.members}
+		jsonObj.put("${tablebean.member.javaIdentifier}", this.${tablebean.member.javaIdentifier});
+		%endfor
+		return jsonObj.toString();
+    }
+
+	public static ${tablebean.declaredName}DTO create(String json) throws IllegalArgumentException{
+		${tablebean.declaredName}DTO x = null;
+		JSONObject jObj = new JSONObject(json);
+		
+		%foreach tablebean.member in ${tablebean.members}		
+		x.${tablebean.member.javaIdentifier} = ${tablebean.member.valueCast}(jObj.${tablebean.member.valueGetter}("${tablebean.member.javaIdentifier}"));
+		%endfor
+		
+		return x;
+	}
+
+}

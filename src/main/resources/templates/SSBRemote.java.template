@@ -1,0 +1,37 @@
+package ${rssbean.package};
+
+import ${tablebean.package}.${tablebean.declaredName};
+import java.util.List;
+import javax.ejb.Remote;
+
+/**
+ * JPA Entity @Remote Facade Interface.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+@Remote
+public interface ${tablebean.declaredName}FacadeRemote {
+
+	${tablebean.declaredName} create(${tablebean.declaredName} entity);
+
+	${tablebean.declaredName} edit(${tablebean.declaredName} entity);
+
+	void remove(${tablebean.declaredName} entity);
+
+	${tablebean.declaredName} findByPK(Object pk);
+
+    ${tablebean.declaredName} findByPK_EAGER(Object pk);
+
+	List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} entity);
+
+	List<${tablebean.declaredName}> findAll();
+
+	List<${tablebean.declaredName}> findRange(int[] range);
+
+	Long count();
+
+	Long countAll();
+
+    public PaginatedResult<${tablebean.declaredName}> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters);
+
+}

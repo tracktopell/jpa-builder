@@ -1,0 +1,75 @@
+package ${asmbean.package};
+
+import java.util.List;
+import java.util.ArrayList;
+
+import ${tableDTObean.package}.*;
+import ${tableJPAbean.package}.${tablebean.declaredName};
+
+/**
+ * Class for Asembler DTO Entity and JPA Entity for Table ${tablebean.name}.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
+ */
+
+public class ${tablebean.declaredName}Assembler {    
+    
+    /** 
+     * Private Constructor
+     */
+    private ${tablebean.declaredName}Assembler() {
+    }
+
+    public static ${tablebean.declaredName} buildJpaEntity(${tablebean.declaredName}DTO dtoEntity){
+		if(dtoEntity == null){
+			return null;
+		}
+
+		${tablebean.declaredName} jpaEntity = new ${tablebean.declaredName}();
+
+        ${dtoCopyedToJpaMembers.code}
+
+        return jpaEntity;
+    }
+
+    public static List<${tablebean.declaredName}> buildJpaEntityList(List<${tablebean.declaredName}DTO> dtoEntityList){
+		if(dtoEntityList == null){
+			return null;
+		}
+		List<${tablebean.declaredName}> jpaEntityList = new ArrayList<>();
+		${tablebean.declaredName} jpaEntity = null;
+		for(${tablebean.declaredName}DTO dtoEntity: dtoEntityList){
+			jpaEntity = new ${tablebean.declaredName}();
+			${dtoCopyedToJpaMembersList.code}
+			jpaEntityList.add(jpaEntity);
+		}
+		
+        return jpaEntityList;
+    }
+
+	public static ${tablebean.declaredName}DTO buildDTOEntity(${tablebean.declaredName} jpaEntity){
+		if(jpaEntity == null){
+			return null;
+		}
+
+        ${tablebean.declaredName}DTO dtoEntity =  new ${tablebean.declaredName}DTO();		
+
+        ${jpaCopyedToDtoMembers.code}
+
+        return dtoEntity;
+    }
+
+	public static List<${tablebean.declaredName}DTO> buildDTOEntityList(List<${tablebean.declaredName}> jpaEntityList){
+		if(jpaEntityList == null){
+			return null;
+		}
+		List<${tablebean.declaredName}DTO> dtoEntityList = new ArrayList<>();
+        ${tablebean.declaredName}DTO dtoEntity =  null;
+		for(${tablebean.declaredName} jpaEntity: jpaEntityList){
+			dtoEntity =  new ${tablebean.declaredName}DTO();
+			${jpaCopyedToDtoMembersList.code}
+			dtoEntityList.add(dtoEntity);
+		}
+        return dtoEntityList;
+    }
+}

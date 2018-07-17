@@ -1,0 +1,14 @@
+/**
+ * SetDataException
+ *
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+
+package ${dao.package};
+
+public class SetDataException extends      DataAccessException
+                               implements  java.io.Serializable {
+    public SetDataException(String description){
+        super(description);
+    }
+}
