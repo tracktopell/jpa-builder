@@ -4,7 +4,7 @@
 	<property name="admin.db.user"         value="define"/>
 	<property name="admin.db.password"     value="define"/>
 	
-	<property name="p1"     value="com.pmarlen.l30.backend.dto"/>
+	<property name="p1"     value="com.pmarlen.l30.backend.dto.entity"/>
 	<property name="p2"     value="com.pmarlen.l30.backend.assembler"/>
 	<property name="p3"     value="com.pmarlen.l30.backend.entity"/>
 	<property name="p4"     value="com.pmarlen.l30.backend.remote"/>
