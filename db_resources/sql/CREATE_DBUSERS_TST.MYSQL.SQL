@@ -1,4 +1,0 @@
-use mysql;
-DELETE FROM user WHERE user='L30_tst_USR';
-GRANT SELECT,INSERT,UPDATE,DELETE ON L30_tst_db.* TO 'L30_tst_USR'@'localhost' IDENTIFIED BY 'L30_tst_PWD';
-GRANT SELECT,INSERT,UPDATE,DELETE ON L30_tst_db.* TO 'L30_tst_USR'@'%'         IDENTIFIED BY 'L30_tst_PWD';

@@ -173,8 +173,16 @@ public class DTOBeanBuilder {
 							if (lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0 || lineInLoop.indexOf("${tablebean.member.valueGetter}") >= 0) {
 								if (! (column instanceof EmbeddeableColumn) ){
 									lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
-									lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , column.getValueGetter());									
-									lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , column.getValueCast());
+									
+									if(column.getJavaClassType().equalsIgnoreCase("byte[]")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getString");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "java.util.Base64.getDecoder().decode");									
+									}else{
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , column.getValueGetter());									
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , column.getValueCast());
+									}
+									
+									
 									ps.println(lineInLoop);
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.javadocCommnet}") >= 0) {

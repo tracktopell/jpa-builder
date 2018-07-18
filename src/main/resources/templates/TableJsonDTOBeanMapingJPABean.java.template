@@ -84,8 +84,8 @@ public class ${tablebean.declaredName}DTO implements java.io.Serializable {
 		${tablebean.declaredName}DTO x = null;
 		JSONObject jObj = new JSONObject(json);
 		
-		%foreach tablebean.member in ${tablebean.members}		
-		x.${tablebean.member.javaIdentifier} = ${tablebean.member.valueCast}(jObj.${tablebean.member.valueGetter}("${tablebean.member.javaIdentifier}"));
+		%foreach tablebean.member in ${tablebean.members}
+		x.${tablebean.member.javaIdentifier} = jObj.has("${tablebean.member.javaIdentifier}")&&!jObj.isNull("${tablebean.member.javaIdentifier}")?${tablebean.member.valueCast}(jObj.${tablebean.member.valueGetter}("${tablebean.member.javaIdentifier}")):null;
 		%endfor
 		
 		return x;
