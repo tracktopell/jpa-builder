@@ -30,7 +30,7 @@ import java.util.Properties;
  */
 public class DTOBeanBuilder {
 	
-	public static void buildMappingDTOsForJPABeans(DBTableSet dbSet, String dtoPackageBeanMember, String jpaPackageBeanMember, String basePath,boolean flatDTOs)
+	public static void buildMappingDTOsForJPABeans(DBTableSet dbSet, String dtoPackage, String dtoPackageBeanMember, String jpaPackageBeanMember, String basePath,boolean flatDTOs)
 			throws Exception {
 		String fileName;
 		File baseDir = null;
@@ -130,7 +130,138 @@ public class DTOBeanBuilder {
 			if (!baseDir.exists()) {
 				baseDir.mkdirs();
 			}
+			String line = null;
+			ArrayList<String> linesToParse = null;
+			int nl = 0;
+			// ------------------------------------------------------
+			fileName = dtoPackage.replace(".", File.separator) + File.separator;
 
+			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+			if (!dirSourceFile.exists()) {
+				dirSourceFile.mkdirs();
+			}
+
+			fileName = dirSourceFile.getPath() + File.separator + "FilteredByDTO.java";
+
+			sourceFile = new File(fileName);
+			fos = new FileOutputStream(sourceFile);
+			ps = new PrintStream(fos);
+
+			br = new BufferedReader(new InputStreamReader(
+					fos.getClass().getResourceAsStream("/templates/FilterByDTO.java.template")));
+			nl = 0;
+			while ((line = br.readLine()) != null) {
+				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+				line = line.replace("${date}", sdf.format(new Date()));
+				line = line.replace("${tablebean.dto.package}", dtoPackage);
+				line = line.replace("${tablebean.serialId}", String.valueOf(23234523453L)+"L");
+				ps.println(line);
+			}
+			// ------------------------------------------------------
+			fileName = dtoPackage.replace(".", File.separator) + File.separator;
+
+			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+			if (!dirSourceFile.exists()) {
+				dirSourceFile.mkdirs();
+			}
+
+			fileName = dirSourceFile.getPath() + File.separator + "MultipageRecordDTORequest.java";
+
+			sourceFile = new File(fileName);
+			fos = new FileOutputStream(sourceFile);
+			ps = new PrintStream(fos);
+
+			br = new BufferedReader(new InputStreamReader(
+					fos.getClass().getResourceAsStream("/templates/MultipageRecordDTORequest.java.template")));
+			line = null;
+			linesToParse = null;
+			nl = 0;
+			while ((line = br.readLine()) != null) {
+				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+				line = line.replace("${date}", sdf.format(new Date()));
+				line = line.replace("${tablebean.dto.package}", dtoPackage);
+				line = line.replace("${tablebean.serialId}", String.valueOf(23234523454L)+"L");
+				ps.println(line);
+			}
+			// ------------------------------------------------------
+			fileName = dtoPackage.replace(".", File.separator) + File.separator;
+
+			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+			if (!dirSourceFile.exists()) {
+				dirSourceFile.mkdirs();
+			}
+
+			fileName = dirSourceFile.getPath() + File.separator + "PaginatedResult.java";
+
+			sourceFile = new File(fileName);
+			fos = new FileOutputStream(sourceFile);
+			ps = new PrintStream(fos);
+
+			br = new BufferedReader(new InputStreamReader(
+					fos.getClass().getResourceAsStream("/templates/PaginatedResult.java.template")));
+			line = null;
+			linesToParse = null;
+			nl = 0;
+			while ((line = br.readLine()) != null) {
+				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+				line = line.replace("${tablebean.dto.package}", dtoPackage);
+				line = line.replace("${tablebean.serialId}", String.valueOf(23234523455L)+"L");
+				ps.println(line);
+			}
+			// ------------------------------------------------------
+			fileName = dtoPackage.replace(".", File.separator) + File.separator;
+
+			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+			if (!dirSourceFile.exists()) {
+				dirSourceFile.mkdirs();
+			}
+
+			fileName = dirSourceFile.getPath() + File.separator + "OrderByDTO.java";
+
+			sourceFile = new File(fileName);
+			fos = new FileOutputStream(sourceFile);
+			ps = new PrintStream(fos);
+
+			br = new BufferedReader(new InputStreamReader(
+					fos.getClass().getResourceAsStream("/templates/OrderByDTO.java.template")));
+			line = null;
+			linesToParse = null;
+			nl = 0;
+			while ((line = br.readLine()) != null) {
+				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+				line = line.replace("${tablebean.dto.package}", dtoPackage);
+				line = line.replace("${tablebean.serialId}", String.valueOf(23234523455L)+"L");
+				ps.println(line);
+			}
+			// ------------------------------------------------------
+			fileName = dtoPackage.replace(".", File.separator) + File.separator;
+
+			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+			if (!dirSourceFile.exists()) {
+				dirSourceFile.mkdirs();
+			}
+
+			fileName = dirSourceFile.getPath() + File.separator + "RecordDTO.java";
+
+			sourceFile = new File(fileName);
+			fos = new FileOutputStream(sourceFile);
+			ps = new PrintStream(fos);
+
+			br = new BufferedReader(new InputStreamReader(
+					fos.getClass().getResourceAsStream("/templates/RecordDTO.java.template")));
+			line = null;
+			linesToParse = null;
+			nl = 0;
+			while ((line = br.readLine()) != null) {
+				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+				line = line.replace("${date}", sdf.format(new Date()));
+				line = line.replace("${tablebean.dto.package}", dtoPackage);
+				line = line.replace("${tablebean.serialId}", String.valueOf(23234523456L)+"L");
+				ps.println(line);
+			}
+
+			// ------------------------------------------------------
+			
 			fileName = dtoPackageBeanMember.replace(".", File.separator) + File.separator;
 
 			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
@@ -146,9 +277,9 @@ public class DTOBeanBuilder {
 
 			br = new BufferedReader(new InputStreamReader(
 					fos.getClass().getResourceAsStream("/templates/TableJsonDTOBeanMapingJPABean.java.template")));
-			String line = null;
-			ArrayList<String> linesToParse = null;
-			int nl = 0;
+			line = null;
+			linesToParse = null;
+			nl = 0;
 			while ((line = br.readLine()) != null) {
 
 				if (line.indexOf("%foreach") >= 0) {
@@ -200,6 +331,13 @@ public class DTOBeanBuilder {
 									ps.println("    */");
 								}
 
+							} else if (lineInLoop.indexOf("${tablebean.member.class}") >= 0) {
+								if (column instanceof EmbeddeableColumn){
+									lineInLoop = lineInLoop.replace("${tablebean.member.class}"   , column.getJavaDeclaredObjectName());
+								} else {
+									lineInLoop = lineInLoop.replace("${tablebean.member.class}"   , column.getJavaClassType());									
+								}
+								ps.println(lineInLoop);
 							} else if (lineInLoop.indexOf("${tablebean.member.declaration}") >= 0) {
 								if (column instanceof EmbeddeableColumn){
 									EmbeddeableColumn eColumn = (EmbeddeableColumn)column;
@@ -332,7 +470,7 @@ public class DTOBeanBuilder {
 				} else {
 					line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 					line = line.replace("${date}", sdf.format(new Date()));
-					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
+					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode())+"L");
 					line = line.replace("${tablebean.name}", table.getName().toUpperCase());
 					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
 					line = line.replace("${tablebean.PKMembersParameters}", membersParameters(table, dbSet));
@@ -353,6 +491,7 @@ public class DTOBeanBuilder {
 					line = line.replace("${tablebean.toStringCode}", table.getToDTOStringCode(dbSet, dtoPackageBeanMember));
 					line = line.replace("${tablebean.name.uc}", table.getName().toUpperCase());
 					line = line.replace("${tablebean.package}", dtoPackageBeanMember);
+					line = line.replace("${tablebean.dto.package}", dtoPackage);
 					line = line.replace("${tableJPAbean.package}", jpaPackageBeanMember);
 
 					ps.println(line);
@@ -533,6 +672,8 @@ public class DTOBeanBuilder {
 									ps.println("    private " + column.getJavaClassType().replace("java.lang.", "") + " " + column.getJavaDeclaredObjectName() + ";");
 								}
 							} else {
+								lineInLoop = lineInLoop.replace("${tablebean.member.getter}", "get"+column.getJavaDeclaredName());
+								lineInLoop = lineInLoop.replace("${tablebean.member.setter}", "set"+column.getJavaDeclaredName());
 								ps.println(lineInLoop);
 							}
 						}
@@ -661,7 +802,7 @@ public class DTOBeanBuilder {
 					line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 					line = line.replace("${date}", sdf.format(new Date()));
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
-					line = line.replace("${tablebean.name}", table.getName());
+					line = line.replace("${tablebean.name}", table.getName());					                       					
 					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
 					line = line.replace("${tablebean.PKMembersParameters}", membersParameters(table, dbSet));
 

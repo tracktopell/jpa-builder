@@ -1,11 +1,6 @@
-package ${ssbinterface.package}.util;
+package ${tablebean.dto.package};
 
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 /**
  * Paginated Result Generic Result for paginated Data-Table.

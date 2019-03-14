@@ -1011,6 +1011,7 @@ public class EJB3Builder {
 
 	static void buildSSB(
             String interfaceRL,DBTableSet dbSet, String jpaPU, 
+			String dtoPackage,
             String jpaPackageBeanMember, String rlsbPackageBeanMember, String ssbPackageBeanMember, 
             String basePathJPA         , String basePathRLSB         , String basePathESB) 
 		throws IOException{
@@ -1168,6 +1169,7 @@ public class EJB3Builder {
 			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
 			line = line.replace("${date}", sdf.format(new Date()));
 			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
+			line = line.replace("${tablebean.dto.package}", dtoPackage);
             line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 			line = line.replace("${ssbinterface.package}", rlsbPackageBeanMember);
 			ps.println(line);
@@ -1187,26 +1189,6 @@ public class EJB3Builder {
             dirSourceFile.mkdirs();
         }
         
-        fileName = dirSourceFile.getPath() + File.separator + File.separator  + "PaginatedResult.java";
-        
-		sourceFile = new File(fileName);
-        
-		fos = new FileOutputStream(sourceFile);
-		ps = new PrintStream(fos);
-		br = new BufferedReader(new InputStreamReader(fos.getClass().getResourceAsStream("/templates/PR.java.template")));
-		
-		while ((line = br.readLine()) != null) {
-			line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
-			line = line.replace("${date}", sdf.format(new Date()));
-			line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);
-            line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
-			line = line.replace("${ssbinterface.package}", rlsbPackageBeanMember);
-			ps.println(line);
-		}
-		br.close();
-		ps.close();
-		fos.close();
-		
 		System.err.println("================== @EJB Remote Stateless Session BEAN CODE GENERATION ========================>>> ");
 		for (Table table : tablesForGeneration) {
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
@@ -1276,6 +1258,7 @@ public class EJB3Builder {
 				line = line.replace("${date}", sdf.format(new Date()));
 				line = line.replace("${rssbean.package}"  , rlsbPackageBeanMember);
 				line = line.replace("${ssf_lr_bean.package}", rlsbPackageBeanMember);
+				line = line.replace("${tablebean.dto.package}", dtoPackage);
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);				
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());

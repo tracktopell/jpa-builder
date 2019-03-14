@@ -1,0 +1,50 @@
+package ${tablebean.dto.package};
+
+import java.io.Serializable;
+
+/**
+ * Class for mapping OrderByDTO.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+public class OrderByDTO  implements java.io.Serializable{
+	private String orderByColumn;
+	private String orderByDirection;
+
+	public OrderByDTO() {
+	}
+
+	public OrderByDTO(String orderByColumn, String orderByDirection) {
+		this.orderByColumn = orderByColumn;
+		this.orderByDirection = orderByDirection;
+	}
+	
+
+	/**
+	 * @return the orderByColumn
+	 */
+	public String getOrderByColumn() {
+		return orderByColumn;
+	}
+
+	/**
+	 * @param orderByColumn the orderByColumn to set
+	 */
+	public void setOrderByColumn(String orderByColumn) {
+		this.orderByColumn = orderByColumn;
+	}
+
+	/**
+	 * @return the orderByDirection
+	 */
+	public String getOrderByDirection() {
+		return orderByDirection;
+	}
+
+	/**
+	 * @param orderByDirection the orderByDirection to set
+	 */
+	public void setOrderByDirection(String orderByDirection) {
+		this.orderByDirection = orderByDirection;
+	}
+}

@@ -1,6 +1,6 @@
 package ${ssbean.package};
 
-import ${ssbinterface.package}.util.PaginatedResult;
+import ${tablebean.dto.package}.PaginatedResult;
 import ${tablebean.package}.AuditableEntity;
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -23,7 +23,9 @@ import static javax.ejb.TransactionAttributeType.SUPPORTS;
  */
 
 public abstract class AbstractFacade<T> {
-    @Resource SessionContext ctx;
+    
+    @Resource 
+    SessionContext ctx;
 
 	private Class<T> entityClass;
 
@@ -66,38 +68,14 @@ public abstract class AbstractFacade<T> {
 	@TransactionAttribute(SUPPORTS)
 	public abstract List<T> findAllLike(T entity);
 
-	@TransactionAttribute(SUPPORTS)
-	public abstract List<T> findAll();
 
 	@TransactionAttribute(SUPPORTS)
-	public List<T> findRange(int[] range) {
-		javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
-		cq.select(cq.from(entityClass));
-		javax.persistence.Query q = getEntityManager().createQuery(cq);
-		q.setMaxResults(range[1] - range[0] + 1);
-		q.setFirstResult(range[0]);
-		return q.getResultList();
+    public PaginatedResult<T> loadPaginated(int first,int pageSize,Map<String,Object> orders, Map<String,Object> filters) {
+    	return loadPaginated(first, pageSize,null, orders, filters);
 	}
-	
+		
 	@TransactionAttribute(SUPPORTS)
-	public Long count() {
-		javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
-		javax.persistence.criteria.Root<T> rt = cq.from(entityClass);
-		cq.select(getEntityManager().getCriteriaBuilder().count(rt));
-		javax.persistence.Query q = getEntityManager().createQuery(cq);
-		return (Long) q.getSingleResult();
-	}
-
-	@TransactionAttribute(SUPPORTS)
-	public abstract Long countAll();
-
-    @TransactionAttribute(SUPPORTS)
-    public PaginatedResult<T> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters) {
-        return loadPaginated(first,pageSize,null,sortField,sortOrder,filters);
-    }
-    
-    @TransactionAttribute(SUPPORTS)
-    public PaginatedResult<T> loadPaginated(int first,int pageSize,String jqlBase,String sortField,Object sortOrder, Map<String,Object> filters) {
+    protected PaginatedResult<T> loadPaginated(int first,int pageSize,String jqlBase,Map<String,Object> orders, Map<String,Object> filters) {
         PaginatedResult<T> r=null;
         List<T> resultList=null;
         
@@ -115,7 +93,7 @@ public abstract class AbstractFacade<T> {
         boolean filterAdded=false;
         if(filters !=null && !filters.isEmpty()){
             filterAdded = true;
-            sbBaseQuery.append(" where ( 1=1 ");
+            sbBaseQuery.append(" where 1=1");
             final Set<String> keySet = filters.keySet();
             for(String k: keySet){
                 sbBaseQuery.append(" and _x.").append(k);
@@ -126,29 +104,32 @@ public abstract class AbstractFacade<T> {
                     sbBaseQuery.append(" = ").append(" :").append(k);
                 }
             }
-            sbBaseQuery.append(" ) ");
+            sbBaseQuery.append(" ");
         }
 
         StringBuilder sbAQSort = new StringBuilder();
-
-        if(sortField != null ){        
-            StringBuilder sbSortExp=new StringBuilder(" order by ");
-            sbSortExp.append(sortField);
-            if(sortOrder != null ){
-                if(sortOrder.toString().equalsIgnoreCase("ASCENDING")){
-                    sbSortExp.append(" ASC ");
-                    sbAQSort.append(sbSortExp);
-                }else if(sortOrder.toString().equalsIgnoreCase("DESCENDING")){
-                    sbSortExp.append(" DESC ");
-                    sbAQSort.append(sbSortExp);
-                }else if(sortOrder.toString().equalsIgnoreCase("UNSORTED")){
-                    // ABORT SORTING !
+		boolean orderAdded=false;
+		if(orders !=null && !orders.isEmpty()){
+            orderAdded = true;
+            sbAQSort   .append(" order by ");
+            final Set<String> keySet = orders.keySet();
+			int numOrdAdded=0;
+            for(String k: keySet){
+				if(numOrdAdded > 0){
+					sbAQSort   .append(",");
+				}
+                sbAQSort .append(" _x.").append(k);
+                Object sortOrder=orders.get(k);
+                if(sortOrder.toString().equalsIgnoreCase("ASC")){
+                    sbAQSort   .append(" ASC");
+                } else if(sortOrder.toString().toUpperCase().startsWith("DESC")){
+                    sbAQSort   .append(" DESC");
+                } else {
                 }
-            }else {
-                // ABORT SORTING !
+				numOrdAdded++;
             }
+            sbAQSort.append(" ");
         }
-        
         StringBuilder sbQc=new StringBuilder("select count(*) ").append(sbBaseQuery);
         StringBuilder sbQr=new StringBuilder("select _x       ").append(sbBaseQuery).append(sbAQSort);
         
@@ -183,12 +164,11 @@ public abstract class AbstractFacade<T> {
         }
         
         Long totalCount = qc.getSingleResult();
-        
+		
         qr.setFirstResult(first);
         qr.setMaxResults (pageSize);
         
         resultList = qr.getResultList();
-        
         r = new PaginatedResult<T>(resultList, totalCount.intValue(), pageSize);
                 
 		return r;

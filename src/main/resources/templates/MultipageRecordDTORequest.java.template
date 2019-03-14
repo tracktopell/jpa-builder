@@ -1,0 +1,82 @@
+package ${tablebean.dto.package};
+
+import java.util.List;
+
+/**
+ * Class for mapping MultipageRecordDTORequest.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+public class MultipageRecordDTORequest implements java.io.Serializable{    
+	private Integer first;
+	private Integer pageSize;
+	private List<OrderByDTO> orderByDTOList;
+	private List<FilteredByDTO> filteredByDTOList;
+
+	public MultipageRecordDTORequest() {
+	}
+
+	public MultipageRecordDTORequest(Integer first, Integer pageSize, List<OrderByDTO> orderByDTOList, List<FilteredByDTO> filteredByDTOList) {
+		this.first = first;
+		this.pageSize = pageSize;
+		this.orderByDTOList = orderByDTOList;
+		this.filteredByDTOList = filteredByDTOList;
+	}
+
+	/**
+	 * @return the first
+	 */
+	public Integer getFirst() {
+		return first;
+	}
+
+	/**
+	 * @param first the first to set
+	 */
+	public void setFirst(Integer first) {
+		this.first = first;
+	}
+
+	/**
+	 * @return the pageSize
+	 */
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	/**
+	 * @param pageSize the pageSize to set
+	 */
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	/**
+	 * @return the orderByDTOList
+	 */
+	public List<OrderByDTO> getOrderByDTOList() {
+		return orderByDTOList;
+	}
+
+	/**
+	 * @param orderByDTOList the orderByDTOList to set
+	 */
+	public void setOrderByDTOList(List<OrderByDTO> orderByDTOList) {
+		this.orderByDTOList = orderByDTOList;
+	}
+
+	/**
+	 * @return the filteredByDTOList
+	 */
+	public List<FilteredByDTO> getFilteredByDTOList() {
+		return filteredByDTOList;
+	}
+
+	/**
+	 * @param filteredByDTOList the filteredByDTOList to set
+	 */
+	public void setFilteredByDTOList(List<FilteredByDTO> filteredByDTOList) {
+		this.filteredByDTOList = filteredByDTOList;
+	}
+	
+}

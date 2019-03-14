@@ -1,7 +1,7 @@
 package ${ssf_lr_bean.package};
 
 import ${tablebean.package}.${tablebean.declaredName};
-import ${ssf_lr_bean.package}.util.PaginatedResult;
+import ${tablebean.dto.package}.PaginatedResult;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.${tablebean.declaredInterface};
@@ -28,14 +28,5 @@ public interface ${tablebean.declaredName}Facade${tablebean.declaredInterface} {
 
 	List<${tablebean.declaredName}> findAllLike(${tablebean.declaredName} entity);
 
-	List<${tablebean.declaredName}> findAll();
-
-	List<${tablebean.declaredName}> findRange(int[] range);
-
-	Long count();
-
-	Long countAll();
-
-    PaginatedResult<${tablebean.declaredName}> loadPaginated(int first,int pageSize,String sortField,Object sortOrder, Map<String,Object> filters);
-
+    PaginatedResult<${tablebean.declaredName}> loadPaginated(int first,int pageSize,Map<String,Object> orders, Map<String,Object> filters);	
 }

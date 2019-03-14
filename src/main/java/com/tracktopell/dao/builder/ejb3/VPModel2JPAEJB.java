@@ -23,6 +23,7 @@ public class VPModel2JPAEJB {
     public static void main(String[] args) {
         String pathToVPProject = null;
         String schemmaName = null;
+		String   dtoPackage          = null;
         String jpaPackageBeanMember = null;
         String esbPackageBeanMember = null;
         String rlsbPackageBeanMember = null;
@@ -34,29 +35,31 @@ public class VPModel2JPAEJB {
         String[] tableNames2Gen = null;
 
         try {
-            if (args.length != 11) {
+            if (args.length != 12) {
                 System.err.println("use: <java ...> com.tracktopell.dao.builder.ejb3.VPModel2JPAEJB "
                         + "pathToVPProject SCHEMA "
-                        + "jpaPackageBeanMember rlsbPackageBeanMember esbPackageBeanMember "
+                        + "dtoPackage jpaPackageBeanMember rlsbPackageBeanMember esbPackageBeanMember "
                         + "basePathJPA          basePathRLSB          basePathESB "
                         + "jpaPU  [ @Remote | @Local ] [ tableNames2GenList,Separated,By,Comma | {all} ]");
                 System.exit(1);
             }
 
-            pathToVPProject       = args[0];
-            schemmaName           = args[1];
+			int arg=0;
+            pathToVPProject       = args[arg++];
+            schemmaName           = args[arg++];
 
-            jpaPackageBeanMember  = args[2];
-            rlsbPackageBeanMember = args[3];            
-            esbPackageBeanMember  = args[4];
+			dtoPackage            = args[arg++];
+            jpaPackageBeanMember  = args[arg++];
+            rlsbPackageBeanMember = args[arg++];            
+            esbPackageBeanMember  = args[arg++];
 
-            basePathJPA           = args[5];
-            basePathRLSB          = args[6];            
-            basePathESB           = args[7];
+            basePathJPA           = args[arg++];
+            basePathRLSB          = args[arg++];            
+            basePathESB           = args[arg++];
 
-            jpaPU                 = args[8];
-            interfaceToImpl       = args[9].replace("@", "");
-            tableNames2Gen        = args[10].split(",");
+            jpaPU                 = args[arg++];
+            interfaceToImpl       = args[arg++].replace("@", "");
+            tableNames2Gen        = args[arg++].split(",");
 
             System.err.println("====================== [ com.tracktopell.dao.builder.jpa.VPModel2DTOAndBeans ]========================");
             Hashtable<String, VPModel> vpModels;
@@ -153,7 +156,7 @@ public class VPModel2JPAEJB {
 
             //-------------------------------------------------------
             
-            EJB3Builder.buildSSB(interfaceToImpl,dbSet, jpaPU, jpaPackageBeanMember, rlsbPackageBeanMember, esbPackageBeanMember, basePathJPA, basePathRLSB, basePathESB);
+            EJB3Builder.buildSSB(interfaceToImpl,dbSet, jpaPU, dtoPackage, jpaPackageBeanMember, rlsbPackageBeanMember, esbPackageBeanMember, basePathJPA, basePathRLSB, basePathESB);
             
             
         } catch (Exception ex) {

@@ -1,10 +1,15 @@
 package ${tablebean.package};
 
 import java.util.Objects;
+import java.util.List;
+import java.util.ArrayList;
+import java.lang.reflect.Field;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import ${tablebean.dto.package}.RecordDTO;
 
 /**
  * Class for mapping Json DTO Entity of Table ${tablebean.name}.
@@ -16,14 +21,29 @@ import org.json.JSONObject;
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
 
-public class ${tablebean.declaredName}DTO implements java.io.Serializable {
-    private static final long serialVersionUID = ${tablebean.serialId};
-
+public class ${tablebean.declaredName}DTO extends RecordDTO  {
+    
     %foreach tablebean.member in ${tablebean.members}
     ${tablebean.member.javadocCommnet}    
     ${tablebean.member.declaration}
     %endfor
 
+	static {
+		List<String> columnNamesList=new ArrayList<>();
+		%foreach tablebean.member in ${tablebean.members}		
+		columnNamesList.add("${tablebean.member.javaIdentifier}");
+		%endfor
+		columnNames = new String[columnNamesList.size()];
+		columnNames = columnNamesList.toArray(columnNames);
+		
+		List<String> columnClassesList=new ArrayList<>();
+		
+		%foreach tablebean.member in ${tablebean.members}
+		columnClassesList.add("${tablebean.member.class}");		
+		%endfor
+		columnClasses = new String[columnClassesList.size()];
+		columnClasses = columnClassesList.toArray(columnClasses);
+	}
     /** 
      * Default Constructor
      */
@@ -90,5 +110,33 @@ public class ${tablebean.declaredName}DTO implements java.io.Serializable {
 		
 		return x;
 	}
-
+	
+	@Override
+	public Object getColumnValue(String name) throws IllegalArgumentException{
+		try {
+			Field f = getClass().getDeclaredField(name);		
+			return f.get(this);
+		}catch(NoSuchFieldException nsfe) {
+			throw new IllegalArgumentException("NoSuchFieldException column:"+name);
+		}catch(SecurityException se) {
+			throw new IllegalArgumentException("SecurityException column:"+name);
+		}catch(IllegalAccessException iae) {
+			throw new IllegalArgumentException("IllegalAccessException column:"+name);
+		}
+	}
+	
+	@Override
+	public void setColumnValue(String name, Object value) throws IllegalArgumentException{
+		try {
+			Field f = getClass().getDeclaredField(name);		
+			f.set(this, value);
+		}catch(NoSuchFieldException nsfe) {
+			throw new IllegalArgumentException("NoSuchFieldException column:"+name);
+		}catch(SecurityException se) {
+			throw new IllegalArgumentException("SecurityException column:"+name);
+		}catch(IllegalAccessException iae) {
+			throw new IllegalArgumentException("IllegalAccessException column:"+name);
+		}		
+	}
+	
 }

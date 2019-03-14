@@ -113,17 +113,5 @@ public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.
         }
         return x;
     }
-
-	@Override
-	public List<${tablebean.declaredName}> findAll() {
-		TypedQuery<${tablebean.declaredName}> nq = em.createNamedQuery("${tablebean.declaredName}.findAll", ${tablebean.declaredName}.class);		
-		return nq.getResultList();
-	}
-	
-	@Override
-	public Long countAll() {
-		TypedQuery<Long> nq = em.createNamedQuery("${tablebean.declaredName}.countAll", Long.class);		
-		return (Long)nq.getSingleResult().longValue();
-	}
 	
 }

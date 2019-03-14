@@ -1,0 +1,49 @@
+package ${tablebean.dto.package};
+
+import java.io.Serializable;
+
+/**
+ * Class for mapping FilterDTO.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+public class FilteredByDTO  implements Serializable{
+	private String filterByColumn;
+	private Object filterByValue;
+
+	public FilteredByDTO() {
+	}
+
+	public FilteredByDTO(String filterByColumn, Object filterByValue) {
+		this.filterByColumn = filterByColumn;
+		this.filterByValue = filterByValue;
+	}
+
+	/**
+	 * @return the filterByColumn
+	 */
+	public String getFilterByColumn() {
+		return filterByColumn;
+	}
+
+	/**
+	 * @param filterByColumn the filterByColumn to set
+	 */
+	public void setFilterByColumn(String filterByColumn) {
+		this.filterByColumn = filterByColumn;
+	}
+
+	/**
+	 * @return the filterByValue
+	 */
+	public Object getFilterByValue() {
+		return filterByValue;
+	}
+
+	/**
+	 * @param filterByValue the filterByValue to set
+	 */
+	public void setFilterByValue(Object filterByValue) {
+		this.filterByValue = filterByValue;
+}
+}
