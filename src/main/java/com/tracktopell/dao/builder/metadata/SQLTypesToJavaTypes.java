@@ -32,6 +32,7 @@ public class SQLTypesToJavaTypes {
 		javaTypes.put("tinyint", Short.class.toString().replace("class ", ""));
         javaTypes.put("float", Float.class.toString().replace("class ", ""));
         javaTypes.put("long", Long.class.toString().replace("class ", ""));
+		javaTypes.put("bigint", Long.class.toString().replace("class ", ""));
         
         javaTypes.put("numeric_not_null", "double");
         javaTypes.put("decimal_not_null", "double");
@@ -42,6 +43,7 @@ public class SQLTypesToJavaTypes {
         javaTypes.put("long_not_null", "long");
 
 		javaTypes.put("nvarchar", String.class.toString().replace("class ", ""));
+		javaTypes.put("longvarchar", String.class.toString().replace("class ", ""));
         javaTypes.put("varchar", String.class.toString().replace("class ", ""));
 		javaTypes.put("char", String.class.toString().replace("class ", ""));
         javaTypes.put("date", java.sql.Date.class.toString().replace("class ", ""));

@@ -1,0 +1,25 @@
+package ${tablebean.dto.package};
+
+/**
+ * Class for mapping Entity as RecordDTO.
+ * 
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+
+public abstract class Record_DTO implements java.io.Serializable {
+    private static final long serialVersionUID = ${tablebean.serialId};
+
+	protected static String[] columnNames;
+	protected static String[] columnClasses;
+	
+	public  abstract Object getColumnValue(String name)throws IllegalArgumentException;
+	public  abstract void   setColumnValue(String name,Object value)throws IllegalArgumentException;
+
+	public static String[] getColumnNames() {
+		return columnNames;
+	}
+
+	public static String[] getColumnClasses() {
+		return columnClasses;
+	}
+}

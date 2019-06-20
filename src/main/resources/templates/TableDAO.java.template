@@ -10,13 +10,22 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Blob;
-import java.sql.Timestamp;	
+import java.sql.Timestamp;
+import java.sql.Date;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import ${tablebean.package}.*;
-import com.tracktopell.jdbc.DataSourceFacade;
 
 /**
  * Class for ${tablebean.declaredName}DAO of Table ${tablebean.name}.
@@ -24,7 +33,8 @@ import com.tracktopell.jdbc.DataSourceFacade;
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/UtilProjects/tree/master/jpa-builder
  */
 
-public class ${tablebean.declaredName}DAO {
+public class ${tablebean.declaredName}DAO extends     ConnectedDAO
+                                          implements  TemplateDAO<${tablebean.declaredName}DTO>{
 
 	private final static Logger logger = Logger.getLogger(${tablebean.declaredName}DAO.class.getName());
 
@@ -46,88 +56,89 @@ public class ${tablebean.declaredName}DAO {
 		return instance;
 	}
 
-	private Connection getConnection(){
-		return DataSourceFacade.getStrategy().getConnection();
-	}
-
-	private Connection getConnectionCommiteable(){
-		return DataSourceFacade.getStrategy().getConnectionCommiteable();
-	}
-
-    public ${tablebean.declaredName} findBy(${tablebean.declaredName} x) throws DAOException, EntityNotFoundException{
-		${tablebean.declaredName} r = null;
+	@Override
+	public List<${tablebean.declaredName}DTO> find(HashMap<String, Object> whereMap) throws DAOException{    
+		Connection      conn = null;
 		PreparedStatement ps = null;
-		ResultSet rs = null;
-		Connection conn = null;
+		ResultSet         rs = null;
+		List<${tablebean.declaredName}DTO> dtoList = null;
 		try {
-			conn = getConnection();
-			ps = conn.prepareStatement("SELECT ${tablebean.listColumns} FROM ${tablebean.name} "+
-					"WHERE ${tablebean.pk.name}=?"
-			);
-			ps.set${tablebean.pk.javaClass}(1, x.${tablebean.getPK}());
+			conn = getConnection();			
+			StringBuilder strQry = new StringBuilder("select * from ${tablebean.name}");
 			
-			rs = ps.executeQuery();
-			if(rs.next()) {
-				r = new ${tablebean.declaredName}();
-				%foreach tablebean.member in ${tablebean.members}
-				r.${tablebean.member.setter}((${tablebean.member.javaObjectClass})rs.getObject("${tablebean.member.name}"));
-				%endfor
-			} else {
-				throw new EntityNotFoundException("${tablebean.name} NOT FOUND FOR ${tablebean.pk.name}="+x.${tablebean.getPK}());
-			}
-		}catch(SQLException ex) {
-			logger.log(Level.SEVERE, "SQLException:", ex);
-			throw new DAOException("InQuery:" + ex.getMessage());
-		} finally {
-			if(rs != null) {
-				try{
-					rs.close();
-					ps.close();
-					conn.close();
-				}catch(SQLException ex) {
-					logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
-					throw new DAOException("Closing:"+ex.getMessage());
+			if(whereMap!=null && whereMap.size()>0){
+				strQry.append(" where ( ");
+				final Set<String> keySet = whereMap.keySet();
+				int nk=1;
+				for(String k: keySet){
+					if(nk > 1){
+						strQry.append(" and ");
+					}
+					strQry.append(k).append(" = ").append("?");
+					nk++;
 				}
+				strQry.append(" )");
+			}			
+			ps = conn.prepareStatement(strQry.toString());
+			if(whereMap!=null && whereMap.size()>0){
+				final Set<String> keySet = whereMap.keySet();
+				int nk=1;
+				for(String k: keySet){
+					Object v = whereMap.get(k);
+					ps.setObject(nk, v);
+					nk++;
+				}
+				strQry.append(" )");
 			}
-		}
-		return r;		
-	}
-
-    public ArrayList<${tablebean.declaredName}> findAll() throws DAOException {
-		ArrayList<${tablebean.declaredName}> r = new ArrayList<${tablebean.declaredName}>();
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			ps = conn.prepareStatement("SELECT ${tablebean.listColumns} FROM ${tablebean.name}");
-			
 			rs = ps.executeQuery();
+			dtoList = new ArrayList<${tablebean.declaredName}DTO>();
 			while(rs.next()) {
-				${tablebean.declaredName} x = new ${tablebean.declaredName}();
+				${tablebean.declaredName}DTO dto = new ${tablebean.declaredName}DTO();
 				%foreach tablebean.member in ${tablebean.members}
-				x.${tablebean.member.setter}((${tablebean.member.javaObjectClass})rs.getObject("${tablebean.member.name}"));
+				dto.${tablebean.member.callSetter} (${tablebean.member.setterNative} rs.${tablebean.member.valueGetter}("${tablebean.member.name}") )); 
 				%endfor
-				r.add(x);
+				dtoList.add(dto);
 			}
+			return dtoList;
 		}catch(SQLException ex) {
 			logger.log(Level.SEVERE, "SQLException:", ex);
 			throw new DAOException("InQuery:" + ex.getMessage());
 		} finally {
 			if(rs != null) {
 				try{
-					rs.close();
-					ps.close();
-					conn.close();
+					if(ps != null){
+						ps.close();
+					}
+					if(rs != null){
+						rs.close();
+					}
+					if(conn != null){
+						conn.close();
+					}
 				}catch(SQLException ex) {
 					logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
 					throw new DAOException("Closing:"+ex.getMessage());
 				}
 			}
-		}
-		return r;		
+		}		
 	};
-    
+
+	@Override
+	public ${tablebean.declaredName}DTO insert(${tablebean.declaredName}DTO o) throws DAOException {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public int update(${tablebean.declaredName}DTO o, HashMap<String, Object> whereMap) throws DAOException {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public int remove(HashMap<String, Object> whereMap) throws DAOException {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+    /*
     public int insert(${tablebean.declaredName} x) throws DAOException {
 		PreparedStatement ps = null;
 		int r = -1;
@@ -166,14 +177,20 @@ public class ${tablebean.declaredName}DAO {
 		return r;
 	}
 
-	public int update(${tablebean.declaredName} x) throws DAOException {		
+	public int update(${tablebean.declaredName} x, HashMap<String,Object> whereKeys) throws DAOException {
 		PreparedStatement ps = null;
 		int r= -1;
 		Connection conn = null;
 		try {
 			conn = getConnection();
-			ps = conn.prepareStatement("UPDATE ${tablebean.name} SET ${tablebean.listColumns4Update} "+
-					" WHERE ${tablebean.pk.name}=?");
+
+			StringBuilder sbQuer = new StringBuilder("UPDATE ${tablebean.name} SET ${tablebean.listColumns4Update} ");;
+			if( whereKeys!=null && whereKeys.size() > 0 ){
+				
+			}
+
+			ps = conn.prepareStatement();
+			
 			
 			int ci=1;
 			%foreach tablebean.member in ${tablebean.members}			
@@ -225,5 +242,6 @@ public class ${tablebean.declaredName}DAO {
 		}
 		return r;
 	}
-
+	*/
+	
 }

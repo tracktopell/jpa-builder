@@ -839,7 +839,7 @@ public class DTOBeanBuilder {
 		}
 	}
 	
-	public static void buildMappingDTOBeans(DBTableSet dbSet, String dtoPackageBeanMember, String basePath)
+	public static void buildMappingDTOs(DBTableSet dbSet, String dtoPackageBeanMember, String basePath)
 			throws Exception {
 		String fileName;
 		File baseDir = null;
@@ -850,7 +850,6 @@ public class DTOBeanBuilder {
 		PrintStream ps = null;
 		BufferedReader br = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-		String collectionClass = "Collection";
 
 		Enumeration<String> tableNames = dbSet.getTableNames();
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
@@ -906,24 +905,25 @@ public class DTOBeanBuilder {
 				dirSourceFile.mkdirs();
 			}
 
-			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName() + ".java";
+			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName() + "DTO.java";
 
 			sourceFile = new File(fileName);
 			fos = new FileOutputStream(sourceFile);
 			ps = new PrintStream(fos);
 
 			br = new BufferedReader(new InputStreamReader(
-					fos.getClass().getResourceAsStream("/templates/TableDTOBean.java.template")));
+					fos.getClass().getResourceAsStream("/templates/TableDTO.java.template")));
 			String line = null;
 			ArrayList<String> linesToParse = null;
 			int nl = 0;
+						
 			while ((line = br.readLine()) != null) {
 
 				if (line.indexOf("%foreach") >= 0) {
 					linesToParse = new ArrayList<String>();
 				} else if (line.indexOf("%endfor") >= 0) {
 					int numColumnGenerating = 0;
-
+					
 					for (Column column : definitiveColumns) {
 						numColumnGenerating++;
 
@@ -935,9 +935,12 @@ public class DTOBeanBuilder {
 						} else {
 							fTable = null;
 						}
-
-						for (String lineInLoop : linesToParse) {
-							if (lineInLoop.indexOf("${tablebean.member.javadocCommnet}") >= 0) {
+						
+						String agregateInHashcodeExcludeExp = column.isPrimaryKey() && table.getPrimaryKeys().size()>0? "":"//";
+						String agregateInEqualsExcludeExp   = column.isPrimaryKey() && table.getPrimaryKeys().size()>0? "":"//";;
+			
+						for (String lineIL : linesToParse) {
+							if (lineIL.indexOf("${tablebean.member.javadocCommnet}") >= 0) {
 								if (!table.isManyToManyTableWinthMoreColumns()) {
 									if (column.getComments() != null) {
 										ps.println("    ");
@@ -952,7 +955,7 @@ public class DTOBeanBuilder {
 										ps.println("    */");
 									}
 								}
-							} else if (lineInLoop.indexOf("${tablebean.member.declaration}") >= 0) {
+							} else if (lineIL.indexOf("${tablebean.member.declaration}") >= 0) {
 								
 								if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
 									fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());									
@@ -960,7 +963,7 @@ public class DTOBeanBuilder {
 								} else {
 									ps.println("    private " + column.getJavaClassType().replace("java.lang.", "") + " " + column.getJavaDeclaredObjectName() + ";");
 								}								
-							} else if (lineInLoop.indexOf("${tablebean.member.getter}") >= 0) {
+							} else if (lineIL.indexOf("${tablebean.member.getter}") >= 0) {
 								
 								if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
 									ps.println("    public "+fTable.getJPAPKClass().replace("java.lang.", "")+"  get"+FormatString.getCadenaHungara(column.getName())+"() {");									
@@ -971,7 +974,7 @@ public class DTOBeanBuilder {
 								}
 								ps.println("    }");
 
-							} else if (lineInLoop.indexOf("${tablebean.member.setter}") >= 0) {
+							} else if (lineIL.indexOf("${tablebean.member.setter}") >= 0) {
 								if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
 									ps.println("    public void set"+FormatString.getCadenaHungara(column.getName())+"("+fTable.getJPAPKClass().replace("java.lang.", "")+" id) {");									
 									ps.println("        this." + column.getJavaDeclaredObjectName() + " = id;");
@@ -982,7 +985,24 @@ public class DTOBeanBuilder {
 								ps.println("    }");
 
 							} else {
-								ps.println(lineInLoop);
+								lineIL = lineIL.replace("${tablebean.member.name}"                        , column.getName().toUpperCase());								
+								lineIL = lineIL.replace("${tablebean.member.javaIdentifier}"              , column.getJavaDeclaredObjectName());
+								lineIL = lineIL.replace("${tablebean.member.javaClass}"                   , column.getJavaClassType());
+								lineIL = lineIL.replace("${tablebean.member.agregateInHashcodeExcludeExp}", agregateInHashcodeExcludeExp);
+								lineIL = lineIL.replace("${tablebean.member.agregateInEqualsExcludeExp}"  , agregateInEqualsExcludeExp);
+								lineIL = lineIL.replace("${tablebean.member.valueGetter}"                 , column.getValueGetter());		
+								lineIL = lineIL.replace("${tablebean.member.jsonObjValueGetter}"          , column.getJsonObjValueGetter());
+								lineIL = lineIL.replace("${tablebean.member.jsonObjGetValue}"             , column.getJsonObjGetValue());								
+								lineIL = lineIL.replace("${tablebean.member.nativeGetter}"                , column.getNativeGetter());
+								lineIL = lineIL.replace("${tablebean.member.getterNative}"                , column.getGetterNative());
+								lineIL = lineIL.replace("${tablebean.member.setterNative}"                , column.getSetterNative());
+								lineIL = lineIL.replace("${tablebean.member.getterCast}"                  , column.getValueCast());
+								lineIL = lineIL.replace("${tablebean.member.callGetter}"                  , "get"+column.getJavaDeclaredName());
+								lineIL = lineIL.replace("${tablebean.member.callSetter}"                  , "set"+column.getJavaDeclaredName());								
+								lineIL = lineIL.replace("${tablebean.member.declaredName}"                , column.getJavaDeclaredName());
+
+								
+								ps.println(lineIL);
 							}
 						}
 					}
@@ -1016,43 +1036,24 @@ public class DTOBeanBuilder {
 						if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
 							fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
 							
-							if( hasNomalizaedFKReferences(fTable, column) ){
-								//ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(fTable.getName()) + "( new " + jpaPackageBeanMember + "." + fTable.getJavaDeclaredName() + "(this.get" + FormatString.getCadenaHungara(column.getName()) + "())); // normalized");
-								//ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(fTable.getName()) + "( this.get" + FormatString.getCadenaHungara(column.getName()) + "()!=null? new " + jpaPackageBeanMember + "." + fTable.getJavaDeclaredName() + "(this.get" + FormatString.getCadenaHungara(column.getName()) + "()):null); // normalized");
-							}else{
-								//ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( new " + jpaPackageBeanMember + "." + fTable.getJavaDeclaredName() + "(this.get" + FormatString.getCadenaHungara(column.getName()) + "())); // custom");
-							}
 						} else {
 
 							ps.println("        jpaEntity.set" + FormatString.getCadenaHungara(column.getName()) + "( this.get" + FormatString.getCadenaHungara(column.getName()) + "());");
 						}
 
 					}
-				} else {
+				} else {					
 					line = line.replace("${date}", sdf.format(new Date()));
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
 					line = line.replace("${tablebean.name}", table.getName());
 					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
-					line = line.replace("${tablebean.PKMembersParameters}", membersParameters(table, dbSet));
-
-					if (table instanceof EmbeddeableColumn) {
-//                        line = line.replace("${tablebean.jpa_entity_or_embeddeable}", "@Embeddable");
-						line = line.replace("${tablebean.jpa_talbe}", "");
-					} else {
-//                        line = line.replace("${tablebean.jpa_entity_or_embeddeable}", "@Entity");
-//                        line = line.replace("${tablebean.jpa_talbe}", "@Table(name = \"" + table.getName().toUpperCase() + "\")");
-						line = line.replace("${tablebean.id}", table.getJPAPK());
-						line = line.replace("${tablebean.id.javaClass}", table.getJPAPKClass().replace("java.lang.", ""));
-					}
-
-					line = line.replace("${tablebean.hashCodeSumCode}", table.getHashCodeSumCode());
-					line = line.replace("${tablebean.PKMembersParametersInitCode}", membersParametersInitCode(table, dbSet));
+					line = line.replace("${tablebean.countPKs}", String.valueOf(table.getPrimaryKeys().size()));					
+					line = line.replace("${tablebean.hashCodeSumCode}", table.getHashCodeSumCode());					
 					line = line.replace("${tablebean.equalsCode}", table.getEqualsCode());
 					line = line.replace("${tablebean.toStringCode}", table.getToDTOStringCode(dbSet, dtoPackageBeanMember));
 					line = line.replace("${tablebean.name.uc}", table.getName().toUpperCase());
 					line = line.replace("${tablebean.package}", dtoPackageBeanMember);
-					//line = line.replace("${tableJPAbean.package}", jpaPackageBeanMember);
-
+					
 					ps.println(line);
 				}
 			}
@@ -1084,7 +1085,7 @@ public class DTOBeanBuilder {
 		while (tableNames.hasMoreElements()) {
 			Table simpleTable = dbSet.getTable(tableNames.nextElement());
 			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
-				System.err.println("-->> + " + simpleTable.getName());
+				//System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
 
 				Iterator<Column> itFKC = simpleTable.getSortedColumnsForJPA();
@@ -1109,7 +1110,7 @@ public class DTOBeanBuilder {
 		//System.err.println("==============================>>> ");
 		for (Table table : tablesForGeneration) {
 
-			//System.err.println("-->> generating: " + table.getJavaDeclaredName() + "DAO.java :" + table);
+			System.err.println("-->> generating: " + table.getJavaDeclaredName() + "DAO.java" );
 
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
 			List<Column> definitiveColumns = new ArrayList();
@@ -1227,9 +1228,20 @@ public class DTOBeanBuilder {
 								lineIL = lineIL.replace("${tablebean.member.javaClass}", FormatString.firstLetterUpperCase(jc.replace("java.lang.", "").replace("java.util.", "").replace("Integer","Int")));
 							}
 							
-							lineIL = lineIL.replace("${tablebean.member.name}", column.getName().toUpperCase());
-							lineIL = lineIL.replace("${tablebean.member.getter}", "get"+column.getJavaDeclaredName());
-							
+							lineIL = lineIL.replace("${tablebean.member.name}"                        , column.getName().toUpperCase());								
+							lineIL = lineIL.replace("${tablebean.member.javaIdentifier}"              , column.getJavaDeclaredObjectName());
+							lineIL = lineIL.replace("${tablebean.member.javaClass}"                   , column.getJavaClassType());
+							lineIL = lineIL.replace("${tablebean.member.valueGetter}"                 , column.getValueGetter());		
+							lineIL = lineIL.replace("${tablebean.member.jsonObjValueGetter}"          , column.getJsonObjValueGetter());
+							lineIL = lineIL.replace("${tablebean.member.jsonObjGetValue}"             , column.getJsonObjGetValue());								
+							lineIL = lineIL.replace("${tablebean.member.nativeGetter}"                , column.getNativeGetter());
+							lineIL = lineIL.replace("${tablebean.member.getterNative}"                , column.getGetterNative());
+							lineIL = lineIL.replace("${tablebean.member.setterNative}"                , column.getSetterNative());
+							lineIL = lineIL.replace("${tablebean.member.getterCast}"                  , column.getValueCast());
+							lineIL = lineIL.replace("${tablebean.member.callGetter}"                  , "get"+column.getJavaDeclaredName());
+							lineIL = lineIL.replace("${tablebean.member.callSetter}"                  , "set"+column.getJavaDeclaredName());
+							lineIL = lineIL.replace("${tablebean.member.declaredName}"                , column.getJavaDeclaredName());
+
 							if(column.isPrimaryKey()){
 								if(lineIL.contains("${tablebean.memberNotPK.javaClass}")){
 									skipPKMemberLine=true;
@@ -1277,16 +1289,8 @@ public class DTOBeanBuilder {
 					line = line.replace("${date}", sdf.format(new Date()));
 					line = line.replace("${tablebean.serialId}", String.valueOf(table.hashCode()));
 					line = line.replace("${tablebean.name}", table.getName().toUpperCase());
-					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
-					//line = line.replace("${tablebean.PKMembersParameters}", membersParameters(table, dbSet));
-										
-					line = line.replace("${tablebean.pk}", tablePKColumn.getName().toUpperCase());
-					line = line.replace("${tablebean.pk.javaClass}", tablePKColumn.getJavaClassType().replace("java.lang.", "").replace("java.util.", "").replace("Integer","Int"));
-					line = line.replace("${tablebean.getPK}", "get"+tablePKColumn.getJavaDeclaredName());
-					line = line.replace("${tablebean.setPK}", "set"+tablePKColumn.getJavaDeclaredName());
-
+					line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());					
 					line = line.replace("${tablebean.hashCodeSumCode}", table.getHashCodeSumCode());
-					//line = line.replace("${tablebean.PKMembersParametersInitCode}", membersParametersInitCode(table, dbSet));
 					line = line.replace("${tablebean.equalsCode}", table.getEqualsCode());
 					line = line.replace("${tablebean.toStringCode}", table.getToDTOStringCode(dbSet, dtoPackageBeanMember));
 					line = line.replace("${tablebean.package}", dtoPackageBeanMember);

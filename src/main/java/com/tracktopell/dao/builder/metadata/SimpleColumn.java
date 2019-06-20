@@ -336,26 +336,102 @@ public class SimpleColumn implements Column {
 		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
 		if(jc.equals("Integer")){
 			return "getInt";
-		} else if(jc.equalsIgnoreCase("Double")){
+		} else if(jc.equals("Double")){
 			return "getDouble";
-		} else if(jc.equalsIgnoreCase("Float")){
+		} else if(jc.equals("Float")){
 			return "getDouble";
-		} else if(jc.equalsIgnoreCase("Long")){
-			return "getLong";
-		} else if(jc.equalsIgnoreCase("Short")){
-			return "getInt";
-		} else if(jc.equalsIgnoreCase("Byte")){
-			return "getByte";
-		} else if(jc.equals("int")){
+		} else if(jc.equals("Long")){
 			return "getInt";
 		} else if(jc.equals("long")){
-			return "getLong";
+			return "getInt";
+		} else if(jc.equals("Short")){
+			return "getInt";
+		} else if(jc.equals("short")){
+			return "getInt";
+		} else if(jc.equals("Byte")){
+			return "getByte";
+		} else if(jc.equals("Integer")){
+			return "getInt";
+		} else if(jc.equals("int")){
+			return "getInt";
+		} else if(jc.equals("String")){
+			return "getString";
 		} else if(jc.equals("Time")){
 			return "getLong";
 		} else  if(jc.equals("Date")){
 			return "getLong";
 		} else if(jc.equals("Timestamp")){
 			return "getLong";
+		}
+		return "get"+jc;
+	}
+
+	@Override
+	public String getJsonObjValueGetter() {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equals("Integer")){
+			return "getJsonNumber";
+		} else if(jc.equals("Double")){
+			return "getJsonNumber";
+		} else if(jc.equals("Float")){
+			return "getJsonNumber";
+		} else if(jc.equals("Long")){
+			return "getJsonNumber";
+		} else if(jc.equals("long")){
+			return "getJsonNumber";
+		} else if(jc.equals("Short")){
+			return "getJsonNumber";
+		} else if(jc.equals("short")){
+			return "getJsonNumber";
+		} else if(jc.equals("Byte")){
+			return "getByte";
+		} else if(jc.equals("Integer")){
+			return "getJsonNumber";
+		} else if(jc.equals("int")){
+			return "getJsonNumber";
+		} else if(jc.equals("String")){
+			return "getString";
+		} else if(jc.equals("Time")){
+			return "getInt";
+		} else  if(jc.equals("Date")){
+			return "getInt";
+		} else if(jc.equals("Timestamp")){
+			return "getInt";
+		}
+		return "get"+jc;
+	}
+	
+	@Override
+	public String getJsonObjGetValue() {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equals("Double")){
+			return ".doubleValue()";
+		} else if(jc.equals("double")){
+			return ".doubleValue()";
+		} else if(jc.equals("Float")){
+			return ".floatValue()";
+		} else if(jc.equals("Long")){
+			return ".longValue()";
+		} else if(jc.equals("long")){
+			return ".longValue()";
+		} else if(jc.equals("Short")){
+			return ".intValue()";
+		} else if(jc.equals("short")){
+			return ".intValue()";
+		} else if(jc.equals("Byte")){
+			return ".intValue()";
+		} else if(jc.equals("Integer")){
+			return ".intValue()";
+		} else if(jc.equals("int")){
+			return ".intValue()";
+		} else if(jc.equals("String")){
+			return "";
+		} else if(jc.equals("Time")){
+			return "";
+		} else  if(jc.equals("Date")){
+			return "";
+		} else if(jc.equals("Timestamp")){
+			return "";
 		}
 		return "get"+jc;
 	}
@@ -367,6 +443,12 @@ public class SimpleColumn implements Column {
 			return "(float)";
 		} else if(jc.equalsIgnoreCase("Short")){
 			return "(short)";
+		} else if(jc.equalsIgnoreCase("Integer")){
+			return "(int)";
+		} else if(jc.equals("Int")){
+			return "(int)";
+		} else if(jc.equalsIgnoreCase("String")){
+			return "";
 		} else if(jc.equals("Date")){
 			return "new java.sql.Date";
 		} else if(jc.equals("Time")){
@@ -378,6 +460,109 @@ public class SimpleColumn implements Column {
 		} else {
 		}
 		return "";
+	}
+
+	@Override
+	public String getNativeGetter() {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equalsIgnoreCase("Float")){
+			return "getFloat()";
+		} else if(jc.equalsIgnoreCase("Short")){
+			return "getShort()";
+		} else if(jc.equalsIgnoreCase("Integer")){
+			return "getInt()";
+		} else if(jc.equals("Date")){
+			return "getDate().getTime()";
+		} else if(jc.equals("Time")){
+			return "getTime().getTime()";
+		} else if(jc.equals("DateTime")){
+			return "getDateTime().getTime()";
+		} else if(jc.equals("Timestamp")){
+			return "getTimestamp().getTime()";
+		} else {
+		}
+		return "";
+	}
+	
+	@Override
+	public String getGetterNative() {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equalsIgnoreCase("Float")){
+			return "";
+		} else if(jc.equalsIgnoreCase("Short")){
+			return "";
+		} else if(jc.equalsIgnoreCase("Integer")){
+			return "";
+		} else if(jc.equals("Date")){
+			return ".getTime()";
+		} else if(jc.equals("Time")){
+			return ".getTime()";
+		} else if(jc.equals("DateTime")){
+			return ".getTime()";
+		} else if(jc.equals("Timestamp")){
+			return ".getTime()";
+		} else {
+		}
+		return "";
+	}
+	
+	@Override
+	public String getNativeSetter() {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equalsIgnoreCase("Float")){
+			return "setFloat(";
+		} else if(jc.equalsIgnoreCase("Short")){
+			return "setShort(";
+		} else if(jc.equalsIgnoreCase("Integer")){
+			return "setInt(";
+		} else if(jc.equals("Date")){
+			return "setDate(new Date(";
+		} else if(jc.equals("Time")){
+			return "setTime(new Time(";
+		} else if(jc.equals("DateTime")){
+			return "setDate(new DateTime(";
+		} else if(jc.equals("Timestamp")){
+			return "setTimestamp(new Timestamp(";
+		} else {
+		}
+		return "";
+	}	
+
+	@Override
+	public String getSetterNative() {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equals("Float")){
+			return "new Float(";
+		} else if(jc.equals("float")){
+			return "(";
+		} else if(jc.equals("Double")){
+			return "new Double(";
+		} else if(jc.equals("double")){
+			return "(";
+		} else if(jc.equals("Long")){
+			return "new Long(";
+		} else if(jc.equals("long")){
+			return "(";
+		} else if(jc.equalsIgnoreCase("Short")){
+			return "new Short((short)";
+		} else if(jc.equalsIgnoreCase("short")){
+			return "(";
+		} else if(jc.equalsIgnoreCase("Integer")){
+			return "new Integer(";
+		} else if(jc.equalsIgnoreCase("int")){
+			return "(";
+		} else if(jc.equals("Date")){
+			return "new Date(";
+		} else if(jc.equals("Time")){
+			return "new Time(";
+		} else if(jc.equals("DateTime")){
+			return "new DateTime(";
+		} else if(jc.equals("Timestamp")){
+			return "new Timestamp(";
+		} else if(jc.equals("String")){
+			return "(";
+		} 
+		return "(";
 	}	
 
 	@Override

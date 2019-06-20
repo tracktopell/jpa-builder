@@ -641,7 +641,7 @@ public class Table {
 		//sbEqualsCode.append(FormatString.getCadenaHungara(getName()) + " other = (");
 		//sbEqualsCode.append(FormatString.getCadenaHungara(getName()) + " ) o;");
 		//sbEqualsCode.append("\n");
-		String jpaPKClass = getJPAPKClass();
+		String jpaPKClass = null;
 
 		Iterator<Column> simpleColumnsIterator = getSortedColumnsForJPA();
 		int numColumns = 0;

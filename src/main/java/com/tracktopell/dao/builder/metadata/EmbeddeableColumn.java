@@ -259,4 +259,34 @@ public class EmbeddeableColumn extends Table implements Column{
 	public void setUnique(boolean uniqe) {
 		throw new UnsupportedOperationException("Not supported for EmbeddeableColumn");
 	}
+
+	@Override
+	public String getNativeGetter() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public String getNativeSetter() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public String getGetterNative() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public String getSetterNative() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public String getJsonObjValueGetter() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@Override
+	public String getJsonObjGetValue() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }

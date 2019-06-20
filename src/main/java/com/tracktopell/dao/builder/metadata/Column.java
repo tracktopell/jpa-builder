@@ -118,4 +118,16 @@ public interface Column {
 	Hashtable<String, String>  getMetaProperties();
 
 	String getValueCast();
+	
+	String getNativeGetter();
+	
+	String getGetterNative();
+	
+	String getNativeSetter();
+	
+	String getSetterNative();
+	
+	String getJsonObjValueGetter();
+	
+	String getJsonObjGetValue();
 }
