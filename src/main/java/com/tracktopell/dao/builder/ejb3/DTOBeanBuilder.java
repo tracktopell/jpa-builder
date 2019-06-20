@@ -1299,6 +1299,8 @@ public class DTOBeanBuilder {
 					line = line.replace("${tablebean.listColumns}", allCols);
 					line = line.replace("${tablebean.listParamColumns}", colsParams);
 					line = line.replace("${tablebean.listColumns4Update}", collToUpdate);
+					line = line.replace("${tablebean.columnList}", table.getListColumnsNames());
+					line = line.replace("${tablebean.listMatchers4PS}", table.getListMatchers4PS());
 					
 					line = line.replace("${dao.package}", daoPackage);
 					

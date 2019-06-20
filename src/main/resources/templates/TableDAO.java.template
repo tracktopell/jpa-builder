@@ -64,7 +64,9 @@ public class ${tablebean.declaredName}DAO extends     ConnectedDAO
 		List<${tablebean.declaredName}DTO> dtoList = null;
 		try {
 			conn = getConnection();			
-			StringBuilder strQry = new StringBuilder("select * from ${tablebean.name}");
+			StringBuilder strQry = new StringBuilder("select ");
+			strQry.append("${tablebean.columnList}");
+			strQry.append(" from ${tablebean.name}");
 			
 			if(whereMap!=null && whereMap.size()>0){
 				strQry.append(" where ( ");
@@ -104,144 +106,191 @@ public class ${tablebean.declaredName}DAO extends     ConnectedDAO
 			logger.log(Level.SEVERE, "SQLException:", ex);
 			throw new DAOException("InQuery:" + ex.getMessage());
 		} finally {
-			if(rs != null) {
-				try{
-					if(ps != null){
-						ps.close();
-					}
-					if(rs != null){
-						rs.close();
-					}
-					if(conn != null){
-						conn.close();
-					}
-				}catch(SQLException ex) {
-					logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
-					throw new DAOException("Closing:"+ex.getMessage());
+			try{
+				if(ps != null){
+					ps.close();
 				}
+				if(rs != null){
+					rs.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+			}catch(SQLException ex) {
+				logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
+				throw new DAOException("Closing:"+ex.getMessage());
 			}
 		}		
 	};
 
 	@Override
-	public ${tablebean.declaredName}DTO insert(${tablebean.declaredName}DTO o) throws DAOException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public int insert(${tablebean.declaredName}DTO o) throws DAOException {
+		Connection      conn = null;
+		PreparedStatement ps = null;
+		int          affected=-1;
+		try {
+			conn = getConnection();			
+			StringBuilder strQry = new StringBuilder("insert into ${tablebean.name}");
+			
+			strQry.append("(");
+			strQry.append("${tablebean.columnList}"); 
+			strQry.append(")");
+			strQry.append(" VALUES (");
+			strQry.append("${tablebean.listMatchers4PS}"); 
+			strQry.append(")");
+			
+			ps = conn.prepareStatement(strQry.toString());
+			int paramIndex=1;
+			
+			${tablebean.declaredName}DTO dto = new ${tablebean.declaredName}DTO();
+			%foreach tablebean.member in ${tablebean.members}			
+			ps.setObject(paramIndex++, o.${tablebean.member.callGetter}());
+			%endfor
+			affected = ps.executeUpdate();
+			return affected;
+		}catch(SQLException ex) {
+			logger.log(Level.SEVERE, "SQLException:", ex);
+			throw new DAOException("InQuery:" + ex.getMessage());
+		} finally {			
+			try{
+				if(ps != null){
+					ps.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+			}catch(SQLException ex) {
+				logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
+				throw new DAOException("Closing:"+ex.getMessage());
+			}
+		}
 	}
 
 	@Override
-	public int update(${tablebean.declaredName}DTO o, HashMap<String, Object> whereMap) throws DAOException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public int update(HashMap<String, Object> setValuesMap, HashMap<String, Object> whereMap) throws DAOException {
+		Connection      conn = null;
+		PreparedStatement ps = null;
+		int          affected=-1;
+		try {
+			conn = getConnection();			
+			StringBuilder strQry = new StringBuilder("update ${tablebean.name}");
+			
+			
+			if(setValuesMap!=null && setValuesMap.size()>0){
+				strQry.append(" SET ");
+				final Set<String> keySet = setValuesMap.keySet();
+				int nk=1;
+				for(String k: keySet){
+					if(nk > 1){
+						strQry.append(" , ");
+					}
+					strQry.append(k).append(" = ").append("?");
+					nk++;
+				}				
+			}
+			if(whereMap!=null && whereMap.size()>0){
+				strQry.append(" where ( ");
+				final Set<String> keySet = whereMap.keySet();
+				int nk=1;
+				for(String k: keySet){
+					if(nk > 1){
+						strQry.append(" and ");
+					}
+					strQry.append(k).append(" = ").append("?");
+					nk++;
+				}
+				strQry.append(" )");
+			}			
+			ps = conn.prepareStatement(strQry.toString());
+			int nk=1;
+			if(setValuesMap!=null && setValuesMap.size()>0){
+				final Set<String> keySet = setValuesMap.keySet();
+				
+				for(String k: keySet){
+					Object v = setValuesMap.get(k);
+					ps.setObject(nk, v);
+					nk++;
+				}
+			}
+			if(whereMap!=null && whereMap.size()>0){
+				final Set<String> keySet = whereMap.keySet();				
+				for(String k: keySet){
+					Object v = whereMap.get(k);
+					ps.setObject(nk, v);
+					nk++;
+				}
+			}
+			affected = ps.executeUpdate();
+			return affected;
+		}catch(SQLException ex) {
+			logger.log(Level.SEVERE, "SQLException:", ex);
+			throw new DAOException("InQuery:" + ex.getMessage());
+		} finally {			
+			try{
+				if(ps != null){
+					ps.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+			}catch(SQLException ex) {
+				logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
+				throw new DAOException("Closing:"+ex.getMessage());
+			}
+		}
 	}
 
 	@Override
 	public int remove(HashMap<String, Object> whereMap) throws DAOException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-    /*
-    public int insert(${tablebean.declaredName} x) throws DAOException {
+		Connection      conn = null;
 		PreparedStatement ps = null;
-		int r = -1;
-		Connection conn = null;
+		int          affected=-1;
 		try {
-			conn = getConnection();
-			ps = conn.prepareStatement("INSERT INTO ${tablebean.name}(${tablebean.listColumns4Insert}) "+
-					" VALUES(${tablebean.listParamColumns4Insert})"
-					,Statement.RETURN_GENERATED_KEYS);			
-			int ci=1;
-			%foreach tablebean.member in ${tablebean.members}			
-			ps.setObject(ci++,x.${tablebean.member.getter}());
-			%endfor
-
-			r = ps.executeUpdate();					
-			ResultSet rsk = ps.getGeneratedKeys();
-			if(rsk != null){
-				while(rsk.next()){
-					x.${tablebean.setPK}((${tablebean.pk.javaObjectClass})rsk.getObject(1));
+			conn = getConnection();			
+			StringBuilder strQry = new StringBuilder("delete from ${tablebean.declaredName}");
+			
+			if(whereMap!=null && whereMap.size()>0){
+				strQry.append(" where ( ");
+				final Set<String> keySet = whereMap.keySet();
+				int nk=1;
+				for(String k: keySet){
+					if(nk > 1){
+						strQry.append(" and ");
+					}
+					strQry.append(k).append(" = ").append("?");
+					nk++;
 				}
+				strQry.append(" )");
+			}			
+			ps = conn.prepareStatement(strQry.toString());
+			if(whereMap!=null && whereMap.size()>0){
+				final Set<String> keySet = whereMap.keySet();
+				int nk=1;
+				for(String k: keySet){
+					Object v = whereMap.get(k);
+					ps.setObject(nk, v);
+					nk++;
+				}
+				strQry.append(" )");
 			}
+			affected = ps.executeUpdate();
+			return affected;
 		}catch(SQLException ex) {
 			logger.log(Level.SEVERE, "SQLException:", ex);
-			throw new DAOException("InUpdate:" + ex.getMessage());
-		} finally {
-			if(ps != null) {
-				try{				
+			throw new DAOException("InQuery:" + ex.getMessage());
+		} finally {			
+			try{
+				if(ps != null){
 					ps.close();
-					conn.close();
-				}catch(SQLException ex) {
-					logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
-					throw new DAOException("Closing:"+ex.getMessage());
 				}
+				if(conn != null){
+					conn.close();
+				}
+			}catch(SQLException ex) {
+				logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
+				throw new DAOException("Closing:"+ex.getMessage());
 			}
 		}
-		return r;
 	}
-
-	public int update(${tablebean.declaredName} x, HashMap<String,Object> whereKeys) throws DAOException {
-		PreparedStatement ps = null;
-		int r= -1;
-		Connection conn = null;
-		try {
-			conn = getConnection();
-
-			StringBuilder sbQuer = new StringBuilder("UPDATE ${tablebean.name} SET ${tablebean.listColumns4Update} ");;
-			if( whereKeys!=null && whereKeys.size() > 0 ){
-				
-			}
-
-			ps = conn.prepareStatement();
-			
-			
-			int ci=1;
-			%foreach tablebean.member in ${tablebean.members}			
-			ps.setObject(ci++,x.${tablebean.member.getter}());
-			%endfor
-			ps.setObject(ci++,x.${tablebean.getPK}());
-			
-			r = ps.executeUpdate();						
-		}catch(SQLException ex) {
-			logger.log(Level.SEVERE, "SQLException:", ex);
-			throw new DAOException("InUpdate:" + ex.getMessage());
-		} finally {
-			if(ps != null) {
-				try{
-					ps.close();
-					conn.close();
-				}catch(SQLException ex) {
-					logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
-					throw new DAOException("Closing:"+ex.getMessage());
-				}
-			}
-		}
-		return r;
-	}
-
-    public int delete(${tablebean.declaredName} x)throws DAOException {
-		PreparedStatement ps = null;
-		int r= -1;
-		Connection conn = null;
-		try {
-			conn = getConnection();
-			ps = conn.prepareStatement("DELETE FROM ${tablebean.name} WHERE ${tablebean.pk.name}=?");
-			ps.setObject(1, x.${tablebean.getPK}());
-			
-			r = ps.executeUpdate();						
-		}catch(SQLException ex) {
-			logger.log(Level.SEVERE, "SQLException:", ex);
-			throw new DAOException("InUpdate:" + ex.getMessage());
-		} finally {
-			if(ps != null) {
-				try{
-					ps.close();
-					conn.close();
-				}catch(SQLException ex) {
-					logger.log(Level.SEVERE, "clossing, SQLException:" + ex.getMessage());
-					throw new DAOException("Closing:"+ex.getMessage());
-				}
-			}
-		}
-		return r;
-	}
-	*/
 	
 }
