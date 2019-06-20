@@ -130,4 +130,6 @@ public interface Column {
 	String getJsonObjValueGetter();
 	
 	String getJsonObjGetValue();
+	
+	String getNullableExpression(String n);
 }

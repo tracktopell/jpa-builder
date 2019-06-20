@@ -59,9 +59,9 @@ public class ${tablebean.declaredName}DTO extends Record_DTO{
 		JsonObjectBuilder jsonObj = Json.createObjectBuilder();
 		// ..still in development
 		%foreach tablebean.member in ${tablebean.members}
-		jsonObj.add("${tablebean.member.javaIdentifier}", this.${tablebean.member.callGetter}()${tablebean.member.getterNative}); 
+		${tablebean.member.nullableExpresion}jsonObj.add("${tablebean.member.javaIdentifier}", this.${tablebean.member.callGetter}()${tablebean.member.getterNative});  // 
 		%endfor
-		return jsonObj.toString();
+		return jsonObj.build().toString();
     }
 
 	public static ${tablebean.declaredName}DTO create(String json) throws IllegalArgumentException{

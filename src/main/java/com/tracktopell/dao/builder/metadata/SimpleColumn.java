@@ -564,6 +564,35 @@ public class SimpleColumn implements Column {
 		} 
 		return "(";
 	}	
+	
+	@Override
+	public String getNullableExpression(String n) {
+		String jc = this.javaClassType.replace("java.lang.", "").replace("java.sql.", "");
+		if(jc.equals("Integer")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("Double")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("Float")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("Long")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("Short")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("Byte")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("Integer")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("String")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("Time")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else  if(jc.equals("Date")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		} else if(jc.equals("Timestamp")){
+			return "if("+n+".get"+getJavaDeclaredName()+"() != null)";
+		}
+		return "";
+	}
 
 	@Override
 	public boolean isUnique() {

@@ -999,6 +999,7 @@ public class DTOBeanBuilder {
 								lineIL = lineIL.replace("${tablebean.member.getterCast}"                  , column.getValueCast());
 								lineIL = lineIL.replace("${tablebean.member.callGetter}"                  , "get"+column.getJavaDeclaredName());
 								lineIL = lineIL.replace("${tablebean.member.callSetter}"                  , "set"+column.getJavaDeclaredName());								
+								lineIL = lineIL.replace("${tablebean.member.nullableExpresion}"           , column.getNullableExpression("this"));
 								lineIL = lineIL.replace("${tablebean.member.declaredName}"                , column.getJavaDeclaredName());
 
 								
@@ -1240,6 +1241,7 @@ public class DTOBeanBuilder {
 							lineIL = lineIL.replace("${tablebean.member.getterCast}"                  , column.getValueCast());
 							lineIL = lineIL.replace("${tablebean.member.callGetter}"                  , "get"+column.getJavaDeclaredName());
 							lineIL = lineIL.replace("${tablebean.member.callSetter}"                  , "set"+column.getJavaDeclaredName());
+							lineIL = lineIL.replace("${tablebean.member.nullableExpresion}"           , column.getNullableExpression("dto"));
 							lineIL = lineIL.replace("${tablebean.member.declaredName}"                , column.getJavaDeclaredName());
 
 							if(column.isPrimaryKey()){
