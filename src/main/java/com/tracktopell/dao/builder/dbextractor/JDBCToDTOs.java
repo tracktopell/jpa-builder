@@ -18,7 +18,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 /**
- *
+ * com.tracktopell.dao.builder.dbextractor.JDBCToDTOs
+ * 
  * @author Alfredo Estrada Gonz&aacute;lez.
  * @version 1.0
  *
@@ -27,8 +28,8 @@ public class JDBCToDTOs {
 
     public static void main(String args[]) {
 
-        if (args.length != 9) {
-            System.err.print("use: <java ...> JDBCToJPABeans  jdbcDriver urlConnection user password schemma tableNames2GenList,Separated,By,Comma  packageDTOMember  packageDAOMember basePath");
+        if (args.length != 10) {
+            System.err.print("use: <java ...> JDBCToJPABeans  jdbcDriver urlConnection user password schemma tableNames2GenList,Separated,By,Comma  packageDTOMember  packageDAOMember basePath jpaCompatibleFKs ");
             System.exit(1);
         }
 
@@ -42,6 +43,7 @@ public class JDBCToDTOs {
         String packageDTOMember = args[6];
 		String packageDAOMember = args[7];
         String basePath = args[8];
+		boolean jpaCompatibleFKs= args[9].equals("true");
 
         try {            
             Class.forName(driver);
@@ -74,11 +76,13 @@ public class JDBCToDTOs {
                 }
             }
 			
+			System.err.println("Generating :dbSet="+dbSet);
+			
 			System.err.println("Generating DTOs:");
-			DTOBeanBuilder.buildMappingDTOs(dbSet, packageDTOMember, basePath);
+			DTOBeanBuilder.buildMappingDTOs(dbSet, packageDTOMember, basePath, jpaCompatibleFKs);
 			
 			System.err.println("Generating DAOs:");
-			DTOBeanBuilder.buildDAOs(dbSet, packageDTOMember, packageDAOMember, basePath);
+			DTOBeanBuilder.buildDAOs(dbSet, packageDTOMember, packageDAOMember, basePath, jpaCompatibleFKs);
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }

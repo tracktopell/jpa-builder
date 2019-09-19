@@ -839,7 +839,7 @@ public class DTOBeanBuilder {
 		}
 	}
 	
-	public static void buildMappingDTOs(DBTableSet dbSet, String dtoPackageBeanMember, String basePath)
+	public static void buildMappingDTOs(DBTableSet dbSet, String dtoPackageBeanMember, String basePath,boolean jpaCompatibleFKs)
 			throws Exception {
 		String fileName;
 		File baseDir = null;
@@ -853,43 +853,58 @@ public class DTOBeanBuilder {
 
 		Enumeration<String> tableNames = dbSet.getTableNames();
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
-		while (tableNames.hasMoreElements()) {
-			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
+		
+		if(jpaCompatibleFKs){
+			while (tableNames.hasMoreElements()) {
+				Table simpleTable = dbSet.getTable(tableNames.nextElement());
+				if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
+					System.err.println("-->> + " + simpleTable.getName());
+					tablesForGeneration.add(simpleTable);
+
+					Iterator<Column> itFKC = simpleTable.getSortedColumnsForJPA();
+					boolean addedAsFKEmbedded = false;
+					while (itFKC.hasNext()) {
+						Column cctJpaC = itFKC.next();
+						if (cctJpaC instanceof EmbeddeableColumn) {
+							//System.err.println("\t-->> + " + cctJpaC.getName());
+							tablesForGeneration.add((EmbeddeableColumn) cctJpaC);
+							addedAsFKEmbedded = true;
+						}
+					}
+
+					if (addedAsFKEmbedded) {
+					}
+
+				} else {
+					//System.err.println("-->> [X] Many 2 Many : " + simpleTable.getName());
+				}
+			}
+		} else {
+			while (tableNames.hasMoreElements()) {
+				Table simpleTable = dbSet.getTable(tableNames.nextElement());				
 				System.err.println("-->> + " + simpleTable.getName());
 				tablesForGeneration.add(simpleTable);
-
-				Iterator<Column> itFKC = simpleTable.getSortedColumnsForJPA();
-				boolean addedAsFKEmbedded = false;
-				while (itFKC.hasNext()) {
-					Column cctJpaC = itFKC.next();
-					if (cctJpaC instanceof EmbeddeableColumn) {
-						//System.err.println("\t-->> + " + cctJpaC.getName());
-						tablesForGeneration.add((EmbeddeableColumn) cctJpaC);
-						addedAsFKEmbedded = true;
-					}
-				}
-
-				if (addedAsFKEmbedded) {
-				}
-
-			} else {
-				//System.err.println("-->> [X] Many 2 Many : " + simpleTable.getName());
 			}
-
 		}
-		//System.err.println("==============================>>> ");
+		System.err.println("==============================>>> ");
 		for (Table table : tablesForGeneration) {
 
-			//System.err.println("-->> generating: " + table.getJavaDeclaredName() + ".java :" + table);
-
-			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
-			List<Column> definitiveColumns = new ArrayList();
-			while (columnsSortedColumnsForJPA.hasNext()) {
-				Column c = columnsSortedColumnsForJPA.next();
-				definitiveColumns.add(c);
-				//System.err.println("\t-->> DefinitiveColumn: " + c);
+			System.err.println("-->> generating for " + table.getJavaDeclaredName() );		
+			
+			Iterator<Column> columnsToGenerate = null;
+			if(jpaCompatibleFKs){
+				columnsToGenerate = table.getSortedColumnsForJPA();
+			}else{
+				columnsToGenerate = table.getColums().iterator();
 			}
+			
+			List<Column> definitiveColumns = new ArrayList();
+			while (columnsToGenerate.hasNext()) {
+				Column c = columnsToGenerate.next();
+				definitiveColumns.add(c);
+				System.err.println("\t\t-->> DefinitiveColumn: " + c);
+			}
+					
 
 			//-------------------------------------------------------
 			baseDir = new File(basePath);
@@ -906,7 +921,8 @@ public class DTOBeanBuilder {
 			}
 
 			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName() + "DTO.java";
-
+			System.err.println("\t-->> file: " + fileName);
+			
 			sourceFile = new File(fileName);
 			fos = new FileOutputStream(sourceFile);
 			ps = new PrintStream(fos);
@@ -989,7 +1005,7 @@ public class DTOBeanBuilder {
 								lineIL = lineIL.replace("${tablebean.member.javaIdentifier}"              , column.getJavaDeclaredObjectName());
 								lineIL = lineIL.replace("${tablebean.member.javaClass}"                   , column.getJavaClassType());
 								lineIL = lineIL.replace("${tablebean.member.agregateInHashcodeExcludeExp}", agregateInHashcodeExcludeExp);
-								lineIL = lineIL.replace("${tablebean.member.agregateInEqualsExcludeExp}"  , agregateInEqualsExcludeExp);
+								lineIL = lineIL.replace("${tablebean.member.agregateInEqualsExcludeExp}"  , agregateInEqualsExcludeExp);								
 								lineIL = lineIL.replace("${tablebean.member.valueGetter}"                 , column.getValueGetter());		
 								lineIL = lineIL.replace("${tablebean.member.jsonObjValueGetter}"          , column.getJsonObjValueGetter());
 								lineIL = lineIL.replace("${tablebean.member.jsonObjGetValue}"             , column.getJsonObjGetValue());								
@@ -1001,7 +1017,6 @@ public class DTOBeanBuilder {
 								lineIL = lineIL.replace("${tablebean.member.callSetter}"                  , "set"+column.getJavaDeclaredName());								
 								lineIL = lineIL.replace("${tablebean.member.nullableExpresion}"           , column.getNullableExpression("this"));
 								lineIL = lineIL.replace("${tablebean.member.declaredName}"                , column.getJavaDeclaredName());
-
 								
 								ps.println(lineIL);
 							}
@@ -1068,7 +1083,7 @@ public class DTOBeanBuilder {
 		}
 	}
 	
-	public static void buildDAOs(DBTableSet dbSet, String dtoPackageBeanMember,String daoPackage, String basePath)
+	public static void buildDAOs(DBTableSet dbSet, String dtoPackageBeanMember,String daoPackage, String basePath,boolean jpaCompatibleFKs)
 			throws Exception {
 		String fileName;
 		File baseDir = null;
@@ -1082,43 +1097,56 @@ public class DTOBeanBuilder {
 		String collectionClass = "Collection";
 
 		Enumeration<String> tableNames = dbSet.getTableNames();
-		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
-		while (tableNames.hasMoreElements()) {
-			Table simpleTable = dbSet.getTable(tableNames.nextElement());
-			if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
-				//System.err.println("-->> + " + simpleTable.getName());
-				tablesForGeneration.add(simpleTable);
+		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();		
+		if(jpaCompatibleFKs){
+			while (tableNames.hasMoreElements()) {
+				Table simpleTable = dbSet.getTable(tableNames.nextElement());
+				if (!simpleTable.isManyToManyTableWinthMoreColumns()) {
+					//System.err.println("-->> + " + simpleTable.getName());
+					tablesForGeneration.add(simpleTable);
 
-				Iterator<Column> itFKC = simpleTable.getSortedColumnsForJPA();
-				boolean addedAsFKEmbedded = false;
-				while (itFKC.hasNext()) {
-					Column cctJpaC = itFKC.next();
-					if (cctJpaC instanceof EmbeddeableColumn) {
-						//System.err.println("\t-->> + " + cctJpaC.getName());
-						tablesForGeneration.add((EmbeddeableColumn) cctJpaC);
-						addedAsFKEmbedded = true;
+					Iterator<Column> itFKC = simpleTable.getSortedColumnsForJPA();
+					boolean addedAsFKEmbedded = false;
+					while (itFKC.hasNext()) {
+						Column cctJpaC = itFKC.next();
+						if (cctJpaC instanceof EmbeddeableColumn) {
+							//System.err.println("\t-->> + " + cctJpaC.getName());
+							tablesForGeneration.add((EmbeddeableColumn) cctJpaC);
+							addedAsFKEmbedded = true;
+						}
 					}
-				}
 
-				if (addedAsFKEmbedded) {
-				}
+					if (addedAsFKEmbedded) {
+					}
 
-			} else {
-				//System.err.println("-->> [X] Many 2 Many : " + simpleTable.getName());
+				} else {
+					//System.err.println("-->> [X] Many 2 Many : " + simpleTable.getName());
+				}
 			}
-
+		} else{
+			while (tableNames.hasMoreElements()) {
+				Table simpleTable = dbSet.getTable(tableNames.nextElement());				
+				System.err.println("-->> + " + simpleTable.getName());
+				tablesForGeneration.add(simpleTable);
+			}
 		}
-		//System.err.println("==============================>>> ");
+		System.err.println("==============================>>> ");
 		for (Table table : tablesForGeneration) {
 
-			System.err.println("-->> generating: " + table.getJavaDeclaredName() + "DAO.java" );
+			System.err.println("-->> generating: for " + table.getJavaDeclaredName() );
 
-			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
+			Iterator<Column> columnsToGenerate = null;
+			if(jpaCompatibleFKs){
+				columnsToGenerate = table.getSortedColumnsForJPA();
+			}else{
+				columnsToGenerate = table.getColums().iterator();
+			}
+
 			List<Column> definitiveColumns = new ArrayList();
-			while (columnsSortedColumnsForJPA.hasNext()) {
-				Column c = columnsSortedColumnsForJPA.next();
+			while (columnsToGenerate.hasNext()) {
+				Column c = columnsToGenerate.next();
 				definitiveColumns.add(c);
-				//System.err.println("\t-->> DefinitiveColumn: " + c);
+				System.err.println("\t\t-->> DefinitiveColumn: " + c);
 			}
 
 			//-------------------------------------------------------
@@ -1136,7 +1164,8 @@ public class DTOBeanBuilder {
 			}
 
 			fileName = dirSourceFile.getPath() + File.separator + table.getJavaDeclaredName() + "DAO.java";
-
+			System.err.println("\t-->> file: " + fileName);
+			
 			sourceFile = new File(fileName);
 			fos = new FileOutputStream(sourceFile);
 			ps = new PrintStream(fos);
