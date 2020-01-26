@@ -124,11 +124,12 @@ public class EJB3Builder {
 							for(Column ftpk: ftPksCol){
 								if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
 									if(fTable.getSingularName()!=null){
-										//suggestedHyperColumnName = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-										suggestedHyperColumnName = fTable.getSingularName();
+										suggestedHyperColumnName = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+										//suggestedHyperColumnName = fTable.getSingularName();
 									}else{
+										suggestedHyperColumnName = c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
 										//suggestedHyperColumnName = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-										suggestedHyperColumnName = fTable.getName();
+										//suggestedHyperColumnName = fTable.getName();
 									}
 									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
 									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
@@ -1088,11 +1089,12 @@ public class EJB3Builder {
 							for(Column ftpk: ftPksCol){
 								if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
 									if(fTable.getSingularName()!=null){
-										//suggestedHyperColumnName = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-										suggestedHyperColumnName = fTable.getSingularName();								
+										suggestedHyperColumnName = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										//suggestedHyperColumnName = fTable.getSingularName();								
 									}else{
+										suggestedHyperColumnName = c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
 										//suggestedHyperColumnName = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-										suggestedHyperColumnName = fTable.getName();
+										//suggestedHyperColumnName = fTable.getName();
 									}
 									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
 									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
@@ -1220,11 +1222,12 @@ public class EJB3Builder {
 					for(Column ftpk: ftPksCol){
 						if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
 							if(fTable.getSingularName()!=null){
-								//suggestedHyperColumnName = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-								suggestedHyperColumnName = fTable.getSingularName();
+								suggestedHyperColumnName = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								//suggestedHyperColumnName = fTable.getSingularName();
 							}else{
+								suggestedHyperColumnName = column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
 								//suggestedHyperColumnName = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-								suggestedHyperColumnName = fTable.getName();
+								//suggestedHyperColumnName = fTable.getName();
 							}
 							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
 							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);

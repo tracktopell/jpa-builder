@@ -95,11 +95,12 @@ public class DTOBeanBuilder {
 						for(Column ftpk: ftPksCol){
 							if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
 								if(fTable.getSingularName()!=null){
-									//suggested = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-									suggestedHyperColumnName = fTable.getSingularName();
+									suggestedHyperColumnName = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+									//suggestedHyperColumnName = fTable.getSingularName();
 								}else{
-									//suggestedHyperColumnName = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-									suggestedHyperColumnName = fTable.getName();
+									suggestedHyperColumnName = column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+									//suggestedHyperColumnName = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+									//suggestedHyperColumnName = fTable.getName();
 								}
 								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
 								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
@@ -310,6 +311,18 @@ public class DTOBeanBuilder {
 									if(column.getJavaClassType().equalsIgnoreCase("byte[]")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getString");
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "java.util.Base64.getDecoder().decode");									
+									}else if(column.getJavaClassType().equalsIgnoreCase("double")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getDouble");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Double)");							
+									}else if(column.getJavaClassType().equalsIgnoreCase("integer")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Int)");							
+									}else if(column.getJavaClassType().equalsIgnoreCase("bigint")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getLong");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Long)");							
+									}else if(column.getJavaClassType().equalsIgnoreCase("long")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getLong");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Long)");							
 									}else{
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , column.getValueGetter());									
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , column.getValueCast());
@@ -584,11 +597,12 @@ public class DTOBeanBuilder {
 						for(Column ftpk: ftPksCol){
 							if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
 								if(fTable.getSingularName()!=null){
-									//suggested = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-									suggestedHyperColumnName = fTable.getSingularName();								
+									suggestedHyperColumnName = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+									//suggestedHyperColumnName = fTable.getSingularName();								
 								}else{
-									//suggestedHyperColumnName = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-									suggestedHyperColumnName = fTable.getName();
+									suggestedHyperColumnName = column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+									//suggestedHyperColumnName = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+									//suggestedHyperColumnName = fTable.getName();
 								}
 								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
 								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
