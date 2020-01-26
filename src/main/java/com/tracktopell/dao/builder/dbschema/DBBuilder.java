@@ -9,9 +9,9 @@ import com.tracktopell.dao.builder.metadata.Column;
 import com.tracktopell.dao.builder.metadata.DBTableSet;
 import com.tracktopell.dao.builder.metadata.Table;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -78,15 +78,17 @@ public abstract class DBBuilder {
     }
 	
 	protected void printDropSchema(String schemaName,DBTableSet dbSet,PrintStream out) {
-
-		List<Table> lt=dbSet.getTablesSortedForDrop();
+		List<Table> ltc= dbSet.getTablesSortedForCreation();
+		List<Table> lt = new ArrayList<Table>();
+		Collections.copy(lt,ltc);
+		Collections.reverse(lt);
 		
         out.println("-- ============================= ELIMINADO DEL ESQUEMA DE LA BASE DE DATOS ====================");        
         printDefinitionSchema(schemaName,dbSet,out);
         out.println("-- ===================================== TABLES ("+lt.size()+") ===============================");
         
         for(Table t: lt) {            
-            out.println("DROP TABLE "+t.getName()+";");
+            out.println("DROP TABLE "+t.getName().toUpperCase()+";");
 			out.println("");
         }
     

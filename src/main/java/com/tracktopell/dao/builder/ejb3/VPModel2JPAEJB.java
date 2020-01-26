@@ -110,7 +110,7 @@ public class VPModel2JPAEJB {
                             || column.getName().equalsIgnoreCase("MODIFICADO_POR")) {
                         continue;
                     }
-                    String suggested = null;
+                    String suggestedHyperColumnName = null;
                     String suggestedObjectName = null;
                     String suggestedGettetObjectName = null;
                     String suggestedSettetObjectName = null;
@@ -124,24 +124,26 @@ public class VPModel2JPAEJB {
                         for (Column ftpk : ftPksCol) {
                             if (column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())) {
                                 if (fTable.getSingularName() != null) {
-                                    suggested = fTable.getSingularName() + column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(), "");
+                                    // suggestedHyperColumnName = fTable.getSingularName() + column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(), "");
+									suggestedHyperColumnName = fTable.getSingularName();
                                 } else {
-                                    suggested = fTable.getName() + column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(), "");
+                                    // suggestedHyperColumnName = fTable.getName() + column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(), "");
+									suggestedHyperColumnName = fTable.getName();
                                 }
-                                suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
-                                suggestedGettetObjectName = "get" + FormatString.getCadenaHungara(suggested);
-                                suggestedSettetObjectName = "set" + FormatString.getCadenaHungara(suggested);
+                                suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+                                suggestedGettetObjectName = "get" + FormatString.getCadenaHungara(suggestedHyperColumnName);
+                                suggestedSettetObjectName = "set" + FormatString.getCadenaHungara(suggestedHyperColumnName);
 
-                                column.setHyperColumnName(suggested);
+                                column.setHyperColumnName(suggestedHyperColumnName);
                                 break;
                             } else {
-                                suggested = column.getName().toUpperCase();
+                                suggestedHyperColumnName = column.getName().toUpperCase();
 
-                                suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
-                                suggestedGettetObjectName = "get" + FormatString.getCadenaHungara(suggested);
-                                suggestedSettetObjectName = "set" + FormatString.getCadenaHungara(suggested);
+                                suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+                                suggestedGettetObjectName = "get" + FormatString.getCadenaHungara(suggestedHyperColumnName);
+                                suggestedSettetObjectName = "set" + FormatString.getCadenaHungara(suggestedHyperColumnName);
 
-                                column.setHyperColumnName(suggested);
+                                column.setHyperColumnName(suggestedHyperColumnName);
                                 break;
                             }
                         }

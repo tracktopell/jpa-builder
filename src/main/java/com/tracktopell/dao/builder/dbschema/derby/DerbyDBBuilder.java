@@ -12,6 +12,7 @@ import com.tracktopell.dao.builder.metadata.ReferenceTable;
 import com.tracktopell.dao.builder.metadata.Table;
 import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * com.tracktopell.dao.builder.dbschema.derby.DerbyDBBuilder
@@ -22,6 +23,19 @@ public class DerbyDBBuilder extends DBBuilder{
     public DerbyDBBuilder() {
     }
 
+	protected void printDropSchema(String schemaName,DBTableSet dbSet,PrintStream out) {
+
+		List<Table> lt=dbSet.getTablesSortedForDrop();
+		
+        out.println("-- ============================= ELIMINADO DEL ESQUEMA DE LA BASE DE DATOS ====================");        
+		out.println("-- ===================================== TABLES ("+lt.size()+") ===============================");
+        
+        for(Table t: lt) {            
+            out.println("DROP TABLE "+t.getName().toUpperCase()+";");
+			out.println("");
+        }
+	}
+	
     protected void printDefinitionSchema(String schemaName,DBTableSet dbSet,PrintStream out) {
     }
 

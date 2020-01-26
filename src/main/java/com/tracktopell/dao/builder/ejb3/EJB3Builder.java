@@ -106,7 +106,7 @@ public class EJB3Builder {
 						
 						plainColumns.add(c);
 						
-						String suggested=null;
+						String suggestedHyperColumnName=null;
 						String suggestedObjectName=null;
 						String suggestedGettetObjectName=null;
 						String suggestedSettetObjectName=null;
@@ -124,24 +124,26 @@ public class EJB3Builder {
 							for(Column ftpk: ftPksCol){
 								if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
 									if(fTable.getSingularName()!=null){
-										suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										//suggestedHyperColumnName = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+										suggestedHyperColumnName = fTable.getSingularName();
 									}else{
-										suggested = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										//suggestedHyperColumnName = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										suggestedHyperColumnName = fTable.getName();
 									}
-									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
-									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
-									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
 
-									c.setHyperColumnName(suggested);
+									c.setHyperColumnName(suggestedHyperColumnName);
 									break;
 								} else {
-									suggested = c.getName().toUpperCase();								
+									suggestedHyperColumnName = c.getName().toUpperCase();								
 									
-									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
-									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
-									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
 
-									c.setHyperColumnName(suggested);
+									c.setHyperColumnName(suggestedHyperColumnName);
 									break;
 								}
 							}							
@@ -281,14 +283,14 @@ public class EJB3Builder {
 									if (column.getComments() != null) {
 										ps.println("    ");
 										ps.println("    /**");
-										ps.println("    * Maps to COLUMN '"+column.getName()+"'");
+										ps.println("    * Maps to COLUMN '"+column.getName().toUpperCase()+"'");
 										ps.println("    * " + column.getComments().replace("\n", "\n     * "));
 										ps.println("    */");
 									} else {
 										String commentForced = column.getName().replace("_", " ");
 										ps.println("    ");
 										ps.println("    /**");
-										ps.println("    * The '" + commentForced+"' Maps to COLUMN '"+column.getName()+"'");
+										ps.println("    * The '" + commentForced+"' Maps to COLUMN '"+column.getName().toUpperCase()+"'");
 										ps.println("    */");
 									}
 								}
@@ -422,7 +424,7 @@ public class EJB3Builder {
                                             }
 											if(column.getFTable()!=null && column.getHyperColumnName()!=null){
 												ps.println("    private " + column.getFTable().getJavaDeclaredName()+" "+column.getHyperColumnObjectName()+";");
-											}else {												
+											}else {
 												ps.println("    private " + column.getFTable().getJavaDeclaredName() + " " + FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(column.getFTable().getJavaDeclaredName())) + ";");
 											}
 										} else {
@@ -752,7 +754,8 @@ public class EJB3Builder {
 					} else {
 						line = line.replace("${tablebean.jpa_entity_or_embeddeable}", "@Entity");
 						//line = line.replace("${tablebean.jpa_talbe}", "@Table(name = \"" + table.getName() + "\", catalog=\""+schemmaName+"\", schema = \"\" )");
-						line = line.replace("${tablebean.jpa_talbe}", "@Table(name = \"" + table.getName() + "\")");
+						line = line.replace("${tablebean.jpa_talbe}"   , "@Table(name = \"" + table.getName() + "\")");
+						line = line.replace("${tablebean.jpa_talbe.uc}", "@Table(name = \"" + table.getName().toUpperCase() + "\")");
 						line = line.replace("${tablebean.id}", table.getJPAPK());
 						line = line.replace("${tablebean.id.javaClass}", table.getJPAPKClass().replace("java.lang.", ""));
 					}
@@ -1072,7 +1075,7 @@ public class EJB3Builder {
 						
 						plainColumns.add(c);
 						
-						String suggested=null;
+						String suggestedHyperColumnName=null;
 						String suggestedObjectName=null;
 						String suggestedGettetObjectName=null;
 						String suggestedSettetObjectName=null;
@@ -1085,15 +1088,17 @@ public class EJB3Builder {
 							for(Column ftpk: ftPksCol){
 								if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
 									if(fTable.getSingularName()!=null){
-										suggested = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										//suggestedHyperColumnName = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										suggestedHyperColumnName = fTable.getSingularName();								
 									}else{
-										suggested = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										//suggestedHyperColumnName = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+										suggestedHyperColumnName = fTable.getName();
 									}
-									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
-									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
-									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
 
-									c.setHyperColumnName(suggested);
+									c.setHyperColumnName(suggestedHyperColumnName);
 									break;
 								}
 							}
@@ -1201,7 +1206,7 @@ public class EJB3Builder {
 						column.getName().equalsIgnoreCase("MODIFICADO_POR")){
 					continue;
 				}
-				String suggested=null;
+				String suggestedHyperColumnName=null;
 				String suggestedObjectName=null;
 				String suggestedGettetObjectName=null;
 				String suggestedSettetObjectName=null;
@@ -1215,15 +1220,17 @@ public class EJB3Builder {
 					for(Column ftpk: ftPksCol){
 						if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
 							if(fTable.getSingularName()!=null){
-								suggested = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+								//suggestedHyperColumnName = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								suggestedHyperColumnName = fTable.getSingularName();
 							}else{
-								suggested = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+								//suggestedHyperColumnName = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+								suggestedHyperColumnName = fTable.getName();
 							}
-							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggested));
-							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggested);
-							suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggested);
+							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+							suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
 
-							column.setHyperColumnName(suggested);
+							column.setHyperColumnName(suggestedHyperColumnName);
 							break;
 						}
 					}					
@@ -1262,6 +1269,7 @@ public class EJB3Builder {
 				line = line.replace("${ssbean.package}"  , ssbPackageBeanMember);				
 				line = line.replace("${tablebean.package}"  , jpaPackageBeanMember);
 				line = line.replace("${tablebean.name}", table.getName());
+				line = line.replace("${tablebean.name.uc}", table.getName().toUpperCase());
 				line = line.replace("${tablebean.declaredName}", table.getJavaDeclaredName());
                 line = line.replace("${tablebean.declaredInterface}", interfaceRL);                
                 line = line.replace("${tablebean.declaredObjectName}", table.getJavaDeclaredObjectName());

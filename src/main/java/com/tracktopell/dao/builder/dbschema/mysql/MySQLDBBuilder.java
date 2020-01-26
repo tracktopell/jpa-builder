@@ -12,6 +12,7 @@ import com.tracktopell.dao.builder.metadata.ReferenceTable;
 import com.tracktopell.dao.builder.metadata.Table;
 import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -21,11 +22,23 @@ public class MySQLDBBuilder extends DBBuilder{
     
     public MySQLDBBuilder() {
     }
+	protected void printDropSchema(String schemaName,DBTableSet dbSet,PrintStream out) {
 
+		List<Table> lt=dbSet.getTablesSortedForDrop();
+		
+        out.println("-- ============================= ELIMINADO DEL ESQUEMA DE LA BASE DE DATOS ====================");        
+		out.println("-- ===================================== TABLES ("+lt.size()+") ===============================");
+        
+        for(Table t: lt) {            
+            out.println("DROP TABLE IF EXISTS "+t.getName().toUpperCase()+";");
+			out.println("");
+        }
+	}
+	
     protected void printDefinitionSchema(String schemaName,DBTableSet dbSet,PrintStream out) {
 		out.println("-- SCHEMMA COMPATIBLE WITH  MySQL SERVER 5.7.x+");
-        out.println("DROP DATABASE IF EXISTS ${schemaName};".replace("${schemaName}",schemaName.toUpperCase()));
-        out.println("CREATE DATABASE ${schemaName};".replace("${schemaName}",schemaName.toUpperCase()));
+        out.println("--DROP DATABASE IF EXISTS ${schemaName};".replace("${schemaName}",schemaName.toUpperCase()));
+        out.println("--CREATE DATABASE ${schemaName};".replace("${schemaName}",schemaName.toUpperCase()));
         out.println("USE ${schemaName};".replace("${schemaName}",schemaName.toUpperCase()));        
     }
 
