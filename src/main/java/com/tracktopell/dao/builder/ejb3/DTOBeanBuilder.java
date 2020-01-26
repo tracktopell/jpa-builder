@@ -314,15 +314,18 @@ public class DTOBeanBuilder {
 									}else if(column.getJavaClassType().equalsIgnoreCase("double")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getDouble");
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Double)");							
-									}else if(column.getJavaClassType().equalsIgnoreCase("integer")){
+									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Double")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getDouble");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Double)");							
+									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Integer")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Int)");							
-									}else if(column.getJavaClassType().equalsIgnoreCase("bigint")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Integer)");							
+									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Long")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getLong");
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Long)");							
-									}else if(column.getJavaClassType().equalsIgnoreCase("long")){
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getLong");
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Long)");							
+									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Short")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getShort");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Short)");							
 									}else{
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , column.getValueGetter());									
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , column.getValueCast());
