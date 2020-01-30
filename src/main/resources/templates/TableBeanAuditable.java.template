@@ -7,19 +7,20 @@ package ${tablebean.package};
  */
 
 public interface AuditableEntity {
-    Short getStatus();
-    void setStatus(Short v);
+
+    public String getCreatedBy();
+    public void setCreatedBy(String v);
     
-    String getUsuarioCreo();
-    void setUsuarioCreo(String v);
+    public java.sql.Timestamp getCreatedTime();
+    public void setCreatedTime(java.sql.Timestamp v);
     
-    java.sql.Timestamp getFechaCreo();
-    void setFechaCreo(java.sql.Timestamp v);
+    public String getUpdatedBy();
+    public void setUpdatedBy(String v);
     
-    String getUsuarioModifico();
-    void setUsuarioModifico(String v) ;
+    public java.sql.Timestamp getUpdatedTime();
+    public void setUpdatedTime(java.sql.Timestamp v);
     
-    java.sql.Timestamp getFechaModifico() ;
-    void setFechaModifico(java.sql.Timestamp v) ;
+    public Short getStatus();
+    public void setStatus(Short v);
     
 }

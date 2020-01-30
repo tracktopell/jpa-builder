@@ -88,6 +88,7 @@ public class MySQLDBBuilder extends DBBuilder{
             if(col.isAutoIncremment()) {
                 out.print(" AUTO_INCREMENT");
             }
+			
             out.println(",");                      
             
             if(col.isPrimaryKey()) {
@@ -103,15 +104,17 @@ public class MySQLDBBuilder extends DBBuilder{
         
         out.print("    ");
         out.println(pkBuffer);        
-        out.println(")ENGINE=InnoDB;");        
+        //out.println(")ENGINE=InnoDB;");        
+		out.println(");");        
         out.println("");
         out.println("-- ===============================================================================");
     }
+	
     /**
      * prints the alter talble for add constraints
      */
-    protected void printAddPKContraints(Table currentTable, PrintStream out) {
-    }
+    protected void printAddPKContraints(Table currentTable, PrintStream out) {	
+	}
     /**
      * prints the alter talble for add constraints
      */
@@ -142,6 +145,7 @@ public class MySQLDBBuilder extends DBBuilder{
     protected void printAddUniqueContraints(Table currentTable, PrintStream out) {
         Iterator<Column> it = currentTable.getSortedColumns();
         Column col = null;
+		int idxCount=1;
         while(it.hasNext()) {
             col = it.next();
             
@@ -152,10 +156,8 @@ public class MySQLDBBuilder extends DBBuilder{
                 out.print(currentTable.getName().toUpperCase());
                 out.print(" ADD CONSTRAINT ");
 				out.print(currentTable.getName().toUpperCase());
-				out.print("_");				
-				out.print(col.getName().toUpperCase());
-				out.print("_UC ");
-				out.print("UNIQUE (");
+				out.print("_UC_"+(idxCount++));
+				out.print(" UNIQUE (");
                 out.print(col.getName().toUpperCase());                
                 out.println(");");
             }
@@ -164,6 +166,23 @@ public class MySQLDBBuilder extends DBBuilder{
 	
     @Override
     protected void printAddIndexes(Table currentTable, PrintStream out) {
-        
+		Iterator<Column> it = currentTable.getSortedColumns();
+        Column col = null;
+		int idxCount=1;
+        while(it.hasNext()) {
+            col = it.next();
+            
+            if(col.isIndex() && !col.isPrimaryKey()) {                
+                ReferenceTable rt = currentTable.getFKReferenceTable(col.getName());
+                
+                out.print("CREATE INDEX ");
+				out.print(currentTable.getName().toUpperCase()+"_IDX_"+(idxCount++));                
+				out.print(" ON ");
+				out.print(currentTable.getName().toUpperCase());
+                out.print(" ( ");
+                out.print(col.getName().toUpperCase());                
+                out.println(");");                                
+            }
+        }
     }
 }

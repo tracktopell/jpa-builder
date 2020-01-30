@@ -81,12 +81,21 @@ public class EJB3Builder {
 				}
 			}
 		}
-		//System.err.println("----------------->>Analizing"); 
 		
 		for (Table iterTable: tablesForGeneration) {
-			//System.err.println("\tAnaliznig Table: " + iterTable.getName());
+			if(	iterTable.getColumn("CREATED_BY")	!= null	&&
+				iterTable.getColumn("CREATED_TIME")	!= null	&&
+				iterTable.getColumn("UPDATED_BY")	!= null	&&
+				iterTable.getColumn("UPDATED_TIME")	!= null	&&
+				iterTable.getColumn("STATUS")		!= null	   ){
+				iterTable.setAuditable(true);
+			}
+		}
+		
+		for (Table iterTable: tablesForGeneration) {
+			System.err.println("\tAnaliznig Table: " + iterTable.getName());
 			if(iterTable.getSingularName()!=null){				
-				//System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
+				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
 			}
 			List<Column>            plainColumns   = new ArrayList();
 			List<EmbeddeableColumn> embededColumns = new ArrayList();

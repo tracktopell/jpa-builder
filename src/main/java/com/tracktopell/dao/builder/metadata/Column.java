@@ -25,6 +25,10 @@ public interface Column {
 
     void setSqlType(String sqlType);
 
+	void setSqlUnsigned(boolean sqlUnsigned);
+	
+	boolean isSqlUnsigned();
+	
     String getJavaClassType();
 	
 	String getValueGetter();
@@ -42,7 +46,15 @@ public interface Column {
 	boolean isUnique() ;
 
     void setUnique(boolean uniqe) ;
+
+	boolean isIndex() ;
+
+    void setIndex(boolean index) ;
     
+	String getSqlDDL();
+
+    void setSqlDDL(String sqlDDL);
+
     boolean isNullable() ;
 
     void setNullable(boolean nullable) ;

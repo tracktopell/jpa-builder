@@ -66,10 +66,19 @@ public class DTOBeanBuilder {
 				}
 			}
 		}
+		for (Table iterTable: tablesForGeneration) {
+			if(	iterTable.getColumn("CREATED_BY")	!= null	&&
+				iterTable.getColumn("CREATED_TIME")	!= null	&&
+				iterTable.getColumn("UPDATED_BY")	!= null	&&
+				iterTable.getColumn("UPDATED_TIME")	!= null	&&
+				iterTable.getColumn("STATUS")		!= null	   ){
+				iterTable.setAuditable(true);
+			}
+		}
 		//System.err.println("==============================>>> ");
 		for (Table table : tablesForGeneration) {
 
-			//System.err.println("-->> generating DTO: " + table.getJavaDeclaredName() + "DTO.java :" + table);
+			System.err.println("-->> generating DTO: " + table.getJavaDeclaredName() + "DTO.java :" + table.getName());
 
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
 			List<Column> definitiveColumns = new ArrayList();
@@ -317,15 +326,24 @@ public class DTOBeanBuilder {
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Double")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getDouble");
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Double)");							
+									}else if(column.getJavaClassType().equalsIgnoreCase("double")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getDouble");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(double)");							
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Integer")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Integer)");							
+									}else if(column.getJavaClassType().equalsIgnoreCase("int")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(int)");							
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Long")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getLong");
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Long)");							
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Short")){
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getShort");
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Short)");							
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(short)");
+									}else if(column.getJavaClassType().equalsIgnoreCase("short")){
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(short)");
 									}else{
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , column.getValueGetter());									
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , column.getValueCast());

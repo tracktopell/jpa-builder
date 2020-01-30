@@ -266,10 +266,21 @@ public class VP6Parser {
                         currentColumn.setAutoIncremment(true);                        
                     }
                     
+                } else if (qName.equals("StringProperty") && currentColumn!=null && attributes.getValue("name").equals("DDLClauses") && attributes.getValue("value")!=null){
+					
+                    if(attributes.getValue("value").equals("unsigned")) {
+                        currentColumn.setSqlUnsigned(true);                        
+                    } else {
+                        currentColumn.setSqlDDL(attributes.getValue("value"));                        
+                    }
+					
+                    
                 } else if (qName.equals("BooleanProperty") && currentColumn!=null && attributes.getValue("name").equals("primaryKey")){
                     currentColumn.setPrimaryKey(attributes.getValue("value").equals("true"));
                 } else if (qName.equals("BooleanProperty") && currentColumn!=null && attributes.getValue("name").equals("unique")){
                     currentColumn.setUnique(attributes.getValue("value").equals("true"));                    
+                } else if (qName.equals("BooleanProperty") && currentColumn!=null && attributes.getValue("name").equals("index")){
+                    currentColumn.setIndex(attributes.getValue("value").equals("true"));                    
                 } else if (qName.equals("IntegerProperty") && currentColumn!=null && attributes.getValue("name").equals("length")){
                     currentColumn.setScale(Integer.parseInt(attributes.getValue("value")));
                 } else if (qName.equals("IntegerProperty") && currentColumn!=null && attributes.getValue("name").equals("scale")){

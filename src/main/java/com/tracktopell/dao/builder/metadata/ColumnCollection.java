@@ -48,6 +48,36 @@ public class ColumnCollection implements Column {
 	public void setSqlType(String sqlType) {
 		this.sqlType = sqlType;
 	}
+	
+    @Override
+	public void setSqlDDL(String sqlDDL){
+		throw new IllegalStateException("Can't has sqlDDL");
+	}
+
+	@Override
+	public String getSqlDDL(){
+		return null;
+	}
+
+	@Override
+	public void setSqlUnsigned(boolean sqlUnsigned) {
+		throw new IllegalStateException("Can't be sqlUnsigned");
+	}
+
+	@Override
+	public boolean isSqlUnsigned() {
+		return false;
+	}
+	
+	@Override
+	public void setIndex(boolean index) {
+		throw new IllegalStateException("Can't be index");
+	}
+
+	@Override
+	public boolean isIndex() {
+		return false;
+	}
 
 	public String getJavaClassType() {
 		return javaClassType;

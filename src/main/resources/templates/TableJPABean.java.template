@@ -34,7 +34,7 @@ import javax.persistence.TemporalType;
  */
 
 ${tablebean.jpa_entity_or_embeddeable}
-${tablebean.jpa_talbe}
+${tablebean.jpa_talbe.uc}
 @NamedQueries({
     ${tablebean.namedQuery}
     , ${tablebean.countAll.namedQuery}

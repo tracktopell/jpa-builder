@@ -62,9 +62,22 @@ public class SQLServerDBBuilder extends DBBuilder{
             } else if(col.getSqlType().toLowerCase().startsWith("long") ) {
                 out.print("BIGINT");
             } else if(col.getSqlType().toLowerCase().startsWith("int") ) {
+				if(col.isSqlUnsigned()){
+					out.print("UNSIGNED ");
+				}
                 out.print("INT");
             } else if(col.getSqlType().toLowerCase().startsWith("tinyint")) {
+				if(col.isSqlUnsigned()){
+					out.print("UNSIGNED ");
+				}
                 out.print("TINYINT");
+            } else if(col.getSqlType().toLowerCase().startsWith("smallint")) {
+				if(col.isSqlUnsigned()){
+					out.print("UNSIGNED ");
+				}
+                out.print("SMALLINT");
+            } else if(col.getSqlType().toLowerCase().startsWith("datetime")) {
+                out.print("DATETIME");
             } else if(col.getSqlType().toLowerCase().startsWith("timestamp")) {
                 out.print("DATETIME");
             } else {

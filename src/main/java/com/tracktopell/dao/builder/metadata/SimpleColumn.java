@@ -17,12 +17,15 @@ public class SimpleColumn implements Column {
 	private Table  fTable;
 	private String hyperColumnName;
 	protected String javaDeclaredName;
+	protected String sqlDDL;
 	private String sqlType;
+	private boolean sqlUnsigned;
 	private String javaClassType;
 	private String label;
 	private boolean autoIncremment;
 	private boolean primaryKey;
 	private boolean uniqe;
+	private boolean index;
 	private boolean foreignKey;
 	private boolean nullable;
 	private boolean foreignDescription;
@@ -49,7 +52,37 @@ public class SimpleColumn implements Column {
 	public String getSqlType() {
 		return sqlType;
 	}
+	
+	@Override
+	public String getSqlDDL(){
+		return this.sqlDDL;
+	}
 
+    @Override
+	public void setSqlDDL(String sqlDDL){
+		this.sqlDDL = sqlDDL;
+	}
+
+	@Override
+	public void setSqlUnsigned(boolean sqlUnsigned) {
+		this.sqlUnsigned = sqlUnsigned;
+	}
+
+	@Override
+	public boolean isSqlUnsigned() {
+		return this.sqlUnsigned;
+	}
+	
+	@Override
+	public void setIndex(boolean index) {
+		this.index = index;
+	}
+
+	@Override
+	public boolean isIndex() {
+		return this.index;
+	}
+	
 	public void setSqlType(String sqlType) {
 		this.sqlType = sqlType;
 	}
