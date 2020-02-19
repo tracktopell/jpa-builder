@@ -11,14 +11,14 @@ public interface AuditableEntity {
     public String getCreatedBy();
     public void setCreatedBy(String v);
     
-    public java.sql.Timestamp getCreatedTime();
-    public void setCreatedTime(java.sql.Timestamp v);
+    public java.util.Date getCreatedTime();
+    public void setCreatedTime(java.util.Date v);
     
     public String getUpdatedBy();
     public void setUpdatedBy(String v);
     
-    public java.sql.Timestamp getUpdatedTime();
-    public void setUpdatedTime(java.sql.Timestamp v);
+    public java.util.Date getUpdatedTime();
+    public void setUpdatedTime(java.util.Date v);
     
     public Short getStatus();
     public void setStatus(Short v);

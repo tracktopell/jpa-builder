@@ -89,25 +89,54 @@ public class ${tablebean.declaredName}DTO extends RecordDTO  {
     }
 
 	/**
+    * @Returns String represention.
+    */
+	@Override
+    public String toString() {
+		StringBuilder sb=new StringBuilder("${tablebean.declaredName}DTO{");
+		try{
+			int memberAdded=0;
+			%foreach tablebean.member in ${tablebean.members}
+			if(memberAdded > 0){  sb.append(", ");  }
+			//sb.append("${tablebean.member.javaIdentifier}").append("=").append(${tablebean.member.jsonValueGetter});		
+            sb.append("${tablebean.member.javaIdentifier}").append("=").append(${tablebean.member.javaIdentifier});
+			memberAdded++;
+			%endfor
+		} catch(Exception ex){
+			ex.printStackTrace(System.err);
+		}
+		sb.append("}");
+
+		return sb.toString();
+    }
+
+	/**
     * @Returns JSon String
     */
-    @Override
-    public String toString() {
+    public String toJSonString() {
 		JSONObject jsonObj = new JSONObject();
-		%foreach tablebean.member in ${tablebean.members}
-		jsonObj.put("${tablebean.member.javaIdentifier}", this.${tablebean.member.javaIdentifier});
-		%endfor
+		try{
+			%foreach tablebean.member in ${tablebean.members}
+			jsonObj.put("${tablebean.member.javaIdentifier}", ${tablebean.member.jsonValueGetter});		
+			%endfor
+		} catch(Exception ex){
+			throw new IllegalStateException(ex.getMessage());
+		}
+
 		return jsonObj.toString();
     }
 
 	public static ${tablebean.declaredName}DTO create(String json) throws IllegalArgumentException{
 		${tablebean.declaredName}DTO x = null;
-		JSONObject jObj = new JSONObject(json);
-		
-		%foreach tablebean.member in ${tablebean.members}
-		x.${tablebean.member.javaIdentifier} = jObj.has("${tablebean.member.javaIdentifier}")&&!jObj.isNull("${tablebean.member.javaIdentifier}")?${tablebean.member.valueCast}(jObj.${tablebean.member.valueGetter}("${tablebean.member.javaIdentifier}")):null;
-		%endfor
-		
+		JSONObject jObj = null;
+		try{
+			jObj = new JSONObject(json);
+			%foreach tablebean.member in ${tablebean.members}
+			x.${tablebean.member.javaIdentifier} = jObj.has("${tablebean.member.javaIdentifier}")&&!jObj.isNull("${tablebean.member.javaIdentifier}")?${tablebean.member.valueCast}(jObj.${tablebean.member.valueGetter}("${tablebean.member.javaIdentifier}")):null;
+			%endfor
+		} catch(Exception exParse){
+			throw new IllegalArgumentException(exParse.getMessage());
+		}
 		return x;
 	}
 	

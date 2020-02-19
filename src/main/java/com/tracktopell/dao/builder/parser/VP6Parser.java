@@ -270,6 +270,10 @@ public class VP6Parser {
 					
                     if(attributes.getValue("value").equals("unsigned")) {
                         currentColumn.setSqlUnsigned(true);                        
+                    } if(attributes.getValue("value").equals("datetime")) {
+						System.err.println("=====>"+currentTable.getName()+"."+currentColumn.getName()+" : "+currentColumn.getSqlType()+" -> DATETIME !! ");	
+                        currentColumn.setSqlType("datetime");
+						currentColumn.setSqlDDL(attributes.getValue("value"));
                     } else {
                         currentColumn.setSqlDDL(attributes.getValue("value"));                        
                     }

@@ -354,27 +354,33 @@ public class EJB3Builder {
 											ps.println("    private " + column.getFTable().getJavaDeclaredName() + " " + FormatString.getCadenaHungara(column.getFTable().getJavaDeclaredName()) + ";");
 										}
 									} else {
-										ps.println("    @Basic(optional = " + column.isNullable() + ")");
-										if(!column.isNullable()){
-											//ps.println("    // Hibernate Validator 5x is not compatible with validation-api 1.0.x");
-											//ps.println("    //@NotNull");
+										if(column.isSqlUnsigned()){
+											ps.println("    @PositiveOrZero");
 										}
 										String extraCoulmnDeclarationInfo="";
 										if (column.getJavaClassType().equals("java.lang.String")) {
 											extraCoulmnDeclarationInfo = ", length=" + column.getScale();
-											if (!column.isNullable()) {												
-												//ps.println("    //@Size(min = 1, max = "+column.getScale()+")");
+											if (!column.isNullable()) {
+												ps.println("    @Size(min = 1, max = "+column.getScale()+")");
 											} else {
-												//ps.println("    //@Size(max = "+column.getScale()+")");
+												ps.println("    @Size(max = "+column.getScale()+")");
 											}
 										}
-										
-										ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\", nullable= "+column.isNullable()+")");
-										if (column.getSqlType().toLowerCase().equals("timestamp")) {
+										ps.print("    @Column(name = \"" + column.getName().toUpperCase() + "\"");
+										ps.print(", nullable= "+column.isNullable());
+										if(column.isUnique()){
+											ps.print(", unique= "+column.isUnique());
+										}
+										ps.println(")");
+										//ps.println("    //1:  SQL TYPE: "+column.getSqlType());
+										//ps.println("    //1: JAVA TYPE: "+column.getJavaClassType());
+										if (column.getSqlType().equalsIgnoreCase("timestamp") && column.getJavaClassType().equals("java.sql.Date")) {
 											ps.println("    @Temporal(TemporalType.TIMESTAMP)");
-										} else if (column.getSqlType().toLowerCase().equals("datetime")) {
-											ps.println("    @Temporal(TemporalType.DATE)");
-										} else if (column.getSqlType().toLowerCase().equals("date")) {
+										} else if (column.getSqlType().equalsIgnoreCase("datetime")&& column.getJavaClassType().equals("java.sql.Date")) {
+											ps.println("    @Temporal(TemporalType.TIMESTAMP)");
+										} else if (column.getSqlType().equalsIgnoreCase("time")&& column.getJavaClassType().equals("java.sql.Date")) {
+											ps.println("    @Temporal(TemporalType.TIME)");
+										} else if (column.getSqlType().equalsIgnoreCase("date")&& column.getJavaClassType().equals("java.sql.Date")) {
 											ps.println("    @Temporal(TemporalType.DATE)");
 										}
 										
@@ -389,30 +395,39 @@ public class EJB3Builder {
 												ps.println("    @Id");
 											}
 											String extraCoulmnDeclarationInfo = "";
-
-											//ps.println("    //@Basic(optional = false)");
+											
 											if (column.getJavaClassType().equals("java.lang.String")) {
 												extraCoulmnDeclarationInfo = ", length=" + column.getScale();
 												if (!column.isNullable()) {
-													//ps.println("    //@Size(min = 1, max = "+column.getScale()+")");
+													ps.println("    @Size(min = 1, max = "+column.getScale()+")");
 												} else {
-													//ps.println("    //@Size(max = "+column.getScale()+")");
+													ps.println("    @Size(max = "+column.getScale()+")");
 												}
 											}
-											if (!column.isNullable()) {
-												//ps.println("    // Hibernate Validator 5x is not compatible with validation-api 1.0.x");
-												//ps.println("    //@NotNull");
+											if(column.isSqlUnsigned()){
+												ps.println("    @PositiveOrZero");
 											}
-											ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\" " + extraCoulmnDeclarationInfo + ", nullable="+column.isNullable()+"  )");
-
+											ps.print("    @Column(name = \"" + column.getName().toUpperCase() + "\"");
+											ps.print(extraCoulmnDeclarationInfo);
+											ps.print(", nullable= "+column.isNullable());
+											if(column.isUnique()){
+												ps.print(", unique= "+column.isUnique());
+											}
+											ps.println(")");
+											//ps.println("    //2:  SQL TYPE: "+column.getSqlType());
+											//ps.println("    //2: JAVA TYPE: "+column.getJavaClassType());
 											if (column.isAutoIncremment()) {
 												ps.println("    @GeneratedValue(strategy=GenerationType.IDENTITY)");
 												//ps.println("    //@GeneratedValue(strategy=GenerationType.AUTO)");
 											}
 										}
-										if (column.getJavaClassType().equals("java.util.Date")) {
+										if (column.getSqlType().equalsIgnoreCase("timestamp") && column.getJavaClassType().equals("java.sql.Date")) {
 											ps.println("    @Temporal(TemporalType.TIMESTAMP)");
-										} else if (column.getJavaClassType().equals("java.util.Calendar")) {
+										} else if (column.getSqlType().equalsIgnoreCase("datetime")&& column.getJavaClassType().equals("java.sql.Date")) {
+											ps.println("    @Temporal(TemporalType.TIMESTAMP)");
+										} else if (column.getSqlType().equalsIgnoreCase("time")&& column.getJavaClassType().equals("java.sql.Date")) {
+											ps.println("    @Temporal(TemporalType.TIME)");
+										} else if (column.getSqlType().equalsIgnoreCase("date")&& column.getJavaClassType().equals("java.sql.Date")) {
 											ps.println("    @Temporal(TemporalType.DATE)");
 										}
 										
@@ -439,27 +454,36 @@ public class EJB3Builder {
 											}
 										} else {
 											String extraCoulmnDeclarationInfo = "";
-											ps.println("    @Basic(optional = " + column.isNullable() + ")");
-											if (!column.isNullable()) {
-												//ps.println("    // Hibernate Validator 5x is not compatible with validation-api 1.0.x");
-												//ps.println("    //@NotNull");
+											if(column.isSqlUnsigned()){
+												ps.println("    @PositiveOrZero");
 											}
 											if (column.getJavaClassType().equals("java.lang.String")) {
 												extraCoulmnDeclarationInfo = ", length=" + column.getScale();
 												if (!column.isNullable()) {
-													//ps.println("    //@Size(min = 1, max = "+column.getScale()+")");
+													ps.println("    @Size(min = 1, max = "+column.getScale()+")");
 												} else {
-													//ps.println("    //@Size(max = "+column.getScale()+")");
+													ps.println("    @Size(max = "+column.getScale()+")");
 												}
 											}
-											if (column.getJavaClassType().equals("java.util.Date")) {
-												ps.println("    @Temporal(TemporalType.TIMESTAMP)");
-											} else if (column.getJavaClassType().equals("java.util.Calendar")) {
-												ps.println("    @Temporal(TemporalType.DATE)");
-											} else if (column.getJavaClassType().equals("java.lang.String")) {
-												extraCoulmnDeclarationInfo = ", length=" + column.getScale();
+											ps.print("    @Column(name = \"" + column.getName().toUpperCase() + "\"");
+											ps.print(extraCoulmnDeclarationInfo);
+											ps.print(", nullable= "+column.isNullable());
+											if(column.isUnique()){
+												ps.print(", unique= "+column.isUnique());
 											}
-											ps.println("    @Column(name = \"" + column.getName().toUpperCase() + "\" " + extraCoulmnDeclarationInfo + ", nullable="+column.isNullable()+")");
+											ps.println(")");
+											//ps.println("    //3:  SQL TYPE: "+column.getSqlType());
+											//ps.println("    //3: JAVA TYPE: "+column.getJavaClassType());
+											//ps.println("    //3:   SQL DDL: "+column.getSqlDDL());
+											if (column.getSqlType().equalsIgnoreCase("timestamp") && column.getJavaClassType().equals("java.sql.Date")) {
+												ps.println("    @Temporal(TemporalType.TIMESTAMP)");
+											} else if (column.getSqlType().equalsIgnoreCase("datetime")&& column.getJavaClassType().equals("java.sql.Date")) {
+												ps.println("    @Temporal(TemporalType.TIMESTAMP)");
+											} else if (column.getSqlType().equalsIgnoreCase("time")&& column.getJavaClassType().equals("java.sql.Date")) {
+												ps.println("    @Temporal(TemporalType.TIME)");
+											} else if (column.getSqlType().equalsIgnoreCase("date")&& column.getJavaClassType().equals("java.sql.Date")) {
+												ps.println("    @Temporal(TemporalType.DATE)");
+											}
 											ps.println("    private " + column.getJavaClassType().replace("java.lang.", "")
 													+ " " + column.getJavaDeclaredObjectName() + ";");
 										}

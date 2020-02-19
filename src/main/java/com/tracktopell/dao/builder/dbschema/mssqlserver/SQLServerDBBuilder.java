@@ -57,29 +57,22 @@ public class SQLServerDBBuilder extends DBBuilder{
                 out.print("NUMERIC");
             } else if(col.getSqlType().toLowerCase().equals("real")) {
                 out.print("REAL");
-            } else if(col.getSqlType().toLowerCase().startsWith("bit") ) {
+            } else if(col.getSqlType().equalsIgnoreCase("bit") ) {
                 out.print("BIT");
-            } else if(col.getSqlType().toLowerCase().startsWith("long") ) {
-                out.print("BIGINT");
-            } else if(col.getSqlType().toLowerCase().startsWith("int") ) {
-				if(col.isSqlUnsigned()){
-					out.print("UNSIGNED ");
-				}
-                out.print("INT");
-            } else if(col.getSqlType().toLowerCase().startsWith("tinyint")) {
-				if(col.isSqlUnsigned()){
-					out.print("UNSIGNED ");
-				}
-                out.print("TINYINT");
-            } else if(col.getSqlType().toLowerCase().startsWith("smallint")) {
-				if(col.isSqlUnsigned()){
-					out.print("UNSIGNED ");
-				}
-                out.print("SMALLINT");
-            } else if(col.getSqlType().toLowerCase().startsWith("datetime")) {
+            } else if(col.getSqlType().equalsIgnoreCase("long") ) {
+				out.print("BIGINT");
+            } else if(col.getSqlType().equalsIgnoreCase("int") ) {				
+				out.print("INT");
+            } else if(col.getSqlType().equalsIgnoreCase("tinyint")) {
+				out.print("TINYINT");
+            } else if(col.getSqlType().equalsIgnoreCase("smallint")) {
+				out.print("SMALLINT");
+            } else if(col.getSqlType().equalsIgnoreCase("date")) {
+                out.print("DATE");
+            } else if(col.getSqlType().equalsIgnoreCase("datetime")) {
                 out.print("DATETIME");
-            } else if(col.getSqlType().toLowerCase().startsWith("timestamp")) {
-                out.print("DATETIME");
+            } else if(col.getSqlType().equalsIgnoreCase("timestamp")) {
+                out.print("TIMESTAMP");
             } else {
                 out.print(col.getSqlType().toUpperCase());
             }
@@ -172,5 +165,23 @@ public class SQLServerDBBuilder extends DBBuilder{
     }
     @Override
     protected void printAddIndexes(Table currentTable, PrintStream out) {       
+		Iterator<Column> it = currentTable.getSortedColumns();
+        Column col = null;
+		int idxCount=1;
+        while(it.hasNext()) {
+            col = it.next();
+            
+            if(col.isIndex() && !col.isPrimaryKey()) {                
+                ReferenceTable rt = currentTable.getFKReferenceTable(col.getName());
+                
+                out.print("CREATE INDEX ");
+				out.print(currentTable.getName().toUpperCase()+"_IDX_"+(idxCount++));                
+				out.print(" ON ");
+				out.print(currentTable.getName().toUpperCase());
+                out.print(" (");
+                out.print(col.getName().toUpperCase());                
+                out.println(");");                                
+            }
+        }
     }
 }

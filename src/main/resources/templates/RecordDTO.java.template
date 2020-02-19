@@ -1,5 +1,7 @@
 package ${tablebean.dto.package};
 
+import java.text.SimpleDateFormat;
+
 /**
  * Class for mapping Entity as RecordDTO.
  * 
@@ -8,6 +10,11 @@ package ${tablebean.dto.package};
 
 public abstract class RecordDTO implements java.io.Serializable {
     private static final long serialVersionUID = ${tablebean.serialId};
+	/**
+	* Using ISO 8601 supported by ECMA
+	* Standard Date serialize strategy: see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toJSON
+	*/
+	protected static final SimpleDateFormat sdfIso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 	protected static String[] columnNames;
 	protected static String[] columnClasses;

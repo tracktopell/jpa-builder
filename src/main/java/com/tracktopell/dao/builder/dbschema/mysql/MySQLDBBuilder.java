@@ -55,6 +55,12 @@ public class MySQLDBBuilder extends DBBuilder{
             out.print(" ");
             if( col.getSqlType().toUpperCase().equals("BLOB")) {
                 out.print("MEDIUMBLOB");
+            } else if(col.getSqlType().equalsIgnoreCase("date")) {
+                out.print("DATE");
+            } else if(col.getSqlType().equalsIgnoreCase("datetime")) {
+                out.print("DATETIME");
+            } else if(col.getSqlType().equalsIgnoreCase("timestamp")) {
+                out.print("TIMESTAMP");
             } else {
                 out.print(col.getSqlType().toUpperCase());
             }
@@ -71,10 +77,10 @@ public class MySQLDBBuilder extends DBBuilder{
                 }
                 out.print(")");                
             }
-            out.print(" ");
+            out.print("\t");
             if(!col.isNullable()) {
 				if(col.getSqlType().equalsIgnoreCase("timestamp")){
-					out.print(" NOT NULL DEFAULT CURRENT_TIMESTAMP");
+					out.print(" NOT NULL");
 				} else{
 					out.print(" NOT NULL");
 				}
@@ -179,7 +185,7 @@ public class MySQLDBBuilder extends DBBuilder{
 				out.print(currentTable.getName().toUpperCase()+"_IDX_"+(idxCount++));                
 				out.print(" ON ");
 				out.print(currentTable.getName().toUpperCase());
-                out.print(" ( ");
+                out.print(" (");
                 out.print(col.getName().toUpperCase());                
                 out.println(");");                                
             }

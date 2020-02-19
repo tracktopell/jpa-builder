@@ -46,10 +46,12 @@ public class SQLTypesToJavaTypes {
 		javaTypes.put("longvarchar", String.class.toString().replace("class ", ""));
         javaTypes.put("varchar", String.class.toString().replace("class ", ""));
 		javaTypes.put("char", String.class.toString().replace("class ", ""));
-        javaTypes.put("date", java.sql.Date.class.toString().replace("class ", ""));
-		javaTypes.put("time", java.sql.Time.class.toString().replace("class ", ""));
-        javaTypes.put("datetime", java.sql.Date.class.toString().replace("class ", ""));
-		javaTypes.put("timestamp", java.sql.Timestamp.class.toString().replace("class ", ""));
+		
+        javaTypes.put("date",			java.util.Date.class.toString().replace("class ", ""));
+		javaTypes.put("time",			java.sql.Time.class.toString().replace("class ", ""));
+        javaTypes.put("datetime",		java.util.Date.class.toString().replace("class ", ""));
+		javaTypes.put("timestamp",		java.util.Date.class.toString().replace("class ", ""));
+		
         javaTypes.put("blob", "byte[]");
 
     }
