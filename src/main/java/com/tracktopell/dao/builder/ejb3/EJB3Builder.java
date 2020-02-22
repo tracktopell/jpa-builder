@@ -217,11 +217,11 @@ public class EJB3Builder {
 				//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
 			}
 		}
-		//System.err.println("================== @JPA BEAN CODE GENERATION ========================>>> ");
+		System.err.println("================== @JPA BEAN CODE GENERATION ========================>>> ");
         boolean auditableInterfaceGenerated=false;
         boolean auditableInterfaceForceInclude=true;
 		for (Table table : tablesForGeneration) {
-			System.err.println("------------->> Generating: "+table.getJavaDeclaredName()+".java for Table:"+table.getName()+", is Auditable?"+(table.isAuditable()));
+			System.err.println("-->> Generating: "+table.getJavaDeclaredName()+".java for Table:"+table.getName()+", is Auditable?"+(table.isAuditable()));
             
             if( ( auditableInterfaceForceInclude || table.isAuditable()) && !auditableInterfaceGenerated){
                 generateAuditableEntityInterface( packageBeanMember, basePath);
@@ -286,7 +286,7 @@ public class EJB3Builder {
 				} else if (line.indexOf("%endfor") >= 0) {
 					
 					for (Column column : allGenerableColumns) {
-						
+						//System.out.println("\t\t\t==>>> Generation: "+table.getName()+" %foreach: column="+column.getName()+" ("+column.getClass()+"), sqlType="+column.getSqlType()+", JavaClassType="+column.getJavaClassType());
 						for (String lineInLoop : linesToParse) {
 							if (lineInLoop.indexOf("${tablebean.member.javadocCommnet}") >= 0) {
 								if (!table.isManyToManyTableWinthMoreColumns()) {
@@ -335,7 +335,7 @@ public class EJB3Builder {
 								ps.println("    ");
 								
 								if (table.isManyToManyTableWinthMoreColumns()) {	
-									if (column instanceof EmbeddeableColumn) {										
+									if (column instanceof EmbeddeableColumn) {
 										ps.println("    @EmbeddedId");
 										ps.println("    private " + column.getJavaClassType().replace("java.lang.", "")
 												+ " " + column.getJavaDeclaredObjectName() + ";");
@@ -387,7 +387,11 @@ public class EJB3Builder {
 										ps.println("    private " + column.getJavaClassType().replace("java.lang.", "") + " " + column.getJavaDeclaredObjectName() + ";");
 									}
 								} else {
-									if (column.isPrimaryKey() && !column.isForeignKey()) {
+									if (column instanceof EmbeddeableColumn) {
+										ps.println("    @EmbeddedId");
+										ps.println("    private " + column.getJavaClassType().replace("java.lang.", "")
+												+ " " + column.getJavaDeclaredObjectName() + ";");
+									} else if (column.isPrimaryKey() && !column.isForeignKey()) {
 										if (column instanceof EmbeddeableColumn) {
 											ps.println("    @EmbeddedId");
 										} else {

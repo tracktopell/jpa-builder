@@ -31,7 +31,7 @@ public class FormatString {
      * @return String
      */
     public static String getCadenaHungara(String sCadena) {
-        if (sCadena == null || sCadena.trim().compareTo("") == 0) {
+        if (sCadena == null || sCadena.trim().length() == 0) {
             return "";
         }
         int iCiclo = 0;
@@ -61,16 +61,37 @@ public class FormatString {
     }
     
     public static String renameForJavaMethod(String str) {
-        String out = getCadenaHungara(str);
+		//System.out.println("\t\t-->renameForJavaMethod: str="+str);
+		if (str == null || str.trim().length() == 0) {
+            return "";
+        }
+        if(str.length()==1){
+			return str.substring(0, 1).toLowerCase();
+		}
+		String out = getCadenaHungara(str);
         out = out.substring(0, 1).toLowerCase() + out.substring(1);
         return out;        
     }
     
     public static String firstLetterLowerCase(String str) {
-        return str.substring(0, 1).toLowerCase() + str.substring(1);
+		//System.out.println("\t\t-->firstLetterLowerCase: str="+str);		
+		if (str == null || str.trim().length() == 0) {
+            return "";
+        }
+        if(str.length()==1){
+			return str.substring(0, 1).toLowerCase();
+		}
+		return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 	
 	public static String firstLetterUpperCase(String str) {
+		//System.out.println("\t\t-->firstLetterUpperCase: str="+str);
+		if (str == null || str.trim().length() == 0) {
+            return "";
+        }
+        if(str.length()==1){
+			return str.substring(0, 1).toUpperCase();
+		}
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
     

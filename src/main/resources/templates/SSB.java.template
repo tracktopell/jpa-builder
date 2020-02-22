@@ -4,6 +4,7 @@ import ${tablebean.package}.${tablebean.declaredName};
 import ${tablebean.package}.*;
 import ${ssbinterface.package}.${tablebean.declaredInterface};
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.security.Principal;
 
@@ -43,11 +44,11 @@ public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.
             // obtain the caller principal.
             if(authenticatedRealmUser != null){                
                 if(entity instanceof AuditableEntity){
-                    final Timestamp nowTimeStamp = new Timestamp(System.currentTimeMillis());
-                    ((AuditableEntity) entity).setFechaCreo(nowTimeStamp);
-                    ((AuditableEntity) entity).setUsuarioCreo(authenticatedRealmUser.getName());
-                    ((AuditableEntity) entity).setFechaModifico(nowTimeStamp);
-                    ((AuditableEntity) entity).setUsuarioModifico(authenticatedRealmUser.getName());
+                    final Date now = new Date(System.currentTimeMillis());
+                    ((AuditableEntity) entity).setCreatedTime(now);
+                    ((AuditableEntity) entity).setCreatedBy(authenticatedRealmUser.getName());
+                    ((AuditableEntity) entity).setUpdatedTime(now);
+                    ((AuditableEntity) entity).setUpdatedBy(authenticatedRealmUser.getName());
                 }
             }
         }
@@ -69,8 +70,9 @@ public class ${tablebean.declaredName}Facade extends AbstractFacade<${tablebean.
             // obtain the caller principal.
             if(authenticatedRealmUser != null){                
                 if(entity instanceof AuditableEntity){
-                    ((AuditableEntity) entity).setFechaModifico(new Timestamp(System.currentTimeMillis()));
-                    ((AuditableEntity) entity).setUsuarioModifico(authenticatedRealmUser.getName());
+					final Date now = new Date(System.currentTimeMillis());
+                    ((AuditableEntity) entity).setUpdatedTime(now);
+                    ((AuditableEntity) entity).setUpdatedBy(authenticatedRealmUser.getName());
                 }
             }
         }
