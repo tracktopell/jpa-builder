@@ -9,26 +9,39 @@ import java.util.List;
  */
 
 public class PaginatedResult<T> implements java.io.Serializable {
-    private List<T> paginatedResultList;
+    private List<T> result;
     private int     totalCount;        
+	private int     totalPages;        
+    
     private int     pageSize;
+    private int     currentPage;
 
     private PaginatedResult(){
     }
 
-    public PaginatedResult(List<T> paginatedResultList, int totalCount, int pageSize) {
-        this.paginatedResultList = paginatedResultList;
-        this.totalCount = totalCount;
-        this.pageSize = pageSize;
+    public PaginatedResult(List<T> result, int totalCount, int totalPages,int pageSize, int currentPage) {
+        this.result = result;
+        this.totalCount  = totalCount;
+		this.totalPages  = totalPages;
+        this.pageSize    = pageSize;
+		this.currentPage = currentPage;
     }
 
     /**
-     * @return the paginatedResultList
+     * @return the result
      */
-    public List<T> getPaginatedResultList() {
-        return paginatedResultList;
+    public List<T> getResult() {
+        return result;
     }
 
+	/**
+	 * @return the totalPages
+	 */
+	public int getTotalPages() {
+		return totalPages;
+	}
+
+	
     /**
      * @return the totalCount
      */
@@ -41,5 +54,12 @@ public class PaginatedResult<T> implements java.io.Serializable {
      */
     public int getPageSize() {
         return pageSize;
-    }    
+    }
+
+	/**
+	 * @return the currentPage
+	 */
+	public int getCurrentPage() {
+		return currentPage;
+	}
 }

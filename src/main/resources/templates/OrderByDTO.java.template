@@ -1,6 +1,8 @@
 package ${tablebean.dto.package};
 
-import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * Class for mapping OrderByDTO.
@@ -8,43 +10,66 @@ import java.io.Serializable;
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
 public class OrderByDTO  implements java.io.Serializable{
-	private String orderByColumn;
-	private String orderByDirection;
-
-	public OrderByDTO() {
+	private static Hashtable<String,String> OPERATORS=new Hashtable<String,String>();
+	
+	static{
+		OPERATORS.put("ASCENDENT"  ,"-as-");
+		OPERATORS.put("DESCENDENT" ,"-de-");
 	}
-
-	public OrderByDTO(String orderByColumn, String orderByDirection) {
-		this.orderByColumn = orderByColumn;
-		this.orderByDirection = orderByDirection;
+	public static String getExp(String name){
+		return OPERATORS.get(name);
 	}
 	
+	private String dir;
+	private String col;
 
+	private OrderByDTO() {
+	}
+
+	public OrderByDTO(String dir,String col) {
+		this.col = col;
+		this.dir = dir;
+	}
+	
+	public static OrderByDTO build(String orderedElem) throws IllegalArgumentException{
+		OrderByDTO orderByDTO=null;
+		final Set<String> operatorsExpSet = OPERATORS.keySet();
+		for(String operatorN: operatorsExpSet){
+			final String operatorX = OPERATORS.get(operatorN);
+			
+			if(orderedElem.contains(operatorX)){
+				final String[] filElemArr = orderedElem.split(operatorX);
+				if(filElemArr.length>0){
+					orderByDTO = new OrderByDTO (operatorX,filElemArr[1]);
+					break;
+				} else {
+					new IllegalArgumentException("Can't build values from:"+Arrays.asList(filElemArr));
+				}
+			}
+		}
+		if(orderByDTO == null){
+			new IllegalArgumentException(orderedElem);
+		}
+		return orderByDTO;
+	}
+
+	
 	/**
-	 * @return the orderByColumn
+	 * @return the col
 	 */
-	public String getOrderByColumn() {
-		return orderByColumn;
+	public String getCol() {
+		return col;
 	}
 
 	/**
-	 * @param orderByColumn the orderByColumn to set
+	 * @return the dir
 	 */
-	public void setOrderByColumn(String orderByColumn) {
-		this.orderByColumn = orderByColumn;
+	public String getDir() {
+		return dir;
 	}
 
-	/**
-	 * @return the orderByDirection
-	 */
-	public String getOrderByDirection() {
-		return orderByDirection;
-	}
-
-	/**
-	 * @param orderByDirection the orderByDirection to set
-	 */
-	public void setOrderByDirection(String orderByDirection) {
-		this.orderByDirection = orderByDirection;
-	}
+	@Override
+	public String toString() {
+		return "("+dir+" "+col+")";
+	}	
 }

@@ -1,6 +1,9 @@
 package ${tablebean.dto.package};
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * Class for mapping FilterDTO.
@@ -8,42 +11,80 @@ import java.io.Serializable;
  * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
  */
 public class FilteredByDTO  implements Serializable{
-	private String filterByColumn;
-	private Object filterByValue;
+	private static Hashtable<String,String> OPERATORS=new Hashtable<String,String>();
+	
+	static{
+		OPERATORS.put("EQUALS"               ,"-eq-");
+		OPERATORS.put("NOT_EQUALS"           ,"-ne-");
+		OPERATORS.put("LES_THAN"             ,"-lt-");
+		OPERATORS.put("LES_THAN_OR_EQUALS"   ,"-le-");
+		OPERATORS.put("GETHER_THAN"          ,"-gt-");
+		OPERATORS.put("GETHER_THAN_OR_EQUALS","-ge-");
+		OPERATORS.put("STRING_LIKE"          ,"-lk-");
+		OPERATORS.put("BASE64_STRING_LIKE"   ,"-l6-");		
+	}
+	public static String getExp(String name){
+		return OPERATORS.get(name);
+	}
+	
+	private String col;
+	private String op;	
+	private String val;
 
-	public FilteredByDTO() {
+	private FilteredByDTO() {
 	}
 
-	public FilteredByDTO(String filterByColumn, Object filterByValue) {
-		this.filterByColumn = filterByColumn;
-		this.filterByValue = filterByValue;
+	public FilteredByDTO(String col, String op, String val) {
+		this.col = col;
+		this.op = op;
+		this.val = val;
+	}
+	
+	public static FilteredByDTO build(String filElem) {
+		FilteredByDTO filteredByDTO=null;
+		final Set<String> operatorsExpSet = OPERATORS.keySet();
+		for(String operatorN: operatorsExpSet){
+			final String operatorX = OPERATORS.get(operatorN);
+				
+			if(filElem.contains(operatorX)){
+				final String[] filElemArr = filElem.split(operatorX);
+				if(filElemArr.length>0){
+					filteredByDTO = new FilteredByDTO (filElemArr[0],operatorX,filElemArr[1]);
+					break;
+				} else {
+					new IllegalArgumentException("Can't build values from:"+Arrays.asList(filElemArr));
+				}
+			}
+		}
+		if(filteredByDTO == null){
+			new IllegalArgumentException(filElem);
+		}
+		return filteredByDTO;
+	}
+	
+	/**
+	 * @return the col
+	 */
+	public String getCol() {
+		return col;
 	}
 
 	/**
-	 * @return the filterByColumn
+	 * @return the op
 	 */
-	public String getFilterByColumn() {
-		return filterByColumn;
+	public String getOp() {
+		return op;
 	}
 
 	/**
-	 * @param filterByColumn the filterByColumn to set
+	 * @return the val
 	 */
-	public void setFilterByColumn(String filterByColumn) {
-		this.filterByColumn = filterByColumn;
+	public String getVal() {
+		return val;
 	}
 
-	/**
-	 * @return the filterByValue
-	 */
-	public Object getFilterByValue() {
-		return filterByValue;
-	}
-
-	/**
-	 * @param filterByValue the filterByValue to set
-	 */
-	public void setFilterByValue(Object filterByValue) {
-		this.filterByValue = filterByValue;
-}
+	@Override
+	public String toString() {
+		return "("+col+" "+op+" "+val+")";
+	}	
 }
