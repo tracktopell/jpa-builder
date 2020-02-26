@@ -99,41 +99,59 @@ public class DTOBeanBuilder {
 				if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
 					fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
 					column.setFTable(fTable);
-					
-						final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
-						for(Column ftpk: ftPksCol){
-							if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
-								if(fTable.getSingularName()!=null){
-									suggestedHyperColumnName = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-									//suggestedHyperColumnName = fTable.getSingularName();
-								}else{
-									suggestedHyperColumnName = column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-									//suggestedHyperColumnName = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-									//suggestedHyperColumnName = fTable.getName();
-								}
-								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
-								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-								
-								column.setHyperColumnName(suggestedHyperColumnName);
-								break;
+					System.err.println("\t\t\t-->>column:"+column.getName()+" == fTable: name:"+fTable.getName()+"?");
+					final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
+					for(Column ftpk: ftPksCol){
+						System.err.println("\t\t\t\t-->>column:"+column.getName()+" == FKs:"+ftpk.getName()+"?");
+						if(column.getName().toUpperCase().equals(ftpk.getName().toUpperCase())){
+							//suggestedHyperColumnName = column.getName().toUpperCase();
+							suggestedHyperColumnName = fTable.getName();
+							System.err.println("\t\t\t1)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+							
+							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+							suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+
+							column.setHyperColumnName(suggestedHyperColumnName);
+							break;
+						} else if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+							if(fTable.getSingularName()!=null){
+								suggestedHyperColumnName = fTable.getSingularName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+								//suggestedHyperColumnName = fTable.getSingularName();
+								System.err.println("\t\t\t\t2)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+							} else if((fTable.getName()+"_"+ftpk.getName()).toUpperCase().equals(column.getName().toUpperCase())){
+								suggestedHyperColumnName = column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								//suggestedHyperColumnName = fTable.getName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");										
+								System.err.println("\t\t\t3A)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 							} else {
-								suggestedHyperColumnName = column.getName().toUpperCase();								
-
-								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
-								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-
-								column.setHyperColumnName(suggestedHyperColumnName);
-								break;
+								//suggestedHyperColumnName = c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								suggestedHyperColumnName = fTable.getName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");										
+								System.err.println("\t\t\t3B)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 							}
-						}					
-					
+							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+							suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+
+							column.setHyperColumnName(suggestedHyperColumnName);
+							break;
+						}
+					}
+					if(suggestedHyperColumnName == null){
+						suggestedHyperColumnName = fTable.getName();
+						System.err.println("\t\t\t4)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+
+						suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+						suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+						suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+
+						column.setHyperColumnName(suggestedHyperColumnName);
+						break;
+					}					
 				} else {
 					fTable = null;
-				}				
+				}
 				definitiveColumns.add(column);
-				//System.err.println("\t-->> DefinitiveColumn: " + column);
+				System.err.println("\t\t\t-->> * DefinitiveColumn: " + column.getName()+"\tHyperColumnName:"+column.getHyperColumnName());
 			}
 
 			//-------------------------------------------------------
@@ -605,7 +623,7 @@ public class DTOBeanBuilder {
 			if(table.getName().endsWith("_P_K")){
 				continue;
 			}
-			//System.err.println("-->> generating: " + table.getJavaDeclaredName() + ".java :" + table);
+			System.err.println("\t\t-->> generating: " + table.getJavaDeclaredName() + ".java :" + table.getName());
 
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
 			List<Column> definitiveColumns = new ArrayList();
@@ -626,41 +644,59 @@ public class DTOBeanBuilder {
 				if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
 					fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
 					column.setFTable(fTable);
-					
-						final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
-						for(Column ftpk: ftPksCol){
-							if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
-								if(fTable.getSingularName()!=null){
-									suggestedHyperColumnName = fTable.getSingularName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-									//suggestedHyperColumnName = fTable.getSingularName();								
-								}else{
-									suggestedHyperColumnName = column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-									//suggestedHyperColumnName = fTable.getName()+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-									//suggestedHyperColumnName = fTable.getName();
-								}
-								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
-								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-								
-								column.setHyperColumnName(suggestedHyperColumnName);
-								break;
+					System.err.println("\t\t\t-->>column:"+column.getName()+" == fTable: name:"+fTable.getName()+"?");
+					final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
+					for(Column ftpk: ftPksCol){
+						System.err.println("\t\t-->>fTable="+fTable.getName()+", ftpk="+ftpk.getName()+", column="+column.getName());
+						if(column.getName().toUpperCase().equals(ftpk.getName().toUpperCase())){
+							//suggestedHyperColumnName = column.getName().toUpperCase();
+							suggestedHyperColumnName = fTable.getName();
+							System.err.println("\t\t\t1)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+							
+							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+							suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+
+							column.setHyperColumnName(suggestedHyperColumnName);
+							break;
+						} else if(column.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
+							if(fTable.getSingularName()!=null){
+								suggestedHyperColumnName = fTable.getSingularName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
+								//suggestedHyperColumnName = fTable.getSingularName();
+								System.err.println("\t\t\t\t2)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+							} else if((fTable.getName()+"_"+ftpk.getName()).toUpperCase().equals(column.getName().toUpperCase())){
+								suggestedHyperColumnName = column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								//suggestedHyperColumnName = fTable.getName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");										
+								System.err.println("\t\t\t3A)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 							} else {
-								suggestedHyperColumnName = column.getName().toUpperCase();								
-
-								suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
-								suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-								suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-
-								column.setHyperColumnName(suggestedHyperColumnName);
-								break;
+								//suggestedHyperColumnName = c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
+								suggestedHyperColumnName = fTable.getName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");										
+								System.err.println("\t\t\t3B)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 							}
-						}					
-					
+							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+							suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+
+							column.setHyperColumnName(suggestedHyperColumnName);
+							break;
+						}
+					}
+					if(suggestedHyperColumnName == null){
+						suggestedHyperColumnName = fTable.getName();
+						System.err.println("\t\t\t4)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+
+						suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
+						suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+						suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
+
+						column.setHyperColumnName(suggestedHyperColumnName);
+						break;
+					}					
 				} else {
 					fTable = null;
-				}				
+				}
 				definitiveColumns.add(column);
-				//System.err.println("\t-->> DefinitiveColumn: " + column);
+				System.err.println("\t\t\t-->> DefinitiveColumn: " + column.getName()+"\tHyperColumnName:"+column.getHyperColumnName());
 			}
 
 			//-------------------------------------------------------

@@ -67,7 +67,7 @@ public class EJB3Builder {
 		
         System.err.println("====================== [ com.tracktopell.dao.builder.ejb3.EJB3Builder.buildMappingBeans ]========================");
         
-		//System.err.println("Preparing Tables: ");			
+		List<Column> definitiveColumns = new ArrayList();		
 		for (Table iterTable: dbSet.getTablesList()) {
 			//System.err.println("Preparing Table: " + iterTable.getJavaDeclaredName());			
 			if (!iterTable.isManyToManyTableWinthMoreColumns()) {				
@@ -91,132 +91,8 @@ public class EJB3Builder {
 				iterTable.setAuditable(true);
 			}
 		}
-		
-		for (Table iterTable: tablesForGeneration) {
-			System.err.println("\tAnaliznig Table: " + iterTable.getName());
-			if(iterTable.getSingularName()!=null){				
-				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
-			}
-			List<Column>            plainColumns   = new ArrayList();
-			List<EmbeddeableColumn> embededColumns = new ArrayList();
-			
-			iterTable.setPlainColumns(plainColumns);
-			iterTable.setEmbededColumns(embededColumns);
-			int countStringPrintable=0;
-			if (! ( iterTable instanceof EmbeddeableColumn)) {
-			
-				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();
-				countStringPrintable = 0;
-				while (itFKC.hasNext()) {
-					Column c = itFKC.next();					
-					if (c instanceof EmbeddeableColumn) {						
-						embededColumns.add((EmbeddeableColumn)c);						
-					} else {
-						
-						plainColumns.add(c);
-						
-						String suggestedHyperColumnName=null;
-						String suggestedObjectName=null;
-						String suggestedGettetObjectName=null;
-						String suggestedSettetObjectName=null;
-						Table fTable = null;
-                        
-                        if(c.isForeignDescription()){
-                            countStringPrintable++;
-                        }                        
-                        
-						if (c.isForeignKey() && !(iterTable instanceof EmbeddeableColumn)) {
-							fTable = dbSet.getTable(iterTable.getFKReferenceTable(c.getName()).getTableName());
-							c.setFTable(fTable);
-							
-							final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
-							for(Column ftpk: ftPksCol){
-								if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
-									if(fTable.getSingularName()!=null){
-										suggestedHyperColumnName = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-										//suggestedHyperColumnName = fTable.getSingularName();
-									}else{
-										suggestedHyperColumnName = c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-										//suggestedHyperColumnName = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-										//suggestedHyperColumnName = fTable.getName();
-									}
-									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
-									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
 
-									c.setHyperColumnName(suggestedHyperColumnName);
-									break;
-								} else {
-									suggestedHyperColumnName = c.getName().toUpperCase();								
-									
-									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
-									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-
-									c.setHyperColumnName(suggestedHyperColumnName);
-									break;
-								}
-							}							
-						}
-					}
-				}
-				
-                if(countStringPrintable==0){
-                    Iterator<Column> itFKC2 = iterTable.getSortedColumnsForJPA();
-                    int countTSx=0;
-                    while(itFKC2.hasNext()){
-                        Column cx2=itFKC2.next();
-                        if(cx2.isPrimaryKey()){
-                            cx2.setForeignDescription(true);
-                            countTSx++;
-                        }
-                    }
-                    if(countTSx==0){
-                        throw new IllegalStateException("Table '"+iterTable.getName()+"', Needs PK's !");
-                    }
-                }
-                
-				Collection<Table> m2mTables = dbSet.getManyToManyRelationTables(iterTable);
-
-				for (Table m2mTable : m2mTables) {
-					//System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
-					iterTable.getM2mTableList().add(m2mTable);
-				}
-				
-				Collection<Table> o2mTables = dbSet.getOneToManyRelationTables(iterTable);
-				for (Table o2mTable : o2mTables) {
-					//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
-					iterTable.getO2mTableList().add(o2mTable);
-				}
-				
-			} else {				
-				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();				
-				while (itFKC.hasNext()) {
-					Column c = itFKC.next();
-					plainColumns.add(c);
-				}
-			}
-			
-			
-			for(Column dc:plainColumns){
-				if(dc.isForeignKey()){
-					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
-				} else{
-					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
-				}				
-			}
-			for(EmbeddeableColumn ec:embededColumns){
-				//System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
-			}
-			
-			for(Table m2mTable:iterTable.getM2mTableList()){
-				Table m2mOT = dbSet.getTableOwnerManyToManyRelation(iterTable, m2mTable);
-				//System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
-			}
-			for(Table o2mTable:iterTable.getO2mTableList()){
-				//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
-			}
-		}
+		Table.analizeTablesForOptomizeJPA(dbSet, tablesForGeneration, definitiveColumns);
 		System.err.println("================== @JPA BEAN CODE GENERATION ========================>>> ");
         boolean auditableInterfaceGenerated=false;
         boolean auditableInterfaceForceInclude=true;
@@ -1087,106 +963,10 @@ public class EJB3Builder {
 			}
 		}
 		//System.err.println("----------------->>Analizing"); 
-		List<Column>            plainColumns   = new ArrayList();
-		List<EmbeddeableColumn> embededColumns = new ArrayList();
-		
-		for (Table iterTable: tablesForGeneration) {
-			//System.err.println("\tAnaliznig Table: " + iterTable.getName());
-			if(iterTable.getSingularName()!=null){				
-				System.err.println("\tPreferred Java Name Table: " + iterTable.getSingularName());
-			}
-			plainColumns   = new ArrayList();
-			embededColumns = new ArrayList();
-			
-			iterTable.setPlainColumns(plainColumns);
-			iterTable.setEmbededColumns(embededColumns);
-			
-			if (! ( iterTable instanceof EmbeddeableColumn)) {
-			
-				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();
-				
-				while (itFKC.hasNext()) {
-					Column c = itFKC.next();					
-					if (c instanceof EmbeddeableColumn) {						
-						embededColumns.add((EmbeddeableColumn)c);						
-					} else {
-						
-						plainColumns.add(c);
-						
-						String suggestedHyperColumnName=null;
-						String suggestedObjectName=null;
-						String suggestedGettetObjectName=null;
-						String suggestedSettetObjectName=null;
-						Table fTable = null;
-						if (c.isForeignKey() && !(iterTable instanceof EmbeddeableColumn)) {
-							fTable = dbSet.getTable(iterTable.getFKReferenceTable(c.getName()).getTableName());
-							c.setFTable(fTable);
-							
-							final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
-							for(Column ftpk: ftPksCol){
-								if(c.getName().toUpperCase().contains(ftpk.getName().toUpperCase())){
-									if(fTable.getSingularName()!=null){
-										suggestedHyperColumnName = fTable.getSingularName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-										//suggestedHyperColumnName = fTable.getSingularName();								
-									}else{
-										suggestedHyperColumnName = c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
-										//suggestedHyperColumnName = fTable.getName()+c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
-										//suggestedHyperColumnName = fTable.getName();
-									}
-									suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
-									suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-									suggestedSettetObjectName = "set"+FormatString.getCadenaHungara(suggestedHyperColumnName);
-
-									c.setHyperColumnName(suggestedHyperColumnName);
-									break;
-								}
-							}
-							
-						}
-					}
-				}
-				
-				Collection<Table> m2mTables = dbSet.getManyToManyRelationTables(iterTable);
-
-				for (Table m2mTable : m2mTables) {
-					//System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
-					iterTable.getM2mTableList().add(m2mTable);
-				}
-				
-				Collection<Table> o2mTables = dbSet.getOneToManyRelationTables(iterTable);
-				for (Table o2mTable : o2mTables) {
-					//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
-					iterTable.getO2mTableList().add(o2mTable);
-				}
-				
-			} else {				
-				Iterator<Column> itFKC = iterTable.getSortedColumnsForJPA();				
-				while (itFKC.hasNext()) {
-					Column c = itFKC.next();
-					plainColumns.add(c);
-				}
-			}
-			
-			
-			for(Column dc:plainColumns){
-				if(dc.isForeignKey()){
-					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [M20] "+dc.getName());
-				} else{
-					//System.err.println("\t\t\tN " +(dc.isPrimaryKey()?"PK":"--")+" [---] "+dc.getName());
-				}				
-			}
-			for(EmbeddeableColumn ec:embededColumns){
-				//System.err.println("\t\t\tE " +(ec.isPrimaryKey()?"PK":"--")    +" [EMD] "+ec.getName());
-			}
-			
-			for(Table m2mTable:iterTable.getM2mTableList()){
-				Table m2mOT = dbSet.getTableOwnerManyToManyRelation(iterTable, m2mTable);
-				//System.err.println("\t\t\t* -- [M2M] "+m2mTable.getName()+" {"+(m2mOT!=null?m2mOT.getName():"-------")+"}");
-			}
-			for(Table o2mTable:iterTable.getO2mTableList()){
-				//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
-			}
-		}
+		List<Column>            plainColumns      = new ArrayList();
+		List<EmbeddeableColumn> embededColumns    = new ArrayList();
+		List<Column>			definitiveColumns = new ArrayList();
+		Table.analizeTablesForOptomizeJPA(dbSet, tablesForGeneration, definitiveColumns);
 		System.err.println("============ @EJB Stateless Session Abstract BEAN CODE GENERATION =====================>>> ");
 		String line = null;
 		baseDir = new File(basePathESB);
@@ -1232,11 +1012,10 @@ public class EJB3Builder {
         if (!dirSourceFile.exists()) {
             dirSourceFile.mkdirs();
         }
-        
-		System.err.println("================== @EJB Remote Stateless Session BEAN CODE GENERATION ========================>>> ");
+        System.err.println("================== @EJB Remote Stateless Session BEAN CODE GENERATION ========================>>> ");
 		for (Table table : tablesForGeneration) {
 			Iterator<Column> columnsSortedColumnsForJPA = table.getSortedColumnsForJPA();
-			List<Column> definitiveColumns = new ArrayList();
+			
 			while (columnsSortedColumnsForJPA.hasNext()) {
 				Column column = columnsSortedColumnsForJPA.next();
 				if(		column.getName().equalsIgnoreCase("FECHA_CREACION")		|| 

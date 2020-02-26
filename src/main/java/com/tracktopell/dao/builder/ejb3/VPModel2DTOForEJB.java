@@ -76,8 +76,8 @@ public class VPModel2DTOForEJB {
                 dbSet = dbSet.copyJustSelectedNames(tableNames2Gen);
             }
 
-            System.err.println("====================== END PARSE XML ========================");
-            System.out.println("->" + dbSet);
+            //System.err.println("====================== END PARSE XML ========================");
+            //System.err.println("->" + dbSet);
 			            
 			DTOBeanBuilder.buildMappingDTOsForJPABeans(dbSet, dtoPackage, dtoPackageBeanMember, jpaPackageBeanMember, basePathDTO, flatDTOs );
 			
