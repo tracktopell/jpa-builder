@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ${tablebean.dto.package}.RecordDTO;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * Class for mapping Json DTO Entity of Table ${tablebean.name}.
  * 
@@ -24,7 +24,8 @@ import ${tablebean.dto.package}.RecordDTO;
 public class ${tablebean.declaredName}DTO extends RecordDTO  {
     
     %foreach tablebean.member in ${tablebean.members}
-    ${tablebean.member.javadocCommnet}    
+    ${tablebean.member.javadocCommnet}
+	${tablebean.member.jsonignore}
     ${tablebean.member.declaration}
     %endfor
 
@@ -117,7 +118,7 @@ public class ${tablebean.declaredName}DTO extends RecordDTO  {
 		JSONObject jsonObj = new JSONObject();
 		try{
 			%foreach tablebean.member in ${tablebean.members}
-			jsonObj.put("${tablebean.member.javaIdentifier}", ${tablebean.member.jsonValueGetter});		
+			${tablebean.member.jsonignore.comment}jsonObj.put("${tablebean.member.javaIdentifier}", ${tablebean.member.jsonValueGetter});		
 			%endfor
 		} catch(Exception ex){
 			throw new IllegalStateException(ex.getMessage());

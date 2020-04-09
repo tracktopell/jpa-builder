@@ -36,6 +36,7 @@ public class SimpleColumn implements Column {
 	private int typeFormatingNumber;
 	private String comments;
 	private String farFKDescription;
+	private boolean jsonIgnored;
 	private Hashtable<String, String> metaProperties;
 
 	public SimpleColumn() {
@@ -635,5 +636,15 @@ public class SimpleColumn implements Column {
 	@Override
 	public void setUnique(boolean uniqe) {
 		this.uniqe = uniqe;
+	}
+
+	@Override
+	public boolean isJsonIgnored() {
+		return jsonIgnored;
+	}
+
+	@Override
+	public void setJsonIgnored(boolean jsonIgnored) {
+		this.jsonIgnored = jsonIgnored;
 	}
 }

@@ -72,7 +72,14 @@ public class DTOBeanBuilder {
 				iterTable.getColumn("UPDATED_BY")	!= null	&&
 				iterTable.getColumn("UPDATED_TIME")	!= null	&&
 				iterTable.getColumn("STATUS")		!= null	   ){
+				
 				iterTable.setAuditable(true);
+				
+				iterTable.getColumn("CREATED_BY")	.setJsonIgnored(true);
+				iterTable.getColumn("CREATED_TIME")	.setJsonIgnored(true);
+				iterTable.getColumn("UPDATED_BY")	.setJsonIgnored(true);
+				iterTable.getColumn("UPDATED_TIME")	.setJsonIgnored(true);
+				iterTable.getColumn("STATUS")		.setJsonIgnored(true);				
 			}
 		}
 		//System.err.println("==============================>>> ");
@@ -151,7 +158,7 @@ public class DTOBeanBuilder {
 					fTable = null;
 				}
 				definitiveColumns.add(column);
-				System.err.println("\t\t\t-->> * DefinitiveColumn: " + column.getName()+"\tHyperColumnName:"+column.getHyperColumnName());
+				//System.err.println("\t\t\t-->> * DefinitiveColumn: " + column.getName()+"\tHyperColumnName:"+column.getHyperColumnName());
 			}
 
 			//-------------------------------------------------------
@@ -331,7 +338,10 @@ public class DTOBeanBuilder {
 
 						for (String lineInLoop : linesToParse) {
 							//System.err.println("===========================["+lineInLoop+".indexOf(${tablebean.member.valueGetter})] => "+(lineInLoop.indexOf("${tablebean.member.valueGetter}")));
-							if (lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0 || lineInLoop.indexOf("${tablebean.member.valueGetter}") >= 0) {
+							if (	lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0 || 
+									lineInLoop.indexOf("${tablebean.member.valueGetter}")    >= 0 ||
+									lineInLoop.indexOf("${tablebean.member.jsonignore}")     >= 0 ||
+									lineInLoop.indexOf("${tablebean.member.jsonignore.comment}")     >= 0 ) {
 								if (! (column instanceof EmbeddeableColumn) ){
 									lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
 									
@@ -380,7 +390,13 @@ public class DTOBeanBuilder {
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"      , column.getValueCast());
 									}
-									
+									if(column.isJsonIgnored()){
+										lineInLoop = lineInLoop.replace("${tablebean.member.jsonignore}", "@JsonIgnore");
+										lineInLoop = lineInLoop.replace("${tablebean.member.jsonignore.comment}", "// ");
+									}else{
+										lineInLoop = lineInLoop.replace("${tablebean.member.jsonignore}", "");
+										lineInLoop = lineInLoop.replace("${tablebean.member.jsonignore.comment}", "");
+									}
 									ps.println(lineInLoop);
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.javadocCommnet}") >= 0) {
@@ -388,13 +404,13 @@ public class DTOBeanBuilder {
 								if (column.getComments() != null) {
 									ps.println("    ");
 									ps.println("    /**");
-									ps.println("    * " + column.getComments().replace("\n", "\n     * "));
+									ps.println("    * " + column.getComments().replace("\n", "\n     * ")+(column.isJsonIgnored()?", Json Ignored in marshalling":""));
 									ps.println("    */");
 								} else {
 									String commentForced = column.getName().toLowerCase().replace("_", " ");
 									ps.println("    ");
 									ps.println("    /**");
-									ps.println("    * " + commentForced);
+									ps.println("    * " + commentForced+(column.isJsonIgnored()?", Json Ignored in marshalling":""));
 									ps.println("    */");
 								}
 
@@ -644,14 +660,14 @@ public class DTOBeanBuilder {
 				if (column.isForeignKey() && !(table instanceof EmbeddeableColumn)) {
 					fTable = dbSet.getTable(table.getFKReferenceTable(column.getName()).getTableName());
 					column.setFTable(fTable);
-					System.err.println("\t\t\t-->>column:"+column.getName()+" == fTable: name:"+fTable.getName()+"?");
+					//System.err.println("\t\t\t-->>column:"+column.getName()+" == fTable: name:"+fTable.getName()+"?");
 					final Collection<Column> ftPksCol = fTable.getPrimaryKeys();
 					for(Column ftpk: ftPksCol){
-						System.err.println("\t\t-->>fTable="+fTable.getName()+", ftpk="+ftpk.getName()+", column="+column.getName());
+						//System.err.println("\t\t-->>fTable="+fTable.getName()+", ftpk="+ftpk.getName()+", column="+column.getName());
 						if(column.getName().toUpperCase().equals(ftpk.getName().toUpperCase())){
 							//suggestedHyperColumnName = column.getName().toUpperCase();
 							suggestedHyperColumnName = fTable.getName();
-							System.err.println("\t\t\t1)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+							//System.err.println("\t\t\t1)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 							
 							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
 							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
@@ -663,15 +679,15 @@ public class DTOBeanBuilder {
 							if(fTable.getSingularName()!=null){
 								suggestedHyperColumnName = fTable.getSingularName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");								
 								//suggestedHyperColumnName = fTable.getSingularName();
-								System.err.println("\t\t\t\t2)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+								//System.err.println("\t\t\t\t2)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 							} else if((fTable.getName()+"_"+ftpk.getName()).toUpperCase().equals(column.getName().toUpperCase())){
 								suggestedHyperColumnName = column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
 								//suggestedHyperColumnName = fTable.getName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");										
-								System.err.println("\t\t\t3A)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+								//System.err.println("\t\t\t3A)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 							} else {
 								//suggestedHyperColumnName = c.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");
 								suggestedHyperColumnName = fTable.getName()+"_"+column.getName().toUpperCase().replace(ftpk.getName().toUpperCase(),"");										
-								System.err.println("\t\t\t3B)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+								//System.err.println("\t\t\t3B)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 							}
 							suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
 							suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
@@ -683,7 +699,7 @@ public class DTOBeanBuilder {
 					}
 					if(suggestedHyperColumnName == null){
 						suggestedHyperColumnName = fTable.getName();
-						System.err.println("\t\t\t4)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
+						//System.err.println("\t\t\t4)-->>suggestedHyperColumnName="+suggestedHyperColumnName);
 
 						suggestedObjectName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(suggestedHyperColumnName));
 						suggestedGettetObjectName = "get"+FormatString.getCadenaHungara(suggestedHyperColumnName);
@@ -696,7 +712,7 @@ public class DTOBeanBuilder {
 					fTable = null;
 				}
 				definitiveColumns.add(column);
-				System.err.println("\t\t\t-->> DefinitiveColumn: " + column.getName()+"\tHyperColumnName:"+column.getHyperColumnName());
+				//System.err.println("\t\t\t-->> DefinitiveColumn: " + column.getName()+"\tHyperColumnName:"+column.getHyperColumnName());
 			}
 
 			//-------------------------------------------------------
@@ -990,7 +1006,7 @@ public class DTOBeanBuilder {
 			while (columnsToGenerate.hasNext()) {
 				Column c = columnsToGenerate.next();
 				definitiveColumns.add(c);
-				System.err.println("\t\t-->> DefinitiveColumn: " + c);
+				//System.err.println("\t\t-->> DefinitiveColumn: " + c);
 			}
 					
 
@@ -1234,7 +1250,7 @@ public class DTOBeanBuilder {
 			while (columnsToGenerate.hasNext()) {
 				Column c = columnsToGenerate.next();
 				definitiveColumns.add(c);
-				System.err.println("\t\t-->> DefinitiveColumn: " + c);
+				//System.err.println("\t\t-->> DefinitiveColumn: " + c);
 			}
 
 			//-------------------------------------------------------

@@ -144,4 +144,8 @@ public interface Column {
 	String getJsonObjGetValue();
 	
 	String getNullableExpression(String n);
+
+	void setJsonIgnored(boolean jsonIgnored);
+	
+	boolean isJsonIgnored();
 }

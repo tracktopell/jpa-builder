@@ -194,6 +194,10 @@ public class VP6Parser {
                                     currentTable.setLabel(keyValueProp[1].replace("\"","").replace("'","").trim());
                                 } else if(keyValueProp[0].trim().equals("singularName") && keyValueProp.length==2){
                                     currentTable.setSingularName(keyValueProp[1].trim());
+                                } else if(keyValueProp[0].trim().equals("jsonIgnored") && keyValueProp.length==2){
+									if(keyValueProp[1].trim().equals("true")){
+										currentTable.setAuditable(true);
+									}
                                 } else if(keyValueProp[0].trim().equals("auditable") && keyValueProp.length==2){
 									if(keyValueProp[1].trim().equals("true")){
 										currentTable.setAuditable(true);
