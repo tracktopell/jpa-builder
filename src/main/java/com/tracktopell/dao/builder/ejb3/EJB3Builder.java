@@ -616,9 +616,9 @@ public class EJB3Builder {
 							}
 						} else {
                             if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
-                                ps.println("    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType."+defaultValueFetchType+")");
+                                ps.println("    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH}, fetch = FetchType."+defaultValueFetchType+")");
                             }else{
-                                ps.println("    @ManyToMany(cascade = CascadeType.ALL)");
+                                ps.println("    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH})");
                             }
 							ps.println("    @JoinTable(name               = \"" + tableOwnerManyToManyRelation.getName().toUpperCase() + "\",");
 							ps.println("               joinColumns        = {@JoinColumn(name = \"" + rtCol1.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getColumnName().toUpperCase() + "\")},");
