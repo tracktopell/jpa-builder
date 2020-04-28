@@ -75,11 +75,11 @@ public class DTOBeanBuilder {
 				
 				iterTable.setAuditable(true);
 				
-				iterTable.getColumn("CREATED_BY")	.setJsonIgnored(true);
-				iterTable.getColumn("CREATED_TIME")	.setJsonIgnored(true);
-				iterTable.getColumn("UPDATED_BY")	.setJsonIgnored(true);
-				iterTable.getColumn("UPDATED_TIME")	.setJsonIgnored(true);
-				iterTable.getColumn("STATUS")		.setJsonIgnored(true);				
+				//iterTable.getColumn("CREATED_BY")	.setJsonIgnored(true);
+				//iterTable.getColumn("CREATED_TIME")	.setJsonIgnored(true);
+				//iterTable.getColumn("UPDATED_BY")	.setJsonIgnored(true);
+				//iterTable.getColumn("UPDATED_TIME")	.setJsonIgnored(true);
+				//iterTable.getColumn("STATUS")		.setJsonIgnored(true);				
 			}
 		}
 		//System.err.println("==============================>>> ");

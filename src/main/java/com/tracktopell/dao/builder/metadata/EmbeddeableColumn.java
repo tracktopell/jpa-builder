@@ -332,6 +332,6 @@ public class EmbeddeableColumn extends Table implements Column{
 
 	@Override
 	public boolean isJsonIgnored() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return false;
 	}
 }
