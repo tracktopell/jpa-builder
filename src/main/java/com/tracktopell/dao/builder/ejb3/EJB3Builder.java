@@ -60,7 +60,7 @@ public class EJB3Builder {
 		BufferedReader br = null;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 		final String collectionClass = "List";
-		final String explainedM2OList = "_HAS_"; //"_THAT_HAS_THIS_";
+		final String explainedM2OList = "_"; //"_HAS_"; //"_THAT_HAS_THIS_";
 		
 		ArrayList<Table> tablesForGeneration = new ArrayList<Table>();
 		Properties vp=VersionUtil.loadVersionProperties();
@@ -297,6 +297,7 @@ public class EJB3Builder {
 											//ps.println("    //2:  SQL TYPE: "+column.getSqlType());
 											//ps.println("    //2: JAVA TYPE: "+column.getJavaClassType());
 											if (column.isAutoIncremment()) {
+												ps.println("    // GenerationType.IDENTITY works better than GenerationType.AUTO");
 												ps.println("    @GeneratedValue(strategy=GenerationType.IDENTITY)");
 												//ps.println("    //@GeneratedValue(strategy=GenerationType.AUTO)");
 											}
@@ -512,39 +513,39 @@ public class EJB3Builder {
 								}
 								
 								if(cfk.getHyperColumnName()!=null){
-									realSugestedCollectionName += cfk.getHyperColumnName()+"_"+collectionClass;
+									//realSugestedCollectionName += cfk.getHyperColumnName()+"_"+collectionClass;
+									realSugestedCollectionName += collectionClass;
 								}else{
-									realSugestedCollectionName += cfk.getName()+"_"+collectionClass;
+									//realSugestedCollectionName += cfk.getName()+"_"+collectionClass;
+									realSugestedCollectionName += collectionClass;
 								}
 								
 								realSugestedCollectionName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(realSugestedCollectionName));
-								
+								ps.println("" );								
 								ps.println("    /** " );
-								ps.println("    * Map the relation to "+posibleTableOneToMany.getName()+" table where has "+cfk.getName()+" object mapped column of for this class." );
+								ps.println("    * Maps the relation "+posibleTableOneToMany.getName()+" table that has MANY "+cfk.getFTable().getName()+" with "+collectionClass+"." );
 								ps.println("    */ " );
                                 
 								if(cfk.getHyperColumnName()!=null){
                                     if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
-                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                        ps.println("    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH}, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
                                     }else{
-                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\")");
+                                        ps.println("    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH}, mappedBy = \"" + cfk.getHyperColumnObjectName() + "\")");
                                     }
 								}else if(cfk.getFTable()!=null){
                                     if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
-                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                        ps.println("    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH}, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
                                     }else{
-                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\")");
+                                        ps.println("    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH}, mappedBy = \"" + cfk.getFTable().getJavaDeclaredObjectName() + "\")");
                                     }
 								}else {
                                     if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
-                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                        ps.println("    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH}, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\", fetch = FetchType."+defaultValueFetchType+")");
                                     }else{
-                                        ps.println("    @OneToMany(cascade = CascadeType.ALL, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\")");
+                                        ps.println("    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH}, mappedBy = \"" + cfk.getJavaDeclaredObjectName() + "\")");
                                     }
-								}
-								//ps.println("    // "+posibleTableOneToMany.getName()+" Well know as "+posibleTableOneToMany.getJavaDeclaredName());
-								ps.println("    private " + collectionClass + "<" + posibleTableOneToMany.getJavaDeclaredName() + "> " + realSugestedCollectionName + ";");
-								ps.println("    " );
+								}								
+								ps.println("    private " + collectionClass + "<" + posibleTableOneToMany.getJavaDeclaredName() + "> " + realSugestedCollectionName + ";");								
 							}
 						}
 					}
@@ -571,16 +572,18 @@ public class EJB3Builder {
 								}
 								
 								if(cfk.getHyperColumnName()!=null){
-									realSugestedCollectionName += cfk.getHyperColumnName()+"_"+collectionClass;
+									//realSugestedCollectionName += cfk.getHyperColumnName()+"_"+collectionClass;
+									realSugestedCollectionName += collectionClass;
 								}else{
-									realSugestedCollectionName += cfk.getName()+"_"+collectionClass;
+									//realSugestedCollectionName += cfk.getName()+"_"+collectionClass;
+									realSugestedCollectionName += collectionClass;
 								}
 								
 								realSugestedCollectionName = FormatString.firstLetterLowerCase(FormatString.getCadenaHungara(realSugestedCollectionName));
 																
 								ps.println("    public " + collectionClass + "<"+posibleTableOneToMany.getJavaDeclaredName()+"> get"+FormatString.firstLetterUpperCase(realSugestedCollectionName)+"(){ return this." + realSugestedCollectionName + "; }");
-								ps.println("    public void set"+FormatString.firstLetterUpperCase(realSugestedCollectionName)+"(" + collectionClass + "<"+posibleTableOneToMany.getJavaDeclaredName()+"> v){ this." + realSugestedCollectionName + " = v; }");
-								ps.println("    ");
+								ps.println("");
+								ps.println("    public void set"+FormatString.firstLetterUpperCase(realSugestedCollectionName)+"(" + collectionClass + "<"+posibleTableOneToMany.getJavaDeclaredName()+"> v){ this." + realSugestedCollectionName + " = v; }");								
 							}
 						}
 					}
@@ -595,23 +598,20 @@ public class EJB3Builder {
                         final Column rtCol1 = rtColM2M.get(1);
 						final Column rtCol2 = rtColM2M.get(2);
                         
-						//ps.println("    ");
-                        //ps.println("    //# BUG: "+fm2mTable.getName());
-                        //ps.println("    //# BUG: M2M:"+tableOwnerManyToManyRelation.getName()+", rtCol1["+rtCol1.getPosition()+"]="+rtCol1.getName()+", rtCol2["+rtCol2.getPosition()+"]="+rtCol2.getName());
-                        //ps.println("    //# BUG: "+tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName()+" == "+table.getName()+"?"+(tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equalsIgnoreCase(table.getName())));
 						if (!tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getTableName().equalsIgnoreCase(table.getName())) {
+							ps.println("");
 							if(table.getSingularName()!=null){
                                 if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
-                                    ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                    ps.println("    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH},mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\", fetch = FetchType."+defaultValueFetchType+")");
                                 }else{
-                                    ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\")");
+                                    ps.println("    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH},mappedBy = \"" + table.getSingularNameJavaDeclaredObjectName() + collectionClass + "\")");
                                 }
                                 
 							}else{
                                 if(!defaultValueFetchType.equals(FETCHTYPE_DEFAULT)){
-                                    ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\", fetch = FetchType."+defaultValueFetchType+")");
+                                    ps.println("    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH},mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\", fetch = FetchType."+defaultValueFetchType+")");
                                 }else{
-                                    ps.println("    @ManyToMany(cascade = CascadeType.ALL,mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\")");
+                                    ps.println("    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH},mappedBy = \"" + FormatString.renameForJavaMethod(table.getName()) + collectionClass + "\")");
                                 }
 							}
 						} else {
@@ -623,8 +623,8 @@ public class EJB3Builder {
 							ps.println("    @JoinTable(name               = \"" + tableOwnerManyToManyRelation.getName().toUpperCase() + "\",");
 							ps.println("               joinColumns        = {@JoinColumn(name = \"" + rtCol1.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol1.getName()).getColumnName().toUpperCase() + "\")},");
 							ps.println("               inverseJoinColumns = {@JoinColumn(name = \"" + rtCol2.getName().toUpperCase() + "\", referencedColumnName =\"" + tableOwnerManyToManyRelation.getFKReferenceTable(rtCol2.getName()).getColumnName().toUpperCase() + "\")}");
-							ps.println("               )");							
-						}		
+							ps.println("    )");
+						}
 						
 						if(fm2mTable.getSingularName()!=null){
 							ps.println("    private " + collectionClass + "<" + fm2mTable.getSingularNameJavaDeclaredName() + "> " + fm2mTable.getSingularNameJavaDeclaredObjectName() + collectionClass + ";");
@@ -639,9 +639,11 @@ public class EJB3Builder {
 					for (Table fm2mTable : m2mTables) {
 						if(fm2mTable.getSingularName()!=null){
 							ps.println("    public " + collectionClass + "<" + fm2mTable.getSingularNameJavaDeclaredName() + "> " + fm2mTable.getSingularNameGetter() + collectionClass + "() { return this." + fm2mTable.getSingularNameJavaDeclaredObjectName() + collectionClass + "; }");						
+							ps.println("    ");
 							ps.println("    public void " + fm2mTable.getSingularNameSetter() + collectionClass + "(" + collectionClass + "<" + fm2mTable.getSingularNameJavaDeclaredName() + ">  v) { this." + fm2mTable.getSingularNameJavaDeclaredObjectName() + collectionClass + " = v; }");							
 						}else{
 							ps.println("    public " + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + "> get" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "() { return this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + "; }");						
+							ps.println("    ");
 							ps.println("    public void set" + FormatString.getCadenaHungara(fm2mTable.getName()) + collectionClass + "(" + collectionClass + "<" + FormatString.getCadenaHungara(fm2mTable.getName()) + ">  v) { this." + FormatString.renameForJavaMethod(fm2mTable.getName()) + collectionClass + " = v; }");
 						}
 						ps.println("    ");

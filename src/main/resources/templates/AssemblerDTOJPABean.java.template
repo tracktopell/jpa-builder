@@ -59,16 +59,40 @@ public class ${tablebean.declaredName}Assembler {
         return dtoEntity;
     }
 
+	public static <T extends ${tablebean.declaredName}DTO> T buildDTOEntity(T dtoEntity,${tablebean.declaredName} jpaEntity){
+		if(jpaEntity == null){
+			return null;
+		}
+
+        ${jpaCopyedToDtoMembers.code}
+
+        return dtoEntity;
+    }
+
 	public static List<${tablebean.declaredName}DTO> buildDTOEntityList(List<${tablebean.declaredName}> jpaEntityList){
 		if(jpaEntityList == null){
 			return null;
 		}
 		List<${tablebean.declaredName}DTO> dtoEntityList = new ArrayList<>();
         ${tablebean.declaredName}DTO dtoEntity =  null;
-		for(${tablebean.declaredName} jpaEntity: jpaEntityList){
-			dtoEntity =  new ${tablebean.declaredName}DTO();
-			${jpaCopyedToDtoMembersList.code}
+		for(${tablebean.declaredName} jpaEntity: jpaEntityList){			
+			dtoEntity = buildDTOEntity(jpaEntity);
 			dtoEntityList.add(dtoEntity);
+		}
+        return dtoEntityList;
+    }
+
+	public static <T extends ${tablebean.declaredName}DTO> List<T> buildDTOEntityList(List<T> dtoEntityList,List<${tablebean.declaredName}> jpaEntityList){
+		if(jpaEntityList == null){
+			return null;
+		}
+		//T dtoEntity =  null;
+		int indexIter=0;
+		for(${tablebean.declaredName} jpaEntity: jpaEntityList){
+			//dtoEntity = dtoEntityList.get(indexIter++);
+			//dtoEntity = buildDTOEntity(dtoEntity,jpaEntity);
+			//dtoEntityList.add(dtoEntity);
+			buildDTOEntity(dtoEntityList.get(indexIter++),jpaEntity);
 		}
         return dtoEntityList;
     }
