@@ -270,32 +270,32 @@ public class DTOBeanBuilder {
 				line = line.replace("${tablebean.serialId}", String.valueOf(23234523455L)+"L");
 				ps.println(line);
 			}
-			// ------------------------------------------------------
-			fileName = dtoPackage.replace(".", File.separator) + File.separator;
-
-			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
-			if (!dirSourceFile.exists()) {
-				dirSourceFile.mkdirs();
-			}
-
-			fileName = dirSourceFile.getPath() + File.separator + "RecordDTO.java";
-
-			sourceFile = new File(fileName);
-			fos = new FileOutputStream(sourceFile);
-			ps = new PrintStream(fos);
-
-			br = new BufferedReader(new InputStreamReader(
-					fos.getClass().getResourceAsStream("/templates/RecordDTO.java.template")));
-			line = null;
-			linesToParse = null;
-			nl = 0;
-			while ((line = br.readLine()) != null) {
-				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
-				line = line.replace("${date}", sdf.format(new Date()));
-				line = line.replace("${tablebean.dto.package}", dtoPackage);
-				line = line.replace("${tablebean.serialId}", String.valueOf(23234523456L)+"L");
-				ps.println(line);
-			}
+//			// ------------------------------------------------------
+//			fileName = dtoPackage.replace(".", File.separator) + File.separator;
+//
+//			dirSourceFile = new File(baseDir.getPath() + File.separator + File.separator + fileName);
+//			if (!dirSourceFile.exists()) {
+//				dirSourceFile.mkdirs();
+//			}
+//
+//			fileName = dirSourceFile.getPath() + File.separator + "RecordDTO.java";
+//
+//			sourceFile = new File(fileName);
+//			fos = new FileOutputStream(sourceFile);
+//			ps = new PrintStream(fos);
+//
+//			br = new BufferedReader(new InputStreamReader(
+//					fos.getClass().getResourceAsStream("/templates/RecordDTO.java.template")));
+//			line = null;
+//			linesToParse = null;
+//			nl = 0;
+//			while ((line = br.readLine()) != null) {
+//				line = line.replace("${version}", vp.getProperty(VersionUtil.PROJECT_VERSION));
+//				line = line.replace("${date}", sdf.format(new Date()));
+//				line = line.replace("${tablebean.dto.package}", dtoPackage);
+//				line = line.replace("${tablebean.serialId}", String.valueOf(23234523456L)+"L");
+//				ps.println(line);
+//			}
 
 			// ------------------------------------------------------
 			
@@ -313,7 +313,7 @@ public class DTOBeanBuilder {
 			ps = new PrintStream(fos);
 
 			br = new BufferedReader(new InputStreamReader(
-					fos.getClass().getResourceAsStream("/templates/TableJsonDTOBeanMapingJPABean.java.template")));
+					fos.getClass().getResourceAsStream("/templates/TableLigthJsonDTOBeanMapingJPABean.java.template")));
 			line = null;
 			linesToParse = null;
 			nl = 0;
@@ -341,6 +341,7 @@ public class DTOBeanBuilder {
 							if (	lineInLoop.indexOf("${tablebean.member.javaIdentifier}") >= 0 || 
 									lineInLoop.indexOf("${tablebean.member.valueGetter}")    >= 0 ||
 									lineInLoop.indexOf("${tablebean.member.jsonignore}")     >= 0 ||
+									lineInLoop.indexOf("${tablebean.member.jsonProperty}")   >= 0 ||
 									lineInLoop.indexOf("${tablebean.member.jsonignore.comment}")     >= 0 ) {
 								if (! (column instanceof EmbeddeableColumn) ){
 									lineInLoop = lineInLoop.replace("${tablebean.member.javaIdentifier}", column.getJavaDeclaredObjectName());
@@ -349,10 +350,6 @@ public class DTOBeanBuilder {
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getString");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "java.util.Base64.getDecoder().decode");									
-									}else if(column.getJavaClassType().equalsIgnoreCase("double")){
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getDouble");
-										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());										
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Double)");							
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Double")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getDouble");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());										
@@ -360,7 +357,7 @@ public class DTOBeanBuilder {
 									}else if(column.getJavaClassType().equalsIgnoreCase("double")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getDouble");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());										
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(double)");							
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Double)");							
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Integer")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());
@@ -368,7 +365,7 @@ public class DTOBeanBuilder {
 									}else if(column.getJavaClassType().equalsIgnoreCase("int")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(int)");							
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Integer)");							
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Long")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getLong");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());
@@ -376,11 +373,11 @@ public class DTOBeanBuilder {
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.lang.Short")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(short)");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Short)");
 									}else if(column.getJavaClassType().equalsIgnoreCase("short")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"   , "getInt");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", column.getJavaDeclaredObjectName());										
-										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(short)");
+										lineInLoop = lineInLoop.replace("${tablebean.member.valueCast}"     , "(Short)");
 									}else if(column.getJavaClassType().equalsIgnoreCase("java.util.Date")){
 										lineInLoop = lineInLoop.replace("${tablebean.member.valueGetter}"    , "getLong");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonValueGetter}", "sdfIso8601.format("+column.getJavaDeclaredObjectName()+")");
@@ -397,20 +394,23 @@ public class DTOBeanBuilder {
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonignore}", "");
 										lineInLoop = lineInLoop.replace("${tablebean.member.jsonignore.comment}", "");
 									}
+									if(table.isDTOJsonProperty_SNAKE()){
+										lineInLoop = lineInLoop.replace("${tablebean.member.jsonProperty}","@JsonProperty(\""+column.getName().toLowerCase()+"\")");
+									} else if(table.isDTOJsonProperty_CAMEL()){
+										lineInLoop = lineInLoop.replace("${tablebean.member.jsonProperty}","@JsonProperty(\""+column.getJavaDeclaredObjectName()+"\") // DEFAULT");
+									}
 									ps.println(lineInLoop);
 								}
 							} else if (lineInLoop.indexOf("${tablebean.member.javadocCommnet}") >= 0) {
 								
 								if (column.getComments() != null) {
-									ps.println("    ");
 									ps.println("    /**");
-									ps.println("    * " + column.getComments().replace("\n", "\n     * ")+(column.isJsonIgnored()?", Json Ignored in marshalling":""));
+									ps.println("    * " + column.getComments().replace("\n", "\n     * ")+(column.isJsonIgnored()?", Json Ignored in marshalling":"."));
 									ps.println("    */");
 								} else {
-									String commentForced = column.getName().toLowerCase().replace("_", " ");
-									ps.println("    ");
+									String commentForced = column.getName().toUpperCase();
 									ps.println("    /**");
-									ps.println("    * " + commentForced+(column.isJsonIgnored()?", Json Ignored in marshalling":""));
+									ps.println("    * MAPS " + commentForced+(column.isJsonIgnored()?", Json Ignored in marshalling":"."));
 									ps.println("    */");
 								}
 
@@ -426,8 +426,17 @@ public class DTOBeanBuilder {
 									EmbeddeableColumn eColumn = (EmbeddeableColumn)column;
 									ps.println("    // " + column.getJavaDeclaredObjectName() + " EmbedableColumn ID References: FKs {"+eColumn.getFKs()+"}");
 								} else {
-									//ps.println("    // Simple: PK?"+column.isPrimaryKey()+", FK?"+column.isForeignKey()+", class="+column.getJavaClassType()+", o="+column.getJavaDeclaredObjectName());
-									ps.println("    private " + column.getJavaClassType().replace("java.lang.", "") + " " + column.getJavaDeclaredObjectName() + ";");
+									if(column.getJavaClassType().equalsIgnoreCase("double")){
+										ps.println("    private Double " + column.getJavaDeclaredObjectName() + ";");
+									} else if(column.getJavaClassType().equalsIgnoreCase("long")){
+										ps.println("    private Long " + column.getJavaDeclaredObjectName() + ";");
+									} else if(column.getJavaClassType().equalsIgnoreCase("int")){
+										ps.println("    private Integer " + column.getJavaDeclaredObjectName() + ";");
+									} else if(column.getJavaClassType().equalsIgnoreCase("short")){
+										ps.println("    private Short " + column.getJavaDeclaredObjectName() + ";");
+									} else {										
+										ps.println("    private " + column.getJavaClassType().replace("java.lang.", "") + " " + column.getJavaDeclaredObjectName() + ";");
+									}
 								}
 
 							} else if (lineInLoop.indexOf("${tablebean.member.getter}") >= 0) {

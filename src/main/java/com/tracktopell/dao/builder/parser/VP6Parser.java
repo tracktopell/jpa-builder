@@ -192,11 +192,17 @@ public class VP6Parser {
                                     currentTable.setTransactionalTable(true);
                                 } else if(keyValueProp[0].trim().equals("label") && keyValueProp.length==2){
                                     currentTable.setLabel(keyValueProp[1].replace("\"","").replace("'","").trim());
-                                } else if(keyValueProp[0].trim().equals("singularName") && keyValueProp.length==2){
+                                } else if(keyValueProp[0].trim().equalsIgnoreCase("singularName") && keyValueProp.length==2){
                                     currentTable.setSingularName(keyValueProp[1].trim());
                                 } else if(keyValueProp[0].trim().equals("auditable") && keyValueProp.length==2){
-									if(keyValueProp[1].trim().equals("true")){
+									if(keyValueProp[1].trim().equalsIgnoreCase("true")){
 										currentTable.setAuditable(true);
+									}
+                                } else if(keyValueProp[0].trim().equals("DTOJsonProperty") && keyValueProp.length==2){
+									if(keyValueProp[1].trim().equalsIgnoreCase("SNAKE")){
+										currentTable.setDTOJsonProperty_SNAKE(true);
+									} else if(keyValueProp[1].trim().equalsIgnoreCase("CAMEL")){
+										currentTable.setDTOJsonProperty_CAMEL(true);
 									}
                                 }
                             }                        

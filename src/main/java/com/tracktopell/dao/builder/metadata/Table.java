@@ -25,6 +25,9 @@ public class Table {
 	protected List<Index> indexes;
 	protected String comments;
 	protected String toStringPattern;
+	
+	protected boolean DTOJsonProperty_SNAKE;
+	protected boolean DTOJsonProperty_CAMEL;
 
 	private Hashtable<String, String> metaProperties;
 	
@@ -37,7 +40,10 @@ public class Table {
 	 * Creates a new instance of Table
 	 */
 	public Table() {
-		this.preferredSingularName=true;
+		this.preferredSingularName = true;
+		this.DTOJsonProperty_SNAKE = false;
+		this.DTOJsonProperty_CAMEL = true;
+
 	}
 
 	public void addColumn(Column col) {
@@ -1252,6 +1258,22 @@ public class Table {
 				//System.err.println("\t\t\t* -- [O2M] "+o2mTable.getName());
 			}
 		}	
+	}
+
+	public boolean isDTOJsonProperty_CAMEL() {
+		return DTOJsonProperty_CAMEL;
+	}
+
+	public void setDTOJsonProperty_CAMEL(boolean DTOJsonProperty_CAMEL) {
+		this.DTOJsonProperty_CAMEL = DTOJsonProperty_CAMEL;
+	}
+
+	public boolean isDTOJsonProperty_SNAKE() {
+		return DTOJsonProperty_SNAKE;
+	}
+
+	public void setDTOJsonProperty_SNAKE(boolean DTOJsonProperty_SNAKE) {
+		this.DTOJsonProperty_SNAKE = DTOJsonProperty_SNAKE;
 	}
 	
 }

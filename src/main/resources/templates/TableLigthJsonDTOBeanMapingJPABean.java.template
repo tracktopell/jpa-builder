@@ -1,0 +1,47 @@
+package ${tablebean.package};
+
+import java.util.Objects;
+import java.util.List;
+import java.util.ArrayList;
+import java.lang.reflect.Field;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ${tablebean.dto.package}.RecordDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+/**
+ * Class for mapping Json DTO Entity of Table ${tablebean.name}.
+ * 
+ * Json Serialization / Deserialization JSE/Android ready compatible.
+ * @See https://developer.android.com/reference/org/json/JSONObject.html
+ * @See https://stleary.github.io/JSON-java/
+ *
+ * @author Tracktopell::jpa-builder @see  https://github.com/tracktopell/jpa-builder
+ */
+
+public class ${tablebean.declaredName}DTO implements java.io.Serializable {
+    
+    %foreach tablebean.member in ${tablebean.members}
+    ${tablebean.member.javadocCommnet}
+	${tablebean.member.jsonignore}
+	${tablebean.member.jsonProperty}
+    ${tablebean.member.declaration}
+    %endfor
+
+    /** 
+     * Default Constructor
+     */
+    public ${tablebean.declaredName}DTO() {
+    }
+
+    /**
+     * Getters and Setters
+     */
+    %foreach tablebean.member in ${tablebean.members}
+    ${tablebean.member.getter}
+    ${tablebean.member.setter}
+    %endfor	
+}

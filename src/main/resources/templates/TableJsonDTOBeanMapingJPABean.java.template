@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import ${tablebean.dto.package}.RecordDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Class for mapping Json DTO Entity of Table ${tablebean.name}.
  * 
@@ -26,6 +27,7 @@ public class ${tablebean.declaredName}DTO extends RecordDTO  {
     %foreach tablebean.member in ${tablebean.members}
     ${tablebean.member.javadocCommnet}
 	${tablebean.member.jsonignore}
+	${tablebean.member.jsonProperty}
     ${tablebean.member.declaration}
     %endfor
 
